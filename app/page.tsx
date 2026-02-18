@@ -21,7 +21,7 @@ export default function Page() {
           height={200}
           priority
           unoptimized
-          className="h-auto w-[140px] md:w-[clamp(130px,18vw,220px)] max-h-[40dvh]"
+          className="h-auto w-[140px]"
         />
       </div>
     </main>
