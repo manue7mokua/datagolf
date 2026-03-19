@@ -114,6 +114,7 @@ const rCodeLines: CodeToken[][] = [
 
 const tokenCountStyle =
   "inline-flex items-center justify-center whitespace-nowrap rounded-none border-x border-b border-white/12 bg-[#111111] px-3 py-2 text-[10px] uppercase leading-none tracking-[0.24em] text-[#9be58a] md:bg-transparent md:px-2 md:py-1 md:tracking-[0.22em]";
+const tokenCountDockStyle = "pointer-events-none flex justify-end";
 
 function countDisplayTokens(text: string) {
   return text.match(/\w+|[^\s\w]/g)?.length ?? 0;
@@ -393,8 +394,8 @@ const tiktokRows = [
 export default function Page() {
   return (
     <main className="relative min-h-dvh overflow-x-hidden bg-[#0A0A0A] text-[#f2f1ea] xl:h-dvh xl:overflow-hidden">
-      <div className="relative mx-auto flex min-h-dvh w-full min-w-0 flex-col px-4 py-4 sm:px-6 sm:py-5 md:px-14 lg:px-20 xl:h-full xl:w-[70vw] xl:max-w-[1320px] xl:px-0 xl:py-0">
-        <header className="flex w-full min-w-0 shrink-0 flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 md:fixed md:inset-x-0 md:top-0 md:z-30 md:flex-nowrap md:items-center md:gap-8 md:bg-[#0A0A0A]/95 md:px-14 md:py-3 md:backdrop-blur lg:px-20 xl:absolute xl:left-0 xl:right-0 xl:top-0 xl:bg-transparent xl:px-0 xl:py-0">
+      <div className="relative mx-auto flex min-h-dvh w-full min-w-0 flex-col px-4 py-4 sm:px-6 sm:py-5 md:px-14 lg:px-20 xl:h-full xl:w-[70vw] xl:max-w-[1320px] xl:overflow-hidden xl:px-0 xl:py-0">
+        <header className="flex w-full min-w-0 shrink-0 flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 md:fixed md:inset-x-0 md:top-4 md:z-30 md:flex-nowrap md:items-center md:gap-8 md:bg-[#0A0A0A]/95 md:px-14 md:py-3 md:backdrop-blur lg:px-20 xl:absolute xl:left-0 xl:right-0 xl:top-6 xl:bg-transparent xl:px-0 xl:py-0">
           <Link
             href="/"
             className="hidden h-10 items-stretch border border-white/15 bg-white/5 text-[10px] uppercase tracking-[0.24em] text-[#f2f1ea] transition hover:bg-white/8 md:flex"
@@ -412,9 +413,9 @@ export default function Page() {
           <SiteNavbar items={navItems} />
         </header>
 
-        <section className="flex min-w-0 flex-col gap-5 py-4 pt-24 sm:gap-6 md:gap-10 md:pt-20 xl:grid xl:flex-1 xl:grid-cols-[minmax(0,0.94fr)_minmax(0,1.06fr)] xl:gap-8 xl:py-6 xl:pt-20">
-          <div className="flex min-w-0 min-h-0 flex-col">
-            <div className="max-w-2xl">
+        <section className="flex min-h-0 min-w-0 flex-col gap-5 py-4 pt-24 sm:gap-6 md:gap-10 md:pt-24 xl:grid xl:flex-1 xl:grid-cols-[minmax(0,0.94fr)_minmax(0,1.06fr)] xl:gap-6 xl:overflow-hidden xl:py-4 xl:pt-24">
+          <div className="flex min-h-0 min-w-0 flex-col xl:overflow-hidden">
+            <div className="max-w-2xl shrink-0">
               <h1 className="font-sans text-[clamp(2rem,4vw,4rem)] leading-[0.92] tracking-[0.02em] text-[#ffbd2e]">
                 datagolf
               </h1>
@@ -434,8 +435,8 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="mt-4 grid min-h-0 gap-4 sm:gap-5 md:gap-10">
-              <div className="relative w-full min-w-0">
+            <div className="mt-4 flex min-h-0 flex-col gap-4 sm:gap-5 md:gap-8 xl:mt-5 xl:flex-1 xl:gap-4 xl:overflow-hidden">
+              <div className="relative w-full min-w-0 shrink-0">
                 <div
                   id="challenges"
                   className="relative w-full min-w-0 overflow-visible border border-white/12 bg-black/40 shadow-2xl shadow-black/40"
@@ -449,25 +450,25 @@ export default function Page() {
                     </div>
                   </div>
                 </div>
-                <div className="pointer-events-none flex justify-end md:absolute md:right-[-1px] md:top-full md:translate-y-0">
+                <div className={tokenCountDockStyle}>
                   <div className={tokenCountStyle}>{promptTokenCount} tokens</div>
                 </div>
               </div>
 
-              <div className="relative w-full min-w-0">
-                <div className="relative w-full min-w-0 overflow-visible border border-white/12 bg-black/40 shadow-2xl shadow-black/40">
-                  <div className="p-2.5 sm:p-3 md:p-4">
+              <div className="relative flex min-h-0 w-full min-w-0 flex-col xl:flex-1 xl:overflow-hidden">
+                <div className="relative flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-visible border border-white/12 bg-black/40 shadow-2xl shadow-black/40">
+                  <div className="flex min-h-0 flex-1 flex-col p-2.5 sm:p-3 md:p-4">
                     <div className="mb-2.5 flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-[#bdb8aa]">
                       <span>Code (R)</span>
                     </div>
-                    <pre className="hide-scrollbar max-h-56 overflow-auto border border-white/10 bg-[#111111] p-3 text-[12px] leading-6 text-[#f2f1ea] md:max-h-64">
+                    <pre className="hide-scrollbar max-h-56 overflow-auto border border-white/10 bg-[#111111] p-3 text-[12px] leading-6 text-[#f2f1ea] md:max-h-64 xl:min-h-0 xl:flex-1 xl:max-h-none">
                       <code className="block w-max min-w-full whitespace-pre">
                         <HighlightedRCode />
                       </code>
                     </pre>
                   </div>
                 </div>
-                <div className="pointer-events-none flex justify-end md:absolute md:right-[-1px] md:top-full md:translate-y-0">
+                <div className={tokenCountDockStyle}>
                   <div className={tokenCountStyle}>{codeTokenCount} tokens</div>
                 </div>
               </div>
