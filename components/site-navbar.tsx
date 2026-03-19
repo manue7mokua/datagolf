@@ -30,7 +30,7 @@ export function SiteNavbar({ items }: SiteNavbarProps) {
   }, []);
 
   return (
-    <nav className="flex flex-wrap gap-6 sm:gap-8" aria-label="Primary">
+    <nav className="flex flex-wrap gap-x-4 gap-y-3 sm:gap-x-5 sm:gap-y-3 md:gap-x-6" aria-label="Primary">
       {items.map((item) => {
         const isActive = item.active && activeHref === item.href;
 
@@ -44,7 +44,7 @@ export function SiteNavbar({ items }: SiteNavbarProps) {
                 setActiveHref(item.href);
               }
             }}
-            className={`relative pb-2 text-[13px] tracking-[0.08em] text-[#eae7db] transition-colors hover:text-[#ffbd2e] after:absolute after:left-0 after:right-0 after:bottom-0 after:h-px after:bg-[#ffbd2e] after:content-[''] ${
+            className={`relative pb-2 text-[12px] tracking-[0.08em] text-[#eae7db] transition-colors hover:text-[#ffbd2e] sm:text-[13px] after:absolute after:left-0 after:right-0 after:bottom-0 after:h-px after:bg-[#ffbd2e] after:content-[''] ${
               isActive ? "after:opacity-100" : "after:opacity-0"
             }`}
           >
