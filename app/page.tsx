@@ -13,6 +13,9 @@ type CodeToken = {
   className?: string;
 };
 
+const challengePrompt =
+  "Analyze a TikTok account for a high school club and identify which video format drives the most saves, shares, and follows. Return the top 5 posts ranked by engagement lift.";
+
 const rCodeLines: CodeToken[][] = [
   [
     { text: "library", className: "text-[#8bd5ff]" },
@@ -107,6 +110,18 @@ const rCodeLines: CodeToken[][] = [
     { text: ")", className: "text-[#f2f1ea]" },
   ],
 ];
+
+const tokenCountStyle =
+  "border border-white/12 bg-transparent px-2 py-1 text-[10px] uppercase tracking-[0.22em] text-[#9be58a]";
+
+function countDisplayTokens(text: string) {
+  return text.match(/\w+|[^\s\w]/g)?.length ?? 0;
+}
+
+const rCodeText = rCodeLines.map((line) => line.map((token) => token.text).join("")).join("\n");
+
+const promptTokenCount = countDisplayTokens(challengePrompt);
+const codeTokenCount = countDisplayTokens(rCodeText);
 
 function HighlightedRCode() {
   return (
@@ -434,30 +449,38 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="mt-4 grid min-h-0 gap-4">
+            <div className="mt-4 grid min-h-0 gap-8">
               <div
                 id="challenges"
-                className="w-full min-w-0 overflow-hidden border border-white/12 bg-black/40 p-2.5 shadow-2xl shadow-black/40 sm:p-3"
+                className="relative w-full min-w-0 overflow-visible border border-white/12 bg-black/40 shadow-2xl shadow-black/40"
               >
-                <div className="mb-2.5 flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-[#bdb8aa]">
-                  <span>Prompt</span>
+                <div className="p-2.5 sm:p-3">
+                  <div className="mb-2.5 flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-[#bdb8aa]">
+                    <span>Prompt</span>
+                  </div>
+                  <div className="break-words border border-white/10 bg-[#111111] px-3 py-3 text-[13px] leading-6 text-[#f2f1ea]">
+                    {challengePrompt}
+                  </div>
                 </div>
-                <div className="break-words border border-white/10 bg-[#111111] p-3 text-[13px] leading-6 text-[#f2f1ea]">
-                  Analyze a TikTok account for a high school club and identify
-                  which video format drives the most saves, shares, and follows.
-                  Return the top 5 posts ranked by engagement lift.
+                <div className="pointer-events-none absolute right-0 top-full">
+                  <div className={tokenCountStyle}>{promptTokenCount} tokens</div>
                 </div>
               </div>
 
-              <div className="w-full min-w-0 overflow-hidden border border-white/12 bg-black/40 p-2.5 shadow-2xl shadow-black/40 sm:p-3">
-                <div className="mb-2.5 flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-[#bdb8aa]">
-                  <span>Code (R)</span>
+              <div className="relative w-full min-w-0 overflow-visible border border-white/12 bg-black/40 shadow-2xl shadow-black/40">
+                <div className="p-2.5 sm:p-3">
+                  <div className="mb-2.5 flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-[#bdb8aa]">
+                    <span>Code (R)</span>
+                  </div>
+                  <pre className="hide-scrollbar max-h-56 overflow-auto border border-white/10 bg-[#111111] p-3 text-[12px] leading-6 text-[#f2f1ea]">
+                    <code className="block w-max min-w-full whitespace-pre">
+                      <HighlightedRCode />
+                    </code>
+                  </pre>
                 </div>
-                <pre className="hide-scrollbar max-h-56 overflow-auto border border-white/10 bg-[#111111] p-3 text-[12px] leading-6 text-[#f2f1ea]">
-                  <code className="block w-max min-w-full whitespace-pre">
-                    <HighlightedRCode />
-                  </code>
-                </pre>
+                <div className="pointer-events-none absolute right-0 top-full">
+                  <div className={tokenCountStyle}>{codeTokenCount} tokens</div>
+                </div>
               </div>
             </div>
           </div>
