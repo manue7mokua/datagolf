@@ -547,7 +547,7 @@ export default function Page() {
           </div>
         </section>
 
-        <footer className="flex shrink-0 items-center justify-between border-t border-white/10 pt-2 text-[11px] text-[#bdb8aa]">
+        <footer className="relative flex w-full shrink-0 items-center justify-between border-t border-white/10 pt-2 text-[11px] text-[#bdb8aa]">
           <div className="flex items-center gap-3">
             <Image
               src="/datagolf_logo.jpg"
@@ -560,6 +560,17 @@ export default function Page() {
               Built by <span className="underline underline-offset-2">Iman</span>
             </span>
           </div>
+          <span className="pointer-events-auto absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-center">
+            inspired by{" "}
+            <a
+              href="https://colf.dev/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 transition hover:text-[#ffbd2e]"
+            >
+              colf.dev
+            </a>
+          </span>
           <span className="uppercase tracking-[0.22em] text-[#ffbd2e]">
             v0.1
           </span>
