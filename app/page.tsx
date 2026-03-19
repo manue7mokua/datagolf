@@ -423,15 +423,17 @@ posts %>%
           </div>
         </section>
 
-        <footer className="flex shrink-0 items-center gap-3 border-t border-white/10 pt-2 text-[11px] text-[#bdb8aa]">
-          <Image
-            src="/datagolf_logo.jpg"
-            alt="datagolf logo"
-            width={24}
-            height={24}
-            className="h-5 w-5"
-          />
-          <span>Built by Iman</span>
+        <footer className="flex shrink-0 items-center justify-between border-t border-white/10 pt-2 text-[11px] text-[#bdb8aa]">
+          <div className="flex items-center gap-3">
+            <Image
+              src="/datagolf_logo.jpg"
+              alt="datagolf logo"
+              width={24}
+              height={24}
+              className="h-5 w-5"
+            />
+            <span>Built by Iman</span>
+          </div>
           <span className="uppercase tracking-[0.22em] text-[#ffbd2e]">
             v0.1
           </span>
