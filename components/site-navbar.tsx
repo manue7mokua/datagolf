@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 type NavItem = {
   label: string;
   href: string;
+  active: boolean;
 };
 
 type SiteNavbarProps = {
@@ -31,14 +32,18 @@ export function SiteNavbar({ items }: SiteNavbarProps) {
   return (
     <nav className="flex flex-wrap gap-6 sm:gap-8" aria-label="Primary">
       {items.map((item) => {
-        const isActive = activeHref === item.href;
+        const isActive = item.active && activeHref === item.href;
 
         return (
           <Link
             key={item.label}
             href={item.href}
             aria-current={isActive ? "page" : undefined}
-            onClick={() => setActiveHref(item.href)}
+            onClick={() => {
+              if (item.active) {
+                setActiveHref(item.href);
+              }
+            }}
             className={`relative pb-2 text-[13px] tracking-[0.08em] text-[#eae7db] transition-colors hover:text-[#ffbd2e] after:absolute after:left-0 after:right-0 after:bottom-0 after:h-px after:bg-[#ffbd2e] after:content-[''] ${
               isActive ? "after:opacity-100" : "after:opacity-0"
             }`}

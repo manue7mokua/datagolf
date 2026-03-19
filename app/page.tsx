@@ -3,10 +3,10 @@ import Link from "next/link";
 import { SiteNavbar } from "@/components/site-navbar";
 
 const navItems = [
-  { label: "Home", href: "#" },
-  { label: "Challenges", href: "#challenges" },
-  { label: "Leaderboard", href: "#leaderboard" },
-  { label: "Profile", href: "#profile" },
+  { label: "Home", href: "#", active: true },
+  { label: "Challenges", href: "#challenges", active: false },
+  { label: "Leaderboard", href: "#leaderboard", active: false },
+  { label: "Profile", href: "#profile", active: false },
 ];
 
 type CodeToken = {
