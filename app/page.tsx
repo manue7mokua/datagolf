@@ -48,9 +48,6 @@ export default function Page() {
 
         <section className="grid min-h-0 flex-1 gap-4 py-5 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-6 lg:py-6">
           <div className="max-w-2xl">
-            <p className="mb-3 text-[11px] uppercase tracking-[0.32em] text-[#ffbd2e]">
-              Data analysis for people who like short answers
-            </p>
             <h1 className="font-sans text-[clamp(2.2rem,4.7vw,4.2rem)] leading-[0.92] tracking-[0.02em] text-[#f7f4eb]">
               datagolf
             </h1>
@@ -96,7 +93,7 @@ export default function Page() {
               <div className="border border-white/12 bg-black/40 p-2.5 shadow-2xl shadow-black/40 sm:p-3">
                 <div className="mb-2.5 flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-[#bdb8aa]">
                   <span>Code</span>
-                  <span>Python</span>
+                  <span>R</span>
                 </div>
                 <pre className="overflow-hidden border border-white/10 bg-[#111111] p-3 text-[12px] leading-6 text-[#f2f1ea]">
                   <code>{`df.groupby("player")
