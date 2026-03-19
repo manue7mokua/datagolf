@@ -113,7 +113,7 @@ const rCodeLines: CodeToken[][] = [
 ];
 
 const tokenCountStyle =
-  "border-x border-b border-white/12 bg-transparent px-2 py-1 text-[10px] uppercase tracking-[0.22em] text-[#9be58a]";
+  "inline-flex items-center justify-center whitespace-nowrap rounded-none border-x border-b border-white/12 bg-[#111111] px-3 py-2 text-[10px] uppercase leading-none tracking-[0.24em] text-[#9be58a] md:bg-transparent md:px-2 md:py-1 md:tracking-[0.22em]";
 
 function countDisplayTokens(text: string) {
   return text.match(/\w+|[^\s\w]/g)?.length ?? 0;
@@ -435,35 +435,39 @@ export default function Page() {
             </div>
 
             <div className="mt-4 grid min-h-0 gap-4 sm:gap-5 md:gap-10">
-              <div
-                id="challenges"
-                className="relative w-full min-w-0 overflow-visible border border-white/12 bg-black/40 shadow-2xl shadow-black/40"
-              >
-                <div className="p-2.5 sm:p-3 md:p-4">
-                  <div className="mb-2.5 flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-[#bdb8aa]">
-                    <span>Prompt</span>
-                  </div>
-                  <div className="break-words border border-white/10 bg-[#111111] px-3 py-3 text-[13px] leading-6 text-[#f2f1ea]">
-                    {challengePrompt}
+              <div className="relative w-full min-w-0">
+                <div
+                  id="challenges"
+                  className="relative w-full min-w-0 overflow-visible border border-white/12 bg-black/40 shadow-2xl shadow-black/40"
+                >
+                  <div className="p-2.5 sm:p-3 md:p-4">
+                    <div className="mb-2.5 flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-[#bdb8aa]">
+                      <span>Prompt</span>
+                    </div>
+                    <div className="break-words border border-white/10 bg-[#111111] px-3 py-3 text-[13px] leading-6 text-[#f2f1ea]">
+                      {challengePrompt}
+                    </div>
                   </div>
                 </div>
-                <div className="mt-2 flex w-full justify-end px-2.5 sm:px-3 md:pointer-events-none md:absolute md:right-[-1px] md:top-full md:mt-0 md:w-auto md:px-0">
+                <div className="pointer-events-none flex justify-end md:absolute md:right-[-1px] md:top-full md:translate-y-0">
                   <div className={tokenCountStyle}>{promptTokenCount} tokens</div>
                 </div>
               </div>
 
-              <div className="relative w-full min-w-0 overflow-visible border border-white/12 bg-black/40 shadow-2xl shadow-black/40">
-                <div className="p-2.5 sm:p-3 md:p-4">
-                  <div className="mb-2.5 flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-[#bdb8aa]">
-                    <span>Code (R)</span>
+              <div className="relative w-full min-w-0">
+                <div className="relative w-full min-w-0 overflow-visible border border-white/12 bg-black/40 shadow-2xl shadow-black/40">
+                  <div className="p-2.5 sm:p-3 md:p-4">
+                    <div className="mb-2.5 flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-[#bdb8aa]">
+                      <span>Code (R)</span>
+                    </div>
+                    <pre className="hide-scrollbar max-h-56 overflow-auto border border-white/10 bg-[#111111] p-3 text-[12px] leading-6 text-[#f2f1ea] md:max-h-64">
+                      <code className="block w-max min-w-full whitespace-pre">
+                        <HighlightedRCode />
+                      </code>
+                    </pre>
                   </div>
-                  <pre className="hide-scrollbar max-h-56 overflow-auto border border-white/10 bg-[#111111] p-3 text-[12px] leading-6 text-[#f2f1ea] md:max-h-64">
-                    <code className="block w-max min-w-full whitespace-pre">
-                      <HighlightedRCode />
-                    </code>
-                  </pre>
                 </div>
-                <div className="mt-2 flex w-full justify-end px-2.5 sm:px-3 md:pointer-events-none md:absolute md:right-[-1px] md:top-full md:mt-0 md:w-auto md:px-0">
+                <div className="pointer-events-none flex justify-end md:absolute md:right-[-1px] md:top-full md:translate-y-0">
                   <div className={tokenCountStyle}>{codeTokenCount} tokens</div>
                 </div>
               </div>
