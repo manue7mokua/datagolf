@@ -393,8 +393,8 @@ const tiktokRows = [
 export default function Page() {
   return (
     <main className="relative min-h-dvh overflow-x-hidden bg-[#0A0A0A] text-[#f2f1ea] xl:h-dvh xl:overflow-hidden">
-      <div className="relative mx-auto flex min-h-dvh w-full flex-col px-4 py-4 sm:px-6 md:px-8 xl:h-full xl:w-[70vw] xl:max-w-[1320px] xl:px-0">
-        <header className="flex shrink-0 flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-6 md:fixed md:inset-x-0 md:top-0 md:z-30 md:flex-nowrap md:items-center md:gap-8 md:bg-[#0A0A0A]/95 md:px-8 md:py-3 md:backdrop-blur xl:absolute xl:left-0 xl:right-0 xl:top-0 xl:bg-transparent xl:px-0 xl:py-0">
+      <div className="relative mx-auto flex min-h-dvh w-full flex-col px-4 py-4 sm:px-6 md:px-14 lg:px-20 xl:h-full xl:w-[70vw] xl:max-w-[1320px] xl:px-0">
+        <header className="flex shrink-0 flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-6 md:fixed md:inset-x-0 md:top-0 md:z-30 md:flex-nowrap md:items-center md:gap-8 md:bg-[#0A0A0A]/95 md:px-14 md:py-3 md:backdrop-blur lg:px-20 xl:absolute xl:left-0 xl:right-0 xl:top-0 xl:bg-transparent xl:px-0 xl:py-0">
           <Link
             href="/"
             className="flex h-10 items-stretch border border-white/15 bg-white/5 text-[10px] uppercase tracking-[0.24em] text-[#f2f1ea] transition hover:bg-white/8"
