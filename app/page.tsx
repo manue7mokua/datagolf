@@ -8,6 +8,129 @@ const navItems = [
   { label: "Profile", href: "#profile" },
 ];
 
+type CodeToken = {
+  text: string;
+  className?: string;
+};
+
+const rCodeLines: CodeToken[][] = [
+  [
+    { text: "library", className: "text-[#8bd5ff]" },
+    { text: "(", className: "text-[#f2f1ea]" },
+    { text: "dplyr", className: "text-[#8ce99a]" },
+    { text: ")", className: "text-[#f2f1ea]" },
+  ],
+  [],
+  [
+    { text: "posts", className: "text-[#f2f1ea]" },
+    { text: " ", className: "text-[#f2f1ea]" },
+    { text: "%>%", className: "text-[#b8a1ff]" },
+  ],
+  [
+    { text: "  ", className: "text-[#f2f1ea]" },
+    { text: "mutate", className: "text-[#8bd5ff]" },
+    { text: "(", className: "text-[#f2f1ea]" },
+  ],
+  [
+    { text: "    ", className: "text-[#f2f1ea]" },
+    { text: "engagement_lift", className: "text-[#f2f1ea]" },
+    { text: " = ", className: "text-[#f2f1ea]" },
+    { text: "(", className: "text-[#f2f1ea]" },
+    { text: "likes", className: "text-[#f2f1ea]" },
+    { text: " + ", className: "text-[#f2f1ea]" },
+    { text: "shares", className: "text-[#f2f1ea]" },
+    { text: " + ", className: "text-[#f2f1ea]" },
+    { text: "saves", className: "text-[#f2f1ea]" },
+    { text: " + ", className: "text-[#f2f1ea]" },
+    { text: "follows", className: "text-[#f2f1ea]" },
+    { text: ") / ", className: "text-[#f2f1ea]" },
+    { text: "views", className: "text-[#f2f1ea]" },
+  ],
+  [
+    { text: "  ", className: "text-[#f2f1ea]" },
+    { text: ")", className: "text-[#f2f1ea]" },
+    { text: " ", className: "text-[#f2f1ea]" },
+    { text: "%>%", className: "text-[#b8a1ff]" },
+  ],
+  [
+    { text: "  ", className: "text-[#f2f1ea]" },
+    { text: "group_by", className: "text-[#8bd5ff]" },
+    { text: "(", className: "text-[#f2f1ea]" },
+    { text: "format", className: "text-[#f2f1ea]" },
+    { text: ")", className: "text-[#f2f1ea]" },
+  ],
+  [
+    { text: "  ", className: "text-[#f2f1ea]" },
+    { text: "%>%", className: "text-[#b8a1ff]" },
+  ],
+  [
+    { text: "  ", className: "text-[#f2f1ea]" },
+    { text: "summarize", className: "text-[#8bd5ff]" },
+    { text: "(", className: "text-[#f2f1ea]" },
+    { text: "avg_lift", className: "text-[#f2f1ea]" },
+    { text: " = ", className: "text-[#f2f1ea]" },
+    { text: "mean", className: "text-[#8bd5ff]" },
+    { text: "(", className: "text-[#f2f1ea]" },
+    { text: "engagement_lift", className: "text-[#f2f1ea]" },
+    { text: ")", className: "text-[#f2f1ea]" },
+    { text: ", ", className: "text-[#f2f1ea]" },
+    { text: ".groups", className: "text-[#f2f1ea]" },
+    { text: " = ", className: "text-[#f2f1ea]" },
+    { text: "\"drop\"", className: "text-[#86efac]" },
+    { text: ")", className: "text-[#f2f1ea]" },
+  ],
+  [
+    { text: "  ", className: "text-[#f2f1ea]" },
+    { text: "%>%", className: "text-[#b8a1ff]" },
+  ],
+  [
+    { text: "  ", className: "text-[#f2f1ea]" },
+    { text: "arrange", className: "text-[#8bd5ff]" },
+    { text: "(", className: "text-[#f2f1ea]" },
+    { text: "desc", className: "text-[#8bd5ff]" },
+    { text: "(", className: "text-[#f2f1ea]" },
+    { text: "avg_lift", className: "text-[#f2f1ea]" },
+    { text: ")", className: "text-[#f2f1ea]" },
+    { text: ")", className: "text-[#f2f1ea]" },
+  ],
+  [
+    { text: "  ", className: "text-[#f2f1ea]" },
+    { text: "%>%", className: "text-[#b8a1ff]" },
+  ],
+  [
+    { text: "  ", className: "text-[#f2f1ea]" },
+    { text: "slice_head", className: "text-[#8bd5ff]" },
+    { text: "(", className: "text-[#f2f1ea]" },
+    { text: "n", className: "text-[#f2f1ea]" },
+    { text: " = ", className: "text-[#f2f1ea]" },
+    { text: "5", className: "text-[#ffd479]" },
+    { text: ")", className: "text-[#f2f1ea]" },
+  ],
+];
+
+function HighlightedRCode() {
+  return (
+    <>
+      {rCodeLines.map((line, lineIndex) => (
+        <span key={lineIndex} className="block">
+          {line.length === 0 ? (
+            <span>&nbsp;</span>
+          ) : (
+            line.map((token, tokenIndex) => (
+              <span
+                key={`${lineIndex}-${tokenIndex}`}
+                className={token.className}
+              >
+                {token.text}
+              </span>
+            ))
+          )}
+        </span>
+      ))}
+    </>
+  );
+}
+
 const tiktokRows = [
   {
     post_id: "tk_1001",
@@ -330,17 +453,10 @@ export default function Page() {
                 <div className="mb-2.5 flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-[#bdb8aa]">
                   <span>Code (R)</span>
                 </div>
-                <pre className="overflow-x-auto border border-white/10 bg-[#111111] p-3 text-[12px] leading-6 text-[#f2f1ea]">
-                  <code>{`library(dplyr)
-
-posts %>%
-  mutate(
-    engagement_lift = (likes + shares + saves + follows) / views
-  ) %>%
-  group_by(format) %>%
-  summarize(avg_lift = mean(engagement_lift), .groups = "drop") %>%
-  arrange(desc(avg_lift)) %>%
-  slice_head(n = 5)`}</code>
+                <pre className="hide-scrollbar max-h-56 overflow-auto border border-white/10 bg-[#111111] p-3 text-[12px] leading-6 text-[#f2f1ea]">
+                  <code className="block w-max min-w-full whitespace-pre">
+                    <HighlightedRCode />
+                  </code>
                 </pre>
               </div>
             </div>
