@@ -393,11 +393,11 @@ const tiktokRows = [
 export default function Page() {
   return (
     <main className="relative min-h-dvh overflow-x-hidden bg-[#0A0A0A] text-[#f2f1ea] xl:h-dvh xl:overflow-hidden">
-      <div className="relative mx-auto flex min-h-dvh w-full flex-col px-4 py-4 sm:px-6 md:px-14 lg:px-20 xl:h-full xl:w-[70vw] xl:max-w-[1320px] xl:px-0">
-        <header className="flex shrink-0 flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-6 md:fixed md:inset-x-0 md:top-0 md:z-30 md:flex-nowrap md:items-center md:gap-8 md:bg-[#0A0A0A]/95 md:px-14 md:py-3 md:backdrop-blur lg:px-20 xl:absolute xl:left-0 xl:right-0 xl:top-0 xl:bg-transparent xl:px-0 xl:py-0">
+      <div className="relative mx-auto flex min-h-dvh w-full min-w-0 flex-col px-4 py-4 sm:px-6 sm:py-5 md:px-14 lg:px-20 xl:h-full xl:w-[70vw] xl:max-w-[1320px] xl:px-0 xl:py-0">
+        <header className="flex w-full min-w-0 shrink-0 flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 md:fixed md:inset-x-0 md:top-0 md:z-30 md:flex-nowrap md:items-center md:gap-8 md:bg-[#0A0A0A]/95 md:px-14 md:py-3 md:backdrop-blur lg:px-20 xl:absolute xl:left-0 xl:right-0 xl:top-0 xl:bg-transparent xl:px-0 xl:py-0">
           <Link
             href="/"
-            className="flex h-10 items-stretch border border-white/15 bg-white/5 text-[10px] uppercase tracking-[0.24em] text-[#f2f1ea] transition hover:bg-white/8"
+            className="hidden h-10 items-stretch border border-white/15 bg-white/5 text-[10px] uppercase tracking-[0.24em] text-[#f2f1ea] transition hover:bg-white/8 md:flex"
           >
             <Image
               src="/datagolf.jpg"
@@ -412,7 +412,7 @@ export default function Page() {
           <SiteNavbar items={navItems} />
         </header>
 
-        <section className="flex flex-col gap-4 py-5 md:gap-10 md:pt-20 xl:grid xl:flex-1 xl:grid-cols-[minmax(0,0.94fr)_minmax(0,1.06fr)] xl:gap-8 xl:py-6 xl:pt-20">
+        <section className="flex min-w-0 flex-col gap-5 py-4 pt-24 sm:gap-6 md:gap-10 md:pt-20 xl:grid xl:flex-1 xl:grid-cols-[minmax(0,0.94fr)_minmax(0,1.06fr)] xl:gap-8 xl:py-6 xl:pt-20">
           <div className="flex min-w-0 min-h-0 flex-col">
             <div className="max-w-2xl">
               <h1 className="font-sans text-[clamp(2rem,4vw,4rem)] leading-[0.92] tracking-[0.02em] text-[#ffbd2e]">
@@ -434,7 +434,7 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="mt-4 grid min-h-0 gap-4 md:gap-10">
+            <div className="mt-4 grid min-h-0 gap-4 sm:gap-5 md:gap-10">
               <div
                 id="challenges"
                 className="relative w-full min-w-0 overflow-visible border border-white/12 bg-black/40 shadow-2xl shadow-black/40"
@@ -447,7 +447,7 @@ export default function Page() {
                     {challengePrompt}
                   </div>
                 </div>
-                <div className="pointer-events-none absolute right-[-1px] top-full">
+                <div className="mt-2 flex w-full justify-end px-2.5 sm:px-3 md:pointer-events-none md:absolute md:right-[-1px] md:top-full md:mt-0 md:w-auto md:px-0">
                   <div className={tokenCountStyle}>{promptTokenCount} tokens</div>
                 </div>
               </div>
@@ -463,7 +463,7 @@ export default function Page() {
                     </code>
                   </pre>
                 </div>
-                <div className="pointer-events-none absolute right-[-1px] top-full">
+                <div className="mt-2 flex w-full justify-end px-2.5 sm:px-3 md:pointer-events-none md:absolute md:right-[-1px] md:top-full md:mt-0 md:w-auto md:px-0">
                   <div className={tokenCountStyle}>{codeTokenCount} tokens</div>
                 </div>
               </div>
@@ -472,7 +472,7 @@ export default function Page() {
 
           <div
             id="leaderboard"
-            className="flex min-w-0 min-h-0 flex-col overflow-hidden border border-white/12 bg-black/40 p-3 shadow-2xl shadow-black/40 sm:p-4 md:h-[38rem] lg:h-[40rem] xl:h-full"
+            className="flex min-h-0 min-w-0 flex-col overflow-hidden border border-white/12 bg-black/40 p-3 shadow-2xl shadow-black/40 h-[26rem] sm:h-[30rem] sm:p-4 md:h-[38rem] lg:h-[40rem] xl:h-full"
           >
             <div className="mb-3 flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-[#bdb8aa]">
               <span>Dataset</span>
@@ -547,23 +547,16 @@ export default function Page() {
           </div>
         </section>
 
-        <footer className="relative flex w-full shrink-0 flex-col gap-2 border-t border-white/10 pt-2 text-[11px] text-[#bdb8aa] sm:grid sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:gap-x-4 sm:gap-y-0">
-          <div className="flex items-center gap-3">
-            <Image
-              src="/datagolf_logo.jpg"
-              alt="datagolf logo"
-              width={24}
-              height={24}
-              className="h-5 w-5"
-            />
+        <footer className="relative flex w-full min-w-0 shrink-0 items-center justify-between gap-2 border-t border-white/10 pt-2 text-[11px] text-[#bdb8aa] sm:grid sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:gap-x-4 sm:gap-y-0">
+          <div className="flex min-w-0 items-center gap-3">
             <span>
-              Built by{" "}
+              built by{" "}
               <span className="underline underline-offset-2 transition hover:text-[#ffbd2e]">
                 Iman
               </span>
             </span>
           </div>
-          <span className="pointer-events-auto whitespace-nowrap text-left sm:justify-self-center sm:text-center xl:absolute xl:left-1/2 xl:top-1/2 xl:-translate-x-1/2 xl:-translate-y-1/2">
+          <span className="pointer-events-auto hidden max-w-full whitespace-normal text-left leading-5 sm:justify-self-center sm:block sm:text-center sm:whitespace-nowrap xl:absolute xl:left-1/2 xl:top-1/2 xl:-translate-x-1/2 xl:-translate-y-1/2">
             inspired by{" "}
             <a
               href="https://colf.dev/"
@@ -574,7 +567,7 @@ export default function Page() {
               colf.dev
             </a>
           </span>
-          <span className="uppercase tracking-[0.22em] text-[#ffbd2e] sm:justify-self-end">
+          <span className="shrink-0 uppercase tracking-[0.22em] text-[#ffbd2e] sm:justify-self-end">
             v0.1
           </span>
         </footer>
