@@ -431,12 +431,6 @@ export default function Page() {
                 >
                   Start challenge
                 </Link>
-                <Link
-                  href="#leaderboard"
-                  className="border border-white/20 bg-white/5 px-4 py-2 text-[11px] uppercase tracking-[0.22em] text-[#f7f4eb] transition hover:bg-white/10"
-                >
-                  View leaderboard
-                </Link>
               </div>
             </div>
 
