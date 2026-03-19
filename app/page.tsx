@@ -557,7 +557,10 @@ export default function Page() {
               className="h-5 w-5"
             />
             <span>
-              Built by <span className="underline underline-offset-2">Iman</span>
+              Built by{" "}
+              <span className="underline underline-offset-2 transition hover:text-[#ffbd2e]">
+                Iman
+              </span>
             </span>
           </div>
           <span className="pointer-events-auto absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-center">
