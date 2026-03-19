@@ -556,7 +556,9 @@ export default function Page() {
               height={24}
               className="h-5 w-5"
             />
-            <span>Built by Iman</span>
+            <span>
+              Built by <span className="underline underline-offset-2">Iman</span>
+            </span>
           </div>
           <span className="uppercase tracking-[0.22em] text-[#ffbd2e]">
             v0.1
