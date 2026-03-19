@@ -112,7 +112,7 @@ const rCodeLines: CodeToken[][] = [
 ];
 
 const tokenCountStyle =
-  "border border-white/12 bg-transparent px-2 py-1 text-[10px] uppercase tracking-[0.22em] text-[#9be58a]";
+  "border-x border-b border-white/12 bg-transparent px-2 py-1 text-[10px] uppercase tracking-[0.22em] text-[#9be58a]";
 
 function countDisplayTokens(text: string) {
   return text.match(/\w+|[^\s\w]/g)?.length ?? 0;
@@ -462,7 +462,7 @@ export default function Page() {
                     {challengePrompt}
                   </div>
                 </div>
-                <div className="pointer-events-none absolute right-0 top-full">
+                <div className="pointer-events-none absolute right-[-1px] top-full">
                   <div className={tokenCountStyle}>{promptTokenCount} tokens</div>
                 </div>
               </div>
@@ -478,7 +478,7 @@ export default function Page() {
                     </code>
                   </pre>
                 </div>
-                <div className="pointer-events-none absolute right-0 top-full">
+                <div className="pointer-events-none absolute right-[-1px] top-full">
                   <div className={tokenCountStyle}>{codeTokenCount} tokens</div>
                 </div>
               </div>
