@@ -412,7 +412,7 @@ export default function Page() {
           <SiteNavbar items={navItems} />
         </header>
 
-        <section className="flex flex-col gap-4 py-5 md:gap-6 md:pt-20 xl:grid xl:flex-1 xl:grid-cols-[minmax(0,0.94fr)_minmax(0,1.06fr)] xl:gap-8 xl:py-6 xl:pt-20">
+        <section className="flex flex-col gap-4 py-5 md:gap-10 md:pt-20 xl:grid xl:flex-1 xl:grid-cols-[minmax(0,0.94fr)_minmax(0,1.06fr)] xl:gap-8 xl:py-6 xl:pt-20">
           <div className="flex min-w-0 min-h-0 flex-col">
             <div className="max-w-2xl">
               <h1 className="font-sans text-[clamp(2rem,4vw,4rem)] leading-[0.92] tracking-[0.02em] text-[#ffbd2e]">
@@ -434,7 +434,7 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="mt-4 grid min-h-0 gap-4 md:gap-5">
+            <div className="mt-4 grid min-h-0 gap-4 md:gap-10">
               <div
                 id="challenges"
                 className="relative w-full min-w-0 overflow-visible border border-white/12 bg-black/40 shadow-2xl shadow-black/40"
