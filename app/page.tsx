@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { SiteNavbar } from "@/components/site-navbar";
 
 const navItems = [
   { label: "Home", href: "#" },
@@ -393,7 +394,7 @@ export default function Page() {
   return (
     <main className="relative h-dvh overflow-hidden bg-[#0A0A0A] text-[#f2f1ea]">
       <div className="relative mx-auto flex h-full w-full flex-col px-4 py-4 sm:px-6 lg:px-8 xl:w-[70vw] xl:max-w-[1320px] xl:px-0">
-        <header className="flex shrink-0 flex-wrap items-center gap-2">
+        <header className="flex shrink-0 flex-wrap items-center gap-6 sm:gap-8">
           <Link
             href="/"
             className="flex h-10 items-stretch border border-white/15 bg-white/5 text-[10px] uppercase tracking-[0.24em] text-[#f2f1ea] transition hover:bg-white/8"
@@ -408,17 +409,7 @@ export default function Page() {
             />
           </Link>
 
-          <nav className="flex flex-wrap border border-white/15 bg-white/5">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="border-r border-white/15 px-3 py-2 text-[13px] tracking-[0.08em] text-[#eae7db] transition last:border-r-0 hover:bg-white/8"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <SiteNavbar items={navItems} />
         </header>
 
         <section className="grid min-h-0 flex-1 gap-4 py-5 lg:grid-cols-[minmax(0,0.94fr)_minmax(0,1.06fr)] lg:gap-8 lg:py-6">
