@@ -271,9 +271,6 @@ export default function Page() {
               priority
               className="h-10 w-10 object-cover"
             />
-            <span className="flex items-center border-l border-white/15 px-4">
-              datagolf
-            </span>
           </Link>
 
           <nav className="flex flex-wrap border border-white/15 bg-white/5">
