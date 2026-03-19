@@ -254,9 +254,6 @@ const tiktokRows = [
 export default function Page() {
   return (
     <main className="relative h-dvh overflow-hidden bg-[#0A0A0A] text-[#f2f1ea]">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,183,77,0.14),_transparent_28%),radial-gradient(circle_at_85%_20%,_rgba(77,193,255,0.1),_transparent_24%),linear-gradient(to_bottom,rgba(255,255,255,0.03),transparent_20%)]" />
-      <div className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:linear-gradient(rgba(255,255,255,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.5)_1px,transparent_1px)] [background-size:48px_48px]" />
-
       <div className="relative mx-auto flex h-full w-full flex-col px-4 py-4 sm:px-6 lg:px-8 xl:w-[70vw] xl:max-w-[1320px] xl:px-0">
         <header className="flex shrink-0 flex-wrap items-center gap-2">
           <Link
@@ -289,7 +286,7 @@ export default function Page() {
         <section className="grid min-h-0 flex-1 gap-4 py-5 lg:grid-cols-[minmax(0,0.94fr)_minmax(0,1.06fr)] lg:gap-8 lg:py-6">
           <div className="flex min-w-0 min-h-0 flex-col">
             <div className="max-w-2xl">
-              <h1 className="font-sans text-[clamp(2rem,4vw,4rem)] leading-[0.92] tracking-[0.02em] text-[#f7f4eb]">
+              <h1 className="font-sans text-[clamp(2rem,4vw,4rem)] leading-[0.92] tracking-[0.02em] text-[#ffbd2e]">
                 datagolf
               </h1>
               <p className="mt-3 max-w-2xl text-[clamp(0.8rem,0.95vw,0.98rem)] leading-6 tracking-[0.02em] text-[#d9d4c7]">
