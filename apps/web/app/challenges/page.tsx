@@ -432,6 +432,7 @@ export default function ChallengesPage() {
               <span
                 className={cn(
                   "flex h-6 w-11 items-center border p-[2px] transition-colors",
+                  isLightTheme ? "justify-end" : "justify-start",
                   isLightTheme
                     ? "border-black/15 bg-[#e5dbc9]"
                     : "border-white/20 bg-[#121212]"
@@ -439,10 +440,10 @@ export default function ChallengesPage() {
               >
                 <span
                   className={cn(
-                    "h-4 w-4 transition-transform",
+                    "h-4 w-4",
                     isLightTheme
-                      ? "translate-x-[1.15rem] bg-[#171411]"
-                      : "translate-x-0 bg-[#f2f1ea]"
+                      ? "bg-[#171411]"
+                      : "bg-[#f2f1ea]"
                   )}
                 />
               </span>
