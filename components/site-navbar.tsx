@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 
 type NavItem = {
@@ -14,22 +15,22 @@ type SiteNavbarProps = {
 };
 
 export function SiteNavbar({ items }: SiteNavbarProps) {
-  const [activeHref, setActiveHref] = useState(items[0]?.href ?? "#");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [currentHash, setCurrentHash] = useState("");
   const mobileMenuId = useId();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
-    const syncActiveHref = () => {
-      setActiveHref(window.location.hash || "#");
-      setMobileOpen(false);
+    const syncHash = () => {
+      setCurrentHash(window.location.hash);
     };
 
-    syncActiveHref();
-    window.addEventListener("hashchange", syncActiveHref);
+    syncHash();
+    window.addEventListener("hashchange", syncHash);
 
     return () => {
-      window.removeEventListener("hashchange", syncActiveHref);
+      window.removeEventListener("hashchange", syncHash);
     };
   }, []);
 
@@ -63,6 +64,18 @@ export function SiteNavbar({ items }: SiteNavbarProps) {
     };
   }, [mobileOpen]);
 
+  const isCurrentItem = (href: string) => {
+    if (href.startsWith("#")) {
+      return pathname === "/" && currentHash === href;
+    }
+
+    if (href === "/") {
+      return pathname === "/" && currentHash === "";
+    }
+
+    return pathname === href;
+  };
+
   return (
     <div className="relative w-full min-w-0 md:w-auto">
       <div className="fixed inset-x-4 top-4 z-50 md:hidden">
@@ -93,7 +106,7 @@ export function SiteNavbar({ items }: SiteNavbarProps) {
             >
               <nav aria-label="Primary" className="flex flex-col">
                 {items.map((item) => {
-                  const isActive = item.active && activeHref === item.href;
+                  const isCurrent = item.active && isCurrentItem(item.href);
 
                   if (!item.active) {
                     return (
@@ -113,13 +126,10 @@ export function SiteNavbar({ items }: SiteNavbarProps) {
                     <Link
                       key={item.label}
                       href={item.href}
-                      aria-current={isActive ? "page" : undefined}
-                      onClick={() => {
-                        setActiveHref(item.href);
-                        setMobileOpen(false);
-                      }}
+                      aria-current={isCurrent ? "page" : undefined}
+                      onClick={() => setMobileOpen(false)}
                       className={`flex items-center border-b border-white/10 px-4 py-4 text-[13px] tracking-[0.08em] text-[#eae7db] transition-colors last:border-b-0 hover:bg-white/5 hover:text-[#ffbd2e] ${
-                        isActive ? "bg-white/5 text-[#ffbd2e]" : ""
+                        isCurrent ? "bg-white/5 text-[#ffbd2e]" : ""
                       }`}
                     >
                       {item.label}
@@ -137,20 +147,27 @@ export function SiteNavbar({ items }: SiteNavbarProps) {
         aria-label="Primary"
       >
         {items.map((item) => {
-          const isActive = item.active && activeHref === item.href;
+          const isCurrent = item.active && isCurrentItem(item.href);
+
+          if (!item.active) {
+            return (
+              <span
+                key={item.label}
+                aria-disabled="true"
+                className="relative cursor-not-allowed pb-1.5 text-[#8f8b80] opacity-60"
+              >
+                {item.label}
+              </span>
+            );
+          }
 
           return (
             <Link
               key={item.label}
               href={item.href}
-              aria-current={isActive ? "page" : undefined}
-              onClick={() => {
-                if (item.active) {
-                  setActiveHref(item.href);
-                }
-              }}
+              aria-current={isCurrent ? "page" : undefined}
               className={`relative pb-1.5 text-[#eae7db] transition-colors hover:text-[#ffbd2e] after:absolute after:left-0 after:right-0 after:bottom-0 after:h-px after:bg-[#ffbd2e] after:content-[''] ${
-                isActive ? "after:opacity-100" : "after:opacity-0"
+                isCurrent ? "after:opacity-100" : "after:opacity-0"
               }`}
             >
               {item.label}

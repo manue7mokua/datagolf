@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import { DatasetPreview, type DatasetColumn } from "@/components/dataset-preview";
 import { SiteNavbar } from "@/components/site-navbar";
 
 const navItems = [
-  { label: "Home", href: "#", active: true },
-  { label: "Challenges", href: "#challenges", active: false },
-  { label: "Leaderboard", href: "#leaderboard", active: false },
+  { label: "Home", href: "/", active: true },
+  { label: "Challenges", href: "/challenges", active: true },
+  { label: "Leaderboard", href: "#leaderboard", active: true },
   { label: "Profile", href: "#profile", active: false },
 ];
 
@@ -391,6 +392,19 @@ const tiktokRows = [
   },
 ];
 
+const homepageDatasetColumns: DatasetColumn<(typeof tiktokRows)[number]>[] = [
+  { key: "post_id", cellClassName: "font-mono" },
+  { key: "post_date", cellClassName: "font-mono" },
+  { key: "format" },
+  { key: "views", cellClassName: "font-mono" },
+  { key: "likes", cellClassName: "font-mono" },
+  { key: "shares", cellClassName: "font-mono" },
+  { key: "saves", cellClassName: "font-mono" },
+  { key: "follows", cellClassName: "font-mono" },
+  { key: "avg_watch_sec", cellClassName: "font-mono" },
+  { key: "engagement_lift", cellClassName: "font-mono" },
+];
+
 export default function Page() {
   return (
     <main className="relative min-h-dvh overflow-x-hidden bg-[#0A0A0A] text-[#f2f1ea] xl:h-dvh xl:overflow-hidden">
@@ -427,7 +441,7 @@ export default function Page() {
 
               <div className="mt-5 flex flex-wrap gap-3">
                 <Link
-                  href="#challenges"
+                  href="/challenges"
                   className="border border-[#f7f4eb] bg-[#f7f4eb] px-4 py-2 text-[11px] uppercase tracking-[0.22em] text-[#090909] transition hover:translate-y-[-1px] hover:bg-white"
                 >
                   Start challenge
@@ -475,81 +489,15 @@ export default function Page() {
             </div>
           </div>
 
-          <div
+          <DatasetPreview
             id="leaderboard"
-            className="flex min-h-0 min-w-0 flex-col overflow-hidden border border-white/12 bg-black/40 p-3 shadow-2xl shadow-black/40 h-[26rem] sm:h-[30rem] sm:p-4 md:h-[38rem] lg:h-[40rem] xl:h-full"
-          >
-            <div className="mb-3 flex items-center justify-between text-[11px] uppercase tracking-[0.24em] text-[#bdb8aa]">
-              <span>Dataset</span>
-            </div>
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden border border-white/10 bg-[#111111]">
-              <div className="border-b border-white/10 px-4 py-4">
-                <div className="text-[15px] uppercase tracking-[0.22em] text-[#f2f1ea]">
-                  TikTok Posts
-                </div>
-              </div>
-              <div className="border-b border-white/10 px-4 py-3">
-                <div className="flex items-center justify-between text-[12px] uppercase tracking-[0.2em] text-[#9bb0c7]">
-                  <span>Columns (10)</span>
-                  <span>Scrollable preview</span>
-                </div>
-              </div>
-              <div className="min-h-0 flex-1 overflow-y-auto overflow-x-auto">
-                <table className="min-w-max border-collapse text-left text-[12px]">
-                  <thead className="sticky top-0 z-10 bg-[#12151b] text-[#9bb0c7]">
-                    <tr className="border-b border-white/10">
-                      <th className="px-4 py-3 font-normal">post_id</th>
-                      <th className="px-4 py-3 font-normal">post_date</th>
-                      <th className="px-4 py-3 font-normal">format</th>
-                      <th className="px-4 py-3 font-normal">views</th>
-                      <th className="px-4 py-3 font-normal">likes</th>
-                      <th className="px-4 py-3 font-normal">shares</th>
-                      <th className="px-4 py-3 font-normal">saves</th>
-                      <th className="px-4 py-3 font-normal">follows</th>
-                      <th className="px-4 py-3 font-normal">avg_watch_sec</th>
-                      <th className="px-4 py-3 font-normal">engagement_lift</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-[#e8ecf2]">
-                    {tiktokRows.map((row) => (
-                      <tr key={row.post_id} className="border-b border-white/8">
-                        <td className="whitespace-nowrap px-4 py-3 font-mono">
-                          {row.post_id}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-3 font-mono">
-                          {row.post_date}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-3">
-                          {row.format}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-3 font-mono">
-                          {row.views}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-3 font-mono">
-                          {row.likes}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-3 font-mono">
-                          {row.shares}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-3 font-mono">
-                          {row.saves}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-3 font-mono">
-                          {row.follows}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-3 font-mono">
-                          {row.avg_watch_sec}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-3 font-mono">
-                          {row.engagement_lift}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+            eyebrow="Dataset"
+            title="TikTok Posts"
+            columns={homepageDatasetColumns}
+            rows={tiktokRows}
+            rowKey="post_id"
+            className="h-[26rem] p-3 sm:h-[30rem] sm:p-4 md:h-[38rem] lg:h-[40rem] xl:h-full"
+          />
         </section>
 
         <footer className="relative flex w-full min-w-0 shrink-0 items-center justify-between gap-2 border-t border-white/10 pt-2 text-[11px] text-[#bdb8aa] sm:grid sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:gap-x-4 sm:gap-y-0">
