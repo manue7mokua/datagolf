@@ -43,3 +43,6 @@ Thumbs.db
 
 # shadcn registry cache
 components.json
+
+#markdown
+*.md
