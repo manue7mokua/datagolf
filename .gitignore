@@ -43,6 +43,8 @@ Thumbs.db
 
 # shadcn registry cache
 components.json
+skills-lock.json
+.agents/
 
 #markdown
 *.md
