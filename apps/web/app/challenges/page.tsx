@@ -487,14 +487,19 @@ export default function ChallengesPage() {
                 <div className="hide-scrollbar max-h-full overflow-y-auto px-4 pb-6">
                   <ol className="space-y-3 pt-2">
                     {challengeCatalog.map((challenge, index) => (
-                      <li key={challenge.label} className="grid grid-cols-[1.5rem_minmax(0,1fr)] items-start gap-x-3">
-                        <span className={cn("pt-1 text-[11px]", mutedTextClass)}>
+                      <li key={challenge.label} className="flex items-baseline gap-3">
+                        <span
+                          className={cn(
+                            "w-[2ch] shrink-0 text-right text-[11px] leading-8 tabular-nums",
+                            mutedTextClass
+                          )}
+                        >
                           {index + 1}.
                         </span>
                         <span
                           aria-disabled={!challenge.available}
                           className={cn(
-                            "min-w-0 truncate pt-[1px] text-[14px] leading-8 tracking-[0.04em]",
+                            "min-w-0 flex-1 truncate text-[14px] leading-8 tracking-[0.04em]",
                             challenge.active ? rowTextClass : mutedTextClass,
                             !challenge.available && "cursor-not-allowed opacity-75"
                           )}
