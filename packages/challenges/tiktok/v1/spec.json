@@ -1,0 +1,997 @@
+{
+  "challenge_slug": "tiktok-creator-posts",
+  "challenge_version": "v1",
+  "title": "TikTok Creator Posts Challenge",
+  "description": "Challenge 1 for the Datagolf MVP using the synthetic TikTok creator posts dataset.",
+  "source_markdown": "packages/challenges/tiktok/v1/source.md",
+  "prompt_version": "prompt_v1",
+  "evaluator_version": "evaluator_v1",
+  "dataset": {
+    "slug": "tiktok-posts",
+    "version": "v1",
+    "path": "data/challenge-datasets/tiktok-posts/v1/datagolf_tiktok_posts_500.csv",
+    "row_count": 500,
+    "column_count": 15,
+    "creators_count": 25,
+    "date_range": {
+      "start": "2025-09-01",
+      "end": "2025-11-09"
+    },
+    "columns": [
+      {
+        "name": "post_id",
+        "type": "character",
+        "description": "Unique post ID"
+      },
+      {
+        "name": "creator_handle",
+        "type": "character",
+        "description": "TikTok creator username"
+      },
+      {
+        "name": "creator_category",
+        "type": "character",
+        "description": "Main creator niche (beauty, gaming, food, fitness, studytok, comedy, fashion)"
+      },
+      {
+        "name": "followers_at_post",
+        "type": "integer",
+        "description": "Followers at the time of posting"
+      },
+      {
+        "name": "post_date",
+        "type": "date",
+        "description": "Post date"
+      },
+      {
+        "name": "post_hour",
+        "type": "integer",
+        "description": "Hour of day posted (0-23)"
+      },
+      {
+        "name": "content_format",
+        "type": "character",
+        "description": "Post style (tutorial, challenge, vlog, review, and more)"
+      },
+      {
+        "name": "video_length_sec",
+        "type": "integer",
+        "description": "Video length in seconds"
+      },
+      {
+        "name": "hashtag_count",
+        "type": "integer",
+        "description": "Number of hashtags used in the caption"
+      },
+      {
+        "name": "views",
+        "type": "integer",
+        "description": "Total views"
+      },
+      {
+        "name": "likes",
+        "type": "integer",
+        "description": "Total likes"
+      },
+      {
+        "name": "comments",
+        "type": "integer",
+        "description": "Total comments"
+      },
+      {
+        "name": "shares",
+        "type": "integer",
+        "description": "Total shares"
+      },
+      {
+        "name": "avg_watch_time_sec",
+        "type": "numeric",
+        "description": "Average watch time in seconds"
+      },
+      {
+        "name": "completion_rate_pct",
+        "type": "numeric",
+        "description": "Percent of viewers who watched to the end"
+      }
+    ]
+  },
+  "questions": [
+    {
+      "id": "Q1",
+      "order": 1,
+      "type": "guided_prompt",
+      "title": "Short videos with unusually high engagement",
+      "display": {
+        "setup_text": "Some short TikToks punch above their weight.",
+        "task_text": "Find the top 5 posts with the highest engagement rate among videos shorter than 30 seconds.",
+        "hint_chips": [
+          "mutate",
+          "filter",
+          "arrange",
+          "desc",
+          "head"
+        ],
+        "answer_format": "prompt"
+      },
+      "strong_prompt_implications": [
+        "Create engagement rate as (likes + comments + shares) / views.",
+        "Keep only rows where video_length_sec < 30.",
+        "Sort from highest to lowest engagement rate.",
+        "Return the top 5 posts."
+      ],
+      "evaluation": {
+        "kind": "guided_prompt",
+        "operation": "q1_short_video_engagement",
+        "result_limit": 5,
+        "round_decimals": 6,
+        "expected_columns": [
+          "post_id",
+          "creator_handle",
+          "engagement_rate"
+        ],
+        "expected_rows": [
+          {
+            "post_id": "TT0423",
+            "creator_handle": "vibewithvic",
+            "engagement_rate": 0.122899
+          },
+          {
+            "post_id": "TT0414",
+            "creator_handle": "urbanuma",
+            "engagement_rate": 0.121625
+          },
+          {
+            "post_id": "TT0406",
+            "creator_handle": "urbanuma",
+            "engagement_rate": 0.116608
+          },
+          {
+            "post_id": "TT0428",
+            "creator_handle": "vibewithvic",
+            "engagement_rate": 0.115949
+          },
+          {
+            "post_id": "TT0407",
+            "creator_handle": "urbanuma",
+            "engagement_rate": 0.111015
+          }
+        ],
+        "expected_metrics": {},
+        "required_checks": [
+          {
+            "name": "engagement_rate_formula",
+            "mode": "contains_all",
+            "patterns": [
+              "engagement_rate",
+              "likes",
+              "comments",
+              "shares",
+              "views"
+            ],
+            "description": "Generated code should create engagement_rate from likes, comments, shares, and views."
+          },
+          {
+            "name": "short_video_filter",
+            "mode": "regex_any",
+            "patterns": [
+              "video_length_sec\\s*<\\s*30"
+            ],
+            "description": "Generated code should filter videos shorter than 30 seconds."
+          },
+          {
+            "name": "descending_sort",
+            "mode": "contains_all",
+            "patterns": [
+              "arrange",
+              "desc"
+            ],
+            "description": "Generated code should sort descending."
+          },
+          {
+            "name": "top_five",
+            "mode": "regex_any",
+            "patterns": [
+              "slice_head\\s*\\([^\\)]*n\\s*=\\s*5",
+              "head\\s*\\(\\s*5\\s*\\)"
+            ],
+            "description": "Generated code should return 5 rows."
+          }
+        ]
+      }
+    },
+    {
+      "id": "Q2",
+      "order": 2,
+      "type": "guided_prompt",
+      "title": "Which format wins with bigger creators?",
+      "display": {
+        "setup_text": "For creators with a bigger audience, not every format performs the same.",
+        "task_text": "Compare average views by content_format for posts where followers_at_post is at least 100000. Return the formats ranked from highest to lowest average views.",
+        "hint_chips": [
+          "filter",
+          "group_by",
+          "summarise",
+          "mean",
+          "arrange"
+        ],
+        "answer_format": "prompt"
+      },
+      "strong_prompt_implications": [
+        "Filter to larger creators.",
+        "Group by content_format.",
+        "Compute average views.",
+        "Sort descending."
+      ],
+      "evaluation": {
+        "kind": "guided_prompt",
+        "operation": "q2_large_creator_format_views",
+        "result_limit": null,
+        "round_decimals": 1,
+        "expected_columns": [
+          "content_format",
+          "avg_views"
+        ],
+        "expected_rows": [
+          {
+            "content_format": "duet",
+            "avg_views": 133871.7
+          },
+          {
+            "content_format": "listicle",
+            "avg_views": 124562.0
+          },
+          {
+            "content_format": "skit",
+            "avg_views": 123510.8
+          },
+          {
+            "content_format": "storytime",
+            "avg_views": 122757.3
+          },
+          {
+            "content_format": "tutorial",
+            "avg_views": 121126.3
+          }
+        ],
+        "expected_metrics": {},
+        "required_checks": [
+          {
+            "name": "larger_creator_filter",
+            "mode": "regex_any",
+            "patterns": [
+              "followers_at_post\\s*>?=\\s*100000"
+            ],
+            "description": "Generated code should filter to creators with at least 100000 followers."
+          },
+          {
+            "name": "group_by_format",
+            "mode": "contains_all",
+            "patterns": [
+              "group_by",
+              "content_format"
+            ],
+            "description": "Generated code should group by content_format."
+          },
+          {
+            "name": "average_views",
+            "mode": "regex_any",
+            "patterns": [
+              "mean\\s*\\(\\s*views"
+            ],
+            "description": "Generated code should compute mean views."
+          },
+          {
+            "name": "descending_sort",
+            "mode": "contains_all",
+            "patterns": [
+              "arrange",
+              "desc"
+            ],
+            "description": "Generated code should sort descending by average views."
+          }
+        ]
+      }
+    },
+    {
+      "id": "Q3",
+      "order": 3,
+      "type": "guided_prompt",
+      "title": "Longer videos: who keeps attention best?",
+      "display": {
+        "setup_text": "Longer videos are harder to finish.",
+        "task_text": "For videos longer than 35 seconds, find the creator_category with the highest average completion_rate_pct.",
+        "hint_chips": [
+          "filter",
+          "group_by",
+          "summarise",
+          "mean",
+          "arrange"
+        ],
+        "answer_format": "prompt"
+      },
+      "strong_prompt_implications": [
+        "Filter to long videos.",
+        "Group by creator_category.",
+        "Average completion_rate_pct.",
+        "Sort descending."
+      ],
+      "evaluation": {
+        "kind": "guided_prompt",
+        "operation": "q3_long_video_completion_by_category",
+        "result_limit": null,
+        "round_decimals": 2,
+        "expected_columns": [
+          "creator_category",
+          "avg_completion_rate_pct"
+        ],
+        "expected_rows": [
+          {
+            "creator_category": "comedy",
+            "avg_completion_rate_pct": 63.61
+          },
+          {
+            "creator_category": "fitness",
+            "avg_completion_rate_pct": 63.56
+          },
+          {
+            "creator_category": "beauty",
+            "avg_completion_rate_pct": 62.29
+          }
+        ],
+        "expected_metrics": {},
+        "required_checks": [
+          {
+            "name": "long_video_filter",
+            "mode": "regex_any",
+            "patterns": [
+              "video_length_sec\\s*>\\s*35"
+            ],
+            "description": "Generated code should filter to videos longer than 35 seconds."
+          },
+          {
+            "name": "group_by_category",
+            "mode": "contains_all",
+            "patterns": [
+              "group_by",
+              "creator_category"
+            ],
+            "description": "Generated code should group by creator_category."
+          },
+          {
+            "name": "average_completion_rate",
+            "mode": "regex_any",
+            "patterns": [
+              "mean\\s*\\(\\s*completion_rate_pct"
+            ],
+            "description": "Generated code should compute mean completion_rate_pct."
+          },
+          {
+            "name": "descending_sort",
+            "mode": "contains_all",
+            "patterns": [
+              "arrange",
+              "desc"
+            ],
+            "description": "Generated code should sort descending by completion rate."
+          }
+        ]
+      }
+    },
+    {
+      "id": "Q4",
+      "order": 4,
+      "type": "guided_prompt",
+      "title": "Creators beating the dataset average",
+      "display": {
+        "setup_text": "Some creators are consistently stronger than the dataset as a whole.",
+        "task_text": "Find creators whose average engagement rate is above the dataset-wide average engagement rate. Return the top 5 creators by average engagement rate.",
+        "hint_chips": [
+          "mutate",
+          "group_by",
+          "summarise",
+          "mean",
+          "filter"
+        ],
+        "answer_format": "prompt"
+      },
+      "strong_prompt_implications": [
+        "Create engagement rate per post.",
+        "Compute the dataset-wide mean engagement rate.",
+        "Compute creator-level average engagement rate.",
+        "Keep only creators above the dataset average.",
+        "Sort descending and return top 5."
+      ],
+      "evaluation": {
+        "kind": "guided_prompt",
+        "operation": "q4_creators_above_dataset_engagement",
+        "result_limit": 5,
+        "round_decimals": 6,
+        "expected_columns": [
+          "creator_handle",
+          "avg_engagement_rate"
+        ],
+        "expected_rows": [
+          {
+            "creator_handle": "urbanuma",
+            "avg_engagement_rate": 0.09757
+          },
+          {
+            "creator_handle": "vibewithvic",
+            "avg_engagement_rate": 0.095137
+          },
+          {
+            "creator_handle": "hypewithhari",
+            "avg_engagement_rate": 0.089652
+          },
+          {
+            "creator_handle": "rayreviews",
+            "avg_engagement_rate": 0.078723
+          },
+          {
+            "creator_handle": "yara.yaps",
+            "avg_engagement_rate": 0.078311
+          }
+        ],
+        "expected_metrics": {
+          "dataset_average_engagement_rate": 0.073854,
+          "creators_above_average_count": 11
+        },
+        "required_checks": [
+          {
+            "name": "engagement_rate_formula",
+            "mode": "contains_all",
+            "patterns": [
+              "engagement_rate",
+              "likes",
+              "comments",
+              "shares",
+              "views"
+            ],
+            "description": "Generated code should create engagement_rate from likes, comments, shares, and views."
+          },
+          {
+            "name": "creator_grouping",
+            "mode": "contains_all",
+            "patterns": [
+              "group_by",
+              "creator_handle"
+            ],
+            "description": "Generated code should group by creator_handle."
+          },
+          {
+            "name": "dataset_average",
+            "mode": "regex_any",
+            "patterns": [
+              "mean\\s*\\(\\s*engagement_rate"
+            ],
+            "description": "Generated code should compute the dataset-wide average engagement rate."
+          },
+          {
+            "name": "filter_above_average",
+            "mode": "contains_all",
+            "patterns": [
+              "filter",
+              ">"
+            ],
+            "description": "Generated code should filter creator averages above the dataset-wide mean."
+          },
+          {
+            "name": "top_five",
+            "mode": "regex_any",
+            "patterns": [
+              "slice_head\\s*\\([^\\)]*n\\s*=\\s*5",
+              "head\\s*\\(\\s*5\\s*\\)"
+            ],
+            "description": "Generated code should return 5 rows."
+          }
+        ]
+      }
+    },
+    {
+      "id": "Q5",
+      "order": 5,
+      "type": "guided_prompt",
+      "title": "Posts that overperformed relative to the creator's norm",
+      "display": {
+        "setup_text": "A post can look good overall, but the real signal is whether it beat that creator’s usual baseline.",
+        "task_text": "For each post, calculate how far its views are above that creator’s average views. Return the top 10 overperforming posts.",
+        "hint_chips": [
+          "group_by",
+          "mutate",
+          "mean",
+          "arrange",
+          "desc"
+        ],
+        "answer_format": "prompt"
+      },
+      "strong_prompt_implications": [
+        "Group by creator_handle.",
+        "Compute each creator's average views.",
+        "Create a new difference column.",
+        "Sort descending.",
+        "Return the top 10."
+      ],
+      "evaluation": {
+        "kind": "guided_prompt",
+        "operation": "q5_overperforming_posts_vs_creator_average",
+        "result_limit": 10,
+        "round_decimals": 1,
+        "expected_columns": [
+          "post_id",
+          "creator_handle",
+          "views_above_creator_avg"
+        ],
+        "expected_rows": [
+          {
+            "post_id": "TT0166",
+            "creator_handle": "islasnaps",
+            "views_above_creator_avg": 274881.3
+          },
+          {
+            "post_id": "TT0226",
+            "creator_handle": "learnwithlena",
+            "views_above_creator_avg": 211158.1
+          },
+          {
+            "post_id": "TT0230",
+            "creator_handle": "learnwithlena",
+            "views_above_creator_avg": 202715.1
+          },
+          {
+            "post_id": "TT0155",
+            "creator_handle": "hypewithhari",
+            "views_above_creator_avg": 148939.8
+          },
+          {
+            "post_id": "TT0031",
+            "creator_handle": "bytewithben",
+            "views_above_creator_avg": 138465.4
+          }
+        ],
+        "expected_metrics": {},
+        "required_checks": [
+          {
+            "name": "creator_grouping",
+            "mode": "contains_all",
+            "patterns": [
+              "group_by",
+              "creator_handle"
+            ],
+            "description": "Generated code should group by creator_handle."
+          },
+          {
+            "name": "average_views",
+            "mode": "regex_any",
+            "patterns": [
+              "mean\\s*\\(\\s*views"
+            ],
+            "description": "Generated code should compute creator average views."
+          },
+          {
+            "name": "performance_delta",
+            "mode": "contains_all",
+            "patterns": [
+              "views_above_creator_avg",
+              "views",
+              "-"
+            ],
+            "description": "Generated code should create a difference between post views and creator average views."
+          },
+          {
+            "name": "descending_sort",
+            "mode": "contains_all",
+            "patterns": [
+              "arrange",
+              "desc"
+            ],
+            "description": "Generated code should sort descending by overperformance."
+          },
+          {
+            "name": "top_ten",
+            "mode": "regex_any",
+            "patterns": [
+              "slice_head\\s*\\([^\\)]*n\\s*=\\s*10",
+              "head\\s*\\(\\s*10\\s*\\)"
+            ],
+            "description": "Generated code should return 10 rows."
+          }
+        ]
+      }
+    },
+    {
+      "id": "Q6",
+      "order": 6,
+      "type": "guided_prompt",
+      "title": "Best time bucket for shares",
+      "display": {
+        "setup_text": "Posting time matters, but time is easier to interpret in buckets than raw hours.",
+        "task_text": "Create an hour_bucket using morning = 5 to 11, afternoon = 12 to 16, evening = 17 to 21, and late_night = everything else. Then find which bucket has the highest average shares per post.",
+        "hint_chips": [
+          "mutate",
+          "case_when",
+          "group_by",
+          "summarise",
+          "mean"
+        ],
+        "answer_format": "prompt"
+      },
+      "strong_prompt_implications": [
+        "Build a bucketed time column.",
+        "Group by the new bucket.",
+        "Compute average shares.",
+        "Sort descending."
+      ],
+      "evaluation": {
+        "kind": "guided_prompt",
+        "operation": "q6_hour_bucket_average_shares",
+        "result_limit": null,
+        "round_decimals": 1,
+        "expected_columns": [
+          "hour_bucket",
+          "avg_shares"
+        ],
+        "expected_rows": [
+          {
+            "hour_bucket": "evening",
+            "avg_shares": 419.5
+          },
+          {
+            "hour_bucket": "late_night",
+            "avg_shares": 376.5
+          },
+          {
+            "hour_bucket": "afternoon",
+            "avg_shares": 347.5
+          },
+          {
+            "hour_bucket": "morning",
+            "avg_shares": 249.7
+          }
+        ],
+        "expected_metrics": {},
+        "required_checks": [
+          {
+            "name": "hour_bucket_case_when",
+            "mode": "contains_all",
+            "patterns": [
+              "hour_bucket",
+              "case_when"
+            ],
+            "description": "Generated code should create hour_bucket with case_when."
+          },
+          {
+            "name": "morning_bucket",
+            "mode": "regex_any",
+            "patterns": [
+              "post_hour\\s*>?=\\s*5.*post_hour\\s*<=?\\s*11"
+            ],
+            "description": "Generated code should define the morning bucket."
+          },
+          {
+            "name": "evening_bucket",
+            "mode": "regex_any",
+            "patterns": [
+              "post_hour\\s*>?=\\s*17.*post_hour\\s*<=?\\s*21"
+            ],
+            "description": "Generated code should define the evening bucket."
+          },
+          {
+            "name": "group_and_average_shares",
+            "mode": "contains_all",
+            "patterns": [
+              "group_by",
+              "hour_bucket",
+              "mean",
+              "shares"
+            ],
+            "description": "Generated code should group by hour_bucket and average shares."
+          }
+        ]
+      }
+    },
+    {
+      "id": "Q7",
+      "order": 7,
+      "type": "guided_prompt",
+      "title": "Did the latest post improve on the previous one?",
+      "display": {
+        "setup_text": "One useful creator question is whether their latest post actually improved.",
+        "task_text": "Within each creator, sort posts by post_date. Compare the latest post's completion_rate_pct to the previous post. Return creators whose latest post has a higher completion rate than the previous one, ranked by the size of the improvement.",
+        "hint_chips": [
+          "arrange",
+          "group_by",
+          "lag",
+          "filter",
+          "slice_tail"
+        ],
+        "answer_format": "prompt"
+      },
+      "strong_prompt_implications": [
+        "Sort posts by creator and date.",
+        "Use lag() to get the previous completion rate.",
+        "Keep only the most recent row per creator.",
+        "Compare latest vs previous.",
+        "Sort by improvement descending."
+      ],
+      "evaluation": {
+        "kind": "guided_prompt",
+        "operation": "q7_latest_post_completion_lift",
+        "result_limit": null,
+        "round_decimals": 1,
+        "expected_columns": [
+          "creator_handle",
+          "latest_completion_rate_pct",
+          "prev_completion_rate_pct",
+          "completion_lift"
+        ],
+        "expected_rows": [
+          {
+            "creator_handle": "quinnfitness",
+            "latest_completion_rate_pct": 91.5,
+            "prev_completion_rate_pct": 57.4,
+            "completion_lift": 34.1
+          },
+          {
+            "creator_handle": "islasnaps",
+            "latest_completion_rate_pct": 74.0,
+            "prev_completion_rate_pct": 44.6,
+            "completion_lift": 29.4
+          },
+          {
+            "creator_handle": "jamieplays",
+            "latest_completion_rate_pct": 81.2,
+            "prev_completion_rate_pct": 60.3,
+            "completion_lift": 20.9
+          },
+          {
+            "creator_handle": "pixelwithpaz",
+            "latest_completion_rate_pct": 79.2,
+            "prev_completion_rate_pct": 59.1,
+            "completion_lift": 20.1
+          },
+          {
+            "creator_handle": "anaedits",
+            "latest_completion_rate_pct": 72.6,
+            "prev_completion_rate_pct": 55.2,
+            "completion_lift": 17.4
+          }
+        ],
+        "expected_metrics": {},
+        "required_checks": [
+          {
+            "name": "ordered_by_creator_date",
+            "mode": "contains_all",
+            "patterns": [
+              "arrange",
+              "creator_handle",
+              "post_date"
+            ],
+            "description": "Generated code should sort by creator_handle and post_date."
+          },
+          {
+            "name": "lag_previous_completion",
+            "mode": "regex_any",
+            "patterns": [
+              "lag\\s*\\(\\s*completion_rate_pct"
+            ],
+            "description": "Generated code should compute the previous completion rate with lag()."
+          },
+          {
+            "name": "latest_per_creator",
+            "mode": "regex_any",
+            "patterns": [
+              "slice_tail\\s*\\(",
+              "tail\\s*\\(",
+              "slice_max\\s*\\("
+            ],
+            "description": "Generated code should isolate the latest row per creator."
+          },
+          {
+            "name": "improvement_filter",
+            "mode": "regex_any",
+            "patterns": [
+              "completion_rate_pct\\s*>\\s*prev_completion_rate_pct",
+              "latest_completion_rate_pct\\s*>\\s*prev_completion_rate_pct"
+            ],
+            "description": "Generated code should keep only creators whose latest post improved."
+          },
+          {
+            "name": "descending_sort",
+            "mode": "contains_all",
+            "patterns": [
+              "arrange",
+              "desc"
+            ],
+            "description": "Generated code should sort descending by completion lift."
+          }
+        ]
+      }
+    },
+    {
+      "id": "Q8",
+      "order": 8,
+      "type": "multiple_choice",
+      "title": "Sort highest views first",
+      "display": {
+        "task_text": "Which dplyr line correctly sorts the dataset from highest to lowest views?",
+        "choices": [
+          {
+            "id": "A",
+            "text": "sort(views)"
+          },
+          {
+            "id": "B",
+            "text": "arrange(desc(views))"
+          },
+          {
+            "id": "C",
+            "text": "filter(desc(views))"
+          },
+          {
+            "id": "D",
+            "text": "select(views, desc)"
+          }
+        ],
+        "answer_format": "single_choice"
+      },
+      "strong_prompt_implications": [],
+      "evaluation": {
+        "kind": "multiple_choice",
+        "correct_option": "B"
+      }
+    },
+    {
+      "id": "Q9",
+      "order": 9,
+      "type": "fill_blank",
+      "title": "Fill in the gaps: filter + mean",
+      "display": {
+        "task_text": "Fill in the missing pieces.",
+        "code_snippet": "df %>%\n  ______(views > 100000) %>%\n  summarise(avg_likes = ______(likes))",
+        "answer_format": "blanks"
+      },
+      "strong_prompt_implications": [],
+      "evaluation": {
+        "kind": "fill_blank",
+        "accepted_answers": [
+          [
+            "filter"
+          ],
+          [
+            "mean"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q10",
+      "order": 10,
+      "type": "micro_code",
+      "title": "Micro-code: build engagement rate",
+      "display": {
+        "task_text": "Inside a mutate() call, write the shortest clear expression to create a new column called engagement_rate using likes, comments, shares, and views.",
+        "answer_format": "code"
+      },
+      "strong_prompt_implications": [],
+      "evaluation": {
+        "kind": "micro_code",
+        "accepted_patterns": [
+          "engagement_rate = (likes + comments + shares) / views"
+        ],
+        "accepted_regex": []
+      }
+    },
+    {
+      "id": "Q11",
+      "order": 11,
+      "type": "multiple_choice",
+      "title": "The pipe operator",
+      "display": {
+        "task_text": "Which operator passes the result of one step into the next step in a dplyr pipeline?",
+        "choices": [
+          {
+            "id": "A",
+            "text": "<-"
+          },
+          {
+            "id": "B",
+            "text": "::"
+          },
+          {
+            "id": "C",
+            "text": "%>%"
+          },
+          {
+            "id": "D",
+            "text": "=="
+          }
+        ],
+        "answer_format": "single_choice"
+      },
+      "strong_prompt_implications": [],
+      "evaluation": {
+        "kind": "multiple_choice",
+        "correct_option": "C"
+      }
+    },
+    {
+      "id": "Q12",
+      "order": 12,
+      "type": "fill_blank",
+      "title": "Fill in the gaps: grouped summary",
+      "display": {
+        "task_text": "Complete the grouped summary.",
+        "code_snippet": "df %>%\n  group_by(content_format) %>%\n  summarise(\n    posts = n(),\n    avg_completion = ______(completion_rate_pct)\n  ) %>%\n  arrange(______)",
+        "answer_format": "blanks"
+      },
+      "strong_prompt_implications": [],
+      "evaluation": {
+        "kind": "fill_blank",
+        "accepted_answers": [
+          [
+            "mean"
+          ],
+          [
+            "desc(avg_completion)"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q13",
+      "order": 13,
+      "type": "micro_code",
+      "title": "Micro-code: evening posts only",
+      "display": {
+        "task_text": "Write only the condition you would place inside filter() to keep posts made at 6 PM or later.",
+        "answer_format": "code"
+      },
+      "strong_prompt_implications": [],
+      "evaluation": {
+        "kind": "micro_code",
+        "accepted_patterns": [
+          "post_hour >= 18"
+        ],
+        "accepted_regex": []
+      }
+    },
+    {
+      "id": "Q14",
+      "order": 14,
+      "type": "fill_blank",
+      "title": "Fill in the gap: previous views",
+      "display": {
+        "task_text": "Complete the missing column reference.",
+        "code_snippet": "df %>%\n  arrange(creator_handle, post_date) %>%\n  group_by(creator_handle) %>%\n  mutate(prev_views = lag(______ ))",
+        "answer_format": "blanks"
+      },
+      "strong_prompt_implications": [],
+      "evaluation": {
+        "kind": "fill_blank",
+        "accepted_answers": [
+          [
+            "views"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q15",
+      "order": 15,
+      "type": "micro_code",
+      "title": "Micro-code: keep only 3 columns",
+      "display": {
+        "task_text": "Write the dplyr step that keeps only these columns: post_id, creator_handle, and views.",
+        "answer_format": "code"
+      },
+      "strong_prompt_implications": [],
+      "evaluation": {
+        "kind": "micro_code",
+        "accepted_patterns": [
+          "select(post_id, creator_handle, views)"
+        ],
+        "accepted_regex": []
+      }
+    }
+  ]
+}

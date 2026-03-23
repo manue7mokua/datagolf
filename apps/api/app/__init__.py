@@ -1,0 +1,1 @@
+"""Datagolf FastAPI application package."""

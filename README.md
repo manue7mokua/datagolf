@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Datagolf
 
-## Getting Started
+Datagolf is now structured as a small monorepo for the MVP:
 
-First, run the development server:
+- `apps/web`: Next.js frontend
+- `apps/api`: FastAPI backend
+- `packages/challenges/tiktok/v1`: versioned TikTok challenge source and runtime spec
+- `data/challenge-datasets/tiktok-posts/v1`: versioned CSV dataset for local development
+
+## Challenge Assets
+
+The existing TikTok source files are preserved and mirrored into the versioned runtime layout:
+
+- Editorial source: [packages/challenges/tiktok/v1/source.md](/Users/imanmokua/Desktop/workspace/github.com/manue7mokua/datagolf/packages/challenges/tiktok/v1/source.md)
+- Runtime spec: [packages/challenges/tiktok/v1/spec.json](/Users/imanmokua/Desktop/workspace/github.com/manue7mokua/datagolf/packages/challenges/tiktok/v1/spec.json)
+- Dataset CSV: [data/challenge-datasets/tiktok-posts/v1/datagolf_tiktok_posts_500.csv](/Users/imanmokua/Desktop/workspace/github.com/manue7mokua/datagolf/data/challenge-datasets/tiktok-posts/v1/datagolf_tiktok_posts_500.csv)
+
+The backend reads the structured `spec.json` at runtime. The markdown file remains the human-authored source document.
+
+## Web App
+
+Install frontend dependencies from the repo root and run the existing Next.js app:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The web workspace lives in `apps/web`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## API
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a Python environment, install the API requirements, and run FastAPI from the repo root:
 
-## Learn More
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r apps/api/requirements.txt
+pnpm dev:api
+```
 
-To learn more about Next.js, take a look at the following resources:
+The API exposes:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `GET /health`
+- `GET /challenges/{slug}`
+- `GET /challenges/{slug}/questions`
+- `POST /questions/{id}/attempts`
+- `GET /attempts/{id}`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Guided Prompt Evaluation
 
-## Deploy on Vercel
+Guided prompt questions generate R-style code but do not execute it. The backend:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Creates or requests generated code.
+2. Computes the authoritative answer from the CSV with pandas.
+3. Compares that authoritative result to the encoded reference preview from the spec.
+4. Runs heuristic code checks against the generated code.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This means MVP correctness for guided prompts is result-based and intent-checked, not true R execution.
+
+## LLM Configuration
+
+If `OPENAI_API_KEY` is set, the API will try to generate code through the OpenAI Responses API. If the key is missing, or if the request fails and fallback is allowed, the API uses a local template generator so guided prompts still work in local development.

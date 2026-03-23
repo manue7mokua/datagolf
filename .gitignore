@@ -1,14 +1,14 @@
 # dependencies
-/node_modules
-/.pnp
+node_modules
+.pnp
 .pnp.js
 
 # next.js
-/.next/
-/out/
+.next/
+out/
 
 # production
-/build
+build
 
 # logs
 npm-debug.log*
@@ -46,5 +46,8 @@ components.json
 skills-lock.json
 .agents/
 
-#markdown
-*.md
+# python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.sqlite3
