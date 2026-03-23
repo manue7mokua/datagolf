@@ -347,16 +347,16 @@ const creatorDatasetColumns: DatasetColumn<
 ]
 
 const challengeCatalog = [
-  { label: "TikTok Creators Dataset", available: true, active: true },
-  { label: "Spotify Songs Dataset", available: false, active: false },
-  { label: "NBA Player Stats Dataset", available: false, active: false },
-  { label: "Netflix Titles Dataset", available: false, active: false },
-  { label: "Airbnb Listings Dataset", available: false, active: false },
-  { label: "YouTube Comments Dataset", available: false, active: false },
-  { label: "Startup Funding Dataset", available: false, active: false },
-  { label: "Retail Orders Dataset", available: false, active: false },
-  { label: "Climate Cities Dataset", available: false, active: false },
-  { label: "Premier League Matches Dataset", available: false, active: false },
+  { label: "TikTok Creators", available: true, active: true },
+  { label: "Spotify Songs", available: false, active: false },
+  { label: "NBA Player Stats", available: false, active: false },
+  { label: "Netflix Titles", available: false, active: false },
+  { label: "Airbnb Listings", available: false, active: false },
+  { label: "YouTube Comments", available: false, active: false },
+  { label: "Startup Funding", available: false, active: false },
+  { label: "Retail Orders", available: false, active: false },
+  { label: "Climate Cities", available: false, active: false },
+  { label: "Premier League Matches", available: false, active: false },
 ]
 
 export default function ChallengesPage() {
