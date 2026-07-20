@@ -468,6 +468,32 @@ assert.equal(
   }),
   0,
 );
+assert.equal(
+  getCompletionPercent({
+    totalQuestions: 3,
+    attemptedQuestions: 3,
+    correctQuestions: 5,
+    remainingQuestions: 0,
+    incorrectQuestions: 0,
+    pendingQuestions: 0,
+    skippedQuestions: 0,
+    totalAttempts: 5,
+  }),
+  100,
+);
+assert.equal(
+  getCompletionPercent({
+    totalQuestions: 3,
+    attemptedQuestions: 0,
+    correctQuestions: -1,
+    remainingQuestions: 3,
+    incorrectQuestions: 0,
+    pendingQuestions: 0,
+    skippedQuestions: 3,
+    totalAttempts: 0,
+  }),
+  0,
+);
 
 function createQuestion(id: string, order: number): PublicQuestion {
   return {

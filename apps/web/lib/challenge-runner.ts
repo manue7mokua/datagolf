@@ -239,7 +239,10 @@ export function getCompletionPercent(summary: ChallengeProgressSummary) {
     return 0;
   }
 
-  return Math.round((summary.correctQuestions / summary.totalQuestions) * 100);
+  const percent = Math.round(
+    (summary.correctQuestions / summary.totalQuestions) * 100,
+  );
+  return Math.min(Math.max(percent, 0), 100);
 }
 
 export function findNextIncompleteQuestionIndex(
