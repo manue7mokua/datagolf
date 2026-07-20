@@ -63,6 +63,27 @@ class AttemptsServiceTests(unittest.TestCase):
                 ),
             )
 
+    def test_validate_multiple_choice_requires_choices(self) -> None:
+        service = create_service()
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "multiple choice questions must define choices",
+        ):
+            service._validate_request(
+                create_question(
+                    question_type="multiple_choice",
+                    evaluation={
+                        "kind": "multiple_choice",
+                        "correct_option": "B",
+                    },
+                ),
+                AttemptCreateRequest(
+                    session_id="session-a",
+                    selected_option="B",
+                ),
+            )
+
     def test_validate_micro_code_trims_code(self) -> None:
         service = create_service()
 
