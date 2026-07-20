@@ -534,6 +534,7 @@ assert.deepEqual(summarizeChallengeProgress(questions, progress), {
   retryQuestions: 0,
   totalAttempts: 3,
   accuracyPercent: 33,
+  completionPercent: 33,
 });
 assert.equal(
   getChallengeProgressDetailText(summarizeChallengeProgress(questions, progress)),
@@ -567,7 +568,29 @@ assert.deepEqual(
     retryQuestions: 2,
     totalAttempts: 6,
     accuracyPercent: 50,
+    completionPercent: 13,
   },
+);
+assert.equal(
+  getCompletionPercent(
+    mapSessionChallengeSummary({
+      session_id: "session-1",
+      challenge_slug: "tiktok-creator-posts",
+      challenge_version: "v1",
+      total_questions: 15,
+      attempted_questions: 4,
+      correct_questions: 2,
+      remaining_questions: 13,
+      incorrect_questions: 1,
+      pending_questions: 1,
+      skipped_questions: 11,
+      retry_questions: 2,
+      total_attempts: 6,
+      accuracy_percent: 50,
+      completion_percent: 13,
+    }),
+  ),
+  13,
 );
 assert.equal(
   getChallengeProgressDetailText({
@@ -581,6 +604,7 @@ assert.equal(
     retryQuestions: 2,
     totalAttempts: 6,
     accuracyPercent: 50,
+    completionPercent: 13,
   }),
   "2 of 15 correct / 13 remaining / 1 incorrect / 11 skipped / 1 pending / 2 retried / 50% accuracy / 6 attempts",
 );
@@ -596,6 +620,7 @@ assert.equal(
     retryQuestions: 0,
     totalAttempts: 1,
     accuracyPercent: 100,
+    completionPercent: 100,
   }),
   "1 of 1 correct / 0 remaining / 0 incorrect / 0 skipped / 100% accuracy / 1 attempt",
 );
@@ -615,6 +640,7 @@ assert.equal(
     retryQuestions: 0,
     totalAttempts: 0,
     accuracyPercent: 0,
+    completionPercent: 0,
   }),
   0,
 );
@@ -630,6 +656,7 @@ assert.equal(
     retryQuestions: 1,
     totalAttempts: 5,
     accuracyPercent: 100,
+    completionPercent: 100,
   }),
   100,
 );
@@ -645,6 +672,7 @@ assert.equal(
     retryQuestions: 0,
     totalAttempts: 0,
     accuracyPercent: 0,
+    completionPercent: 0,
   }),
   0,
 );

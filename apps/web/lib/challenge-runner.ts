@@ -32,6 +32,7 @@ export type ChallengeProgressSummary = {
   retryQuestions: number;
   totalAttempts: number;
   accuracyPercent: number;
+  completionPercent: number;
 };
 
 export type FeedbackLine = {
@@ -241,6 +242,10 @@ export function summarizeChallengeProgress(
     retryQuestions,
     totalAttempts,
     accuracyPercent: getAccuracyPercent(correctQuestions, attemptedQuestions),
+    completionPercent: getCompletionPercentFromCounts(
+      correctQuestions,
+      questions.length,
+    ),
   };
 }
 
@@ -258,6 +263,7 @@ export function mapSessionChallengeSummary(
     retryQuestions: summary.retry_questions,
     totalAttempts: summary.total_attempts,
     accuracyPercent: summary.accuracy_percent,
+    completionPercent: summary.completion_percent,
   };
 }
 
@@ -271,13 +277,18 @@ function getAccuracyPercent(correctQuestions: number, attemptedQuestions: number
 }
 
 export function getCompletionPercent(summary: ChallengeProgressSummary) {
-  if (summary.totalQuestions === 0) {
+  return Math.min(Math.max(summary.completionPercent, 0), 100);
+}
+
+function getCompletionPercentFromCounts(
+  correctQuestions: number,
+  totalQuestions: number,
+) {
+  if (totalQuestions === 0) {
     return 0;
   }
 
-  const percent = Math.round(
-    (summary.correctQuestions / summary.totalQuestions) * 100,
-  );
+  const percent = Math.round((correctQuestions / totalQuestions) * 100);
   return Math.min(Math.max(percent, 0), 100);
 }
 
