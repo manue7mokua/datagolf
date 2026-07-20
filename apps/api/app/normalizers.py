@@ -9,7 +9,8 @@ def normalize_token(value: str) -> str:
 
 
 def normalize_code(value: str) -> str:
-    stripped = value.strip().replace("```r", "").replace("```", "")
+    stripped = re.sub(r"^```\w*\s*", "", value.strip(), flags=re.IGNORECASE)
+    stripped = re.sub(r"\s*```$", "", stripped)
     stripped = stripped.replace("`", "").replace("\n", "")
     return re.sub(r"\s+", "", stripped.lower()).rstrip(";")
 

@@ -79,6 +79,14 @@ class EvaluatorTests(unittest.TestCase):
         self.assertTrue(correct["passed"])
         self.assertFalse(wrong["passed"])
 
+    def test_micro_code_accepts_fenced_r_snippets(self) -> None:
+        result = self.evaluator.evaluate_micro_code(
+            self.questions["Q10"],
+            "```R\nengagement_rate = (likes + comments + shares) / views\n```",
+        )
+
+        self.assertTrue(result["passed"])
+
 
 if __name__ == "__main__":
     unittest.main()
