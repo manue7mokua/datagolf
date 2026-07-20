@@ -223,6 +223,45 @@ class AttemptsServiceTests(unittest.TestCase):
                 ),
             )
 
+    def test_validate_fill_blank_requires_accepted_answers(self) -> None:
+        service = create_service()
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "fill-in-the-blank questions must define accepted answers",
+        ):
+            service._validate_request(
+                create_question(
+                    question_type="fill_blank",
+                    evaluation={
+                        "kind": "fill_blank",
+                        "accepted_answers": [],
+                    },
+                ),
+                AttemptCreateRequest(
+                    session_id="session-a",
+                    blanks=["views"],
+                ),
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "fill-in-the-blank questions must define accepted answers",
+        ):
+            service._validate_request(
+                create_question(
+                    question_type="fill_blank",
+                    evaluation={
+                        "kind": "fill_blank",
+                        "accepted_answers": [["views"], [" "]],
+                    },
+                ),
+                AttemptCreateRequest(
+                    session_id="session-a",
+                    blanks=["views", "likes"],
+                ),
+            )
+
     def test_list_attempts_for_session_delegates_filter_and_limit(self) -> None:
         repo = FakeAttemptsRepository()
         service = AttemptsService(
