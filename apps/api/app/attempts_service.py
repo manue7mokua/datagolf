@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import re
 from uuid import uuid4
 
 from .attempts_repo import AttemptsRepository
@@ -195,6 +196,14 @@ class AttemptsService:
                 )
             ):
                 raise ValueError("micro-code questions must define accepted answers")
+            for pattern in question.evaluation.accepted_regex:
+                if pattern.strip():
+                    try:
+                        re.compile(pattern)
+                    except re.error as exc:
+                        raise ValueError(
+                            "micro-code accepted regex must be valid"
+                        ) from exc
             return {"code_text": code_text}
 
         raise ValueError(f"Unsupported question type: {question.type}")

@@ -181,6 +181,28 @@ class AttemptsServiceTests(unittest.TestCase):
                 ),
             )
 
+    def test_validate_micro_code_requires_valid_accepted_regex(self) -> None:
+        service = create_service()
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "micro-code accepted regex must be valid",
+        ):
+            service._validate_request(
+                create_question(
+                    question_type="micro_code",
+                    evaluation={
+                        "kind": "micro_code",
+                        "accepted_patterns": [],
+                        "accepted_regex": ["("],
+                    },
+                ),
+                AttemptCreateRequest(
+                    session_id="session-a",
+                    code_text="select(post_id)",
+                ),
+            )
+
     def test_validate_fill_blank_trims_values(self) -> None:
         service = create_service()
 
