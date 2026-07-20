@@ -21,6 +21,7 @@ import {
   applyAttemptToProgress,
   buildProgressFromAttempts,
   buildAttemptPayload,
+  createAnswerDraftFromAttempt,
   createEmptyAnswerDraft,
   findNextIncompleteQuestionIndex,
   getAttemptFeedbackLines,
@@ -164,6 +165,23 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
     setDraftsByQuestion((currentDrafts) => ({
       ...currentDrafts,
       [activeQuestion.id]: createEmptyAnswerDraft(),
+    }));
+    setSubmitError(null);
+  }
+
+  function restoreActiveDraftFromLastAttempt() {
+    if (!activeQuestion) {
+      return;
+    }
+
+    const lastAttempt = progressByQuestion[activeQuestion.id]?.lastAttempt;
+    if (!lastAttempt) {
+      return;
+    }
+
+    setDraftsByQuestion((currentDrafts) => ({
+      ...currentDrafts,
+      [activeQuestion.id]: createAnswerDraftFromAttempt(lastAttempt),
     }));
     setSubmitError(null);
   }
@@ -380,6 +398,7 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
                   isSubmitting={submittingQuestionId === activeQuestion.id}
                   onSubmit={submitActiveAnswer}
                   onClearDraft={clearActiveDraft}
+                  onRestoreDraft={restoreActiveDraftFromLastAttempt}
                   canGoPrevious={activeQuestionIndex > 0}
                   canGoNext={activeQuestionIndex < loadState.questions.length - 1}
                   onPrevious={goToPreviousQuestion}
@@ -546,6 +565,7 @@ function QuestionShell({
   isSubmitting,
   onSubmit,
   onClearDraft,
+  onRestoreDraft,
   canGoPrevious,
   canGoNext,
   onPrevious,
@@ -559,12 +579,14 @@ function QuestionShell({
   isSubmitting: boolean;
   onSubmit: () => void;
   onClearDraft: () => void;
+  onRestoreDraft: () => void;
   canGoPrevious: boolean;
   canGoNext: boolean;
   onPrevious: () => void;
   onNext: () => void;
 }) {
   const canSubmit = isAnswerDraftSubmittable(question.type, draft);
+  const canRestoreDraft = Boolean(progress?.lastAttempt);
 
   return (
     <article className="mx-auto max-w-4xl">
@@ -625,6 +647,19 @@ function QuestionShell({
               className="h-10 border border-white/20 px-4 text-[12px] uppercase tracking-[0.18em] text-[#f2f1ea] transition-colors hover:bg-white/5"
             >
               Clear
+            </button>
+            <button
+              type="button"
+              disabled={!canRestoreDraft}
+              onClick={onRestoreDraft}
+              className={cn(
+                "h-10 border px-4 text-[12px] uppercase tracking-[0.18em] transition-colors",
+                canRestoreDraft
+                  ? "border-white/20 text-[#f2f1ea] hover:bg-white/5"
+                  : "cursor-not-allowed border-white/10 text-[#686257]",
+              )}
+            >
+              Use last
             </button>
             <button
               type="button"

@@ -46,6 +46,19 @@ export function createEmptyAnswerDraft(): RunnerAnswerDraft {
   };
 }
 
+export function createAnswerDraftFromAttempt(
+  attempt: AttemptResponse,
+): RunnerAnswerDraft {
+  const payload = attempt.user_input_payload;
+
+  return {
+    promptText: getPayloadString(payload.prompt_text),
+    selectedOption: getPayloadString(payload.selected_option),
+    blanks: getPayloadStringArray(payload.blanks),
+    codeText: getPayloadString(payload.code_text),
+  };
+}
+
 export function buildAttemptPayload(
   question: PublicQuestion,
   sessionId: string,
@@ -261,6 +274,16 @@ function getPayloadRecord(value: unknown): Record<string, unknown> {
   }
 
   return {};
+}
+
+function getPayloadString(value: unknown): string {
+  return typeof value === "string" ? value : "";
+}
+
+function getPayloadStringArray(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.map((item) => (typeof item === "string" ? item : ""))
+    : [];
 }
 
 function formatPayloadValue(value: unknown): string {
