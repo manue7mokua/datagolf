@@ -375,7 +375,9 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
                               ? "border-[#9be58a] bg-[#9be58a]"
                               : status === "incorrect"
                                 ? "border-[#ffbd2e] bg-[#ffbd2e]"
-                                : "border-white/20",
+                                : status === "pending"
+                                  ? "border-[#8f8b80] bg-[#8f8b80]"
+                                  : "border-white/20",
                           )}
                         />
                         <span className="w-[3ch] shrink-0 font-mono text-[12px] tabular-nums">

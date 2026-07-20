@@ -21,6 +21,7 @@ import {
   getPreviousAttemptLabel,
   getPreviousAttemptsNewestFirst,
   getQuestionPositionLabel,
+  getQuestionProgressStatus,
   getQuestionProgressStatusLabel,
   getQuestionTypeLabel,
   isAnswerDraftDirty,
@@ -57,6 +58,12 @@ const failedAttempt: AttemptResponse = {
   status: "failed",
   is_correct: null,
   error_message: "Evaluator timed out",
+};
+const pendingAttempt: AttemptResponse = {
+  ...retryAttempt,
+  id: "attempt-pending",
+  status: "pending",
+  is_correct: null,
 };
 const thirdAttempt = createAttempt("attempt-3", "Q2", {
   blanks: ["shares", "saves"],
@@ -98,7 +105,23 @@ assert.equal(getAnswerFormatLabel(null, "micro_code"), "micro code");
 assert.equal(getAnswerFormatLabel("unknown", "guided_prompt"), "guided prompt");
 assert.equal(getQuestionProgressStatusLabel("unattempted"), "Open");
 assert.equal(getQuestionProgressStatusLabel("incorrect"), "Retry");
+assert.equal(getQuestionProgressStatusLabel("pending"), "Pending");
 assert.equal(getQuestionProgressStatusLabel("correct"), "Done");
+assert.equal(getQuestionProgressStatus(undefined), "unattempted");
+assert.equal(
+  getQuestionProgressStatus(applyAttemptToProgress(undefined, pendingAttempt)),
+  "pending",
+);
+assert.equal(
+  getQuestionProgressStatus(
+    applyAttemptToProgress(undefined, { ...retryAttempt, is_correct: false }),
+  ),
+  "incorrect",
+);
+assert.equal(
+  getQuestionProgressStatus(applyAttemptToProgress(undefined, correctAttempt)),
+  "correct",
+);
 assert.equal(getQuestionPositionLabel(questions[1], questions.length), "Q2 / 3");
 assert.equal(getQuestionTypeLabel("guided_prompt"), "guided prompt");
 assert.equal(getQuestionTypeLabel("multi_part_question"), "multi part question");

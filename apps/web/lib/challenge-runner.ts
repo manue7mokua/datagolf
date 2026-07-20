@@ -36,7 +36,11 @@ export type FeedbackLine = {
   passed?: boolean;
 };
 
-export type QuestionProgressStatus = "unattempted" | "correct" | "incorrect";
+export type QuestionProgressStatus =
+  | "unattempted"
+  | "pending"
+  | "correct"
+  | "incorrect";
 
 export function createEmptyAnswerDraft(): RunnerAnswerDraft {
   return {
@@ -324,7 +328,11 @@ export function getQuestionProgressStatus(
     return "unattempted";
   }
 
-  return progress.correctCount > 0 ? "correct" : "incorrect";
+  if (progress.correctCount > 0) {
+    return "correct";
+  }
+
+  return progress.lastAttempt?.status === "pending" ? "pending" : "incorrect";
 }
 
 export function getQuestionProgressStatusLabel(
@@ -336,6 +344,10 @@ export function getQuestionProgressStatusLabel(
 
   if (status === "incorrect") {
     return "Retry";
+  }
+
+  if (status === "pending") {
+    return "Pending";
   }
 
   return "Open";
