@@ -148,6 +148,10 @@ class AttemptsService:
             choice_ids = {choice.id for choice in question.display.choices}
             if not choice_ids:
                 raise ValueError("multiple choice questions must define choices")
+            if question.evaluation.correct_option not in choice_ids:
+                raise ValueError(
+                    "multiple choice correct option must be one of the defined choices"
+                )
             if selected_option not in choice_ids:
                 allowed_options = ", ".join(sorted(choice_ids))
                 raise ValueError(f"selected_option must be one of: {allowed_options}")
