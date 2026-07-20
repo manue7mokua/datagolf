@@ -39,13 +39,7 @@ class AttemptsServiceTests(unittest.TestCase):
         service = create_service()
 
         payload = service._validate_request(
-            create_question(
-                question_type="multiple_choice",
-                evaluation={
-                    "kind": "multiple_choice",
-                    "correct_option": "B",
-                },
-            ),
+            create_multiple_choice_question(),
             AttemptCreateRequest(
                 session_id="session-a",
                 selected_option=" B ",
@@ -53,6 +47,21 @@ class AttemptsServiceTests(unittest.TestCase):
         )
 
         self.assertEqual(payload, {"selected_option": "B"})
+
+    def test_validate_multiple_choice_rejects_unknown_option(self) -> None:
+        service = create_service()
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "selected_option must be one of: A, B",
+        ):
+            service._validate_request(
+                create_multiple_choice_question(),
+                AttemptCreateRequest(
+                    session_id="session-a",
+                    selected_option="C",
+                ),
+            )
 
     def test_validate_micro_code_trims_code(self) -> None:
         service = create_service()
@@ -198,13 +207,31 @@ def create_fill_blank_question() -> QuestionSpec:
     )
 
 
-def create_question(question_type: str, evaluation: dict) -> QuestionSpec:
+def create_multiple_choice_question() -> QuestionSpec:
+    return create_question(
+        question_type="multiple_choice",
+        evaluation={
+            "kind": "multiple_choice",
+            "correct_option": "B",
+        },
+        choices=[
+            {"id": "A", "text": "First"},
+            {"id": "B", "text": "Second"},
+        ],
+    )
+
+
+def create_question(
+    question_type: str,
+    evaluation: dict,
+    choices: list[dict] | None = None,
+) -> QuestionSpec:
     return QuestionSpec(
         id=f"Q-{question_type}",
         order=1,
         type=question_type,
         title="Question",
-        display=QuestionDisplay(task_text="Fill each blank."),
+        display=QuestionDisplay(task_text="Fill each blank.", choices=choices or []),
         evaluation=evaluation,
     )
 
