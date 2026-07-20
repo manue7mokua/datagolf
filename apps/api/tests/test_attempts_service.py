@@ -48,6 +48,19 @@ class AttemptsServiceTests(unittest.TestCase):
 
         self.assertEqual(payload, {"selected_option": "B"})
 
+    def test_validate_multiple_choice_canonicalizes_option_case(self) -> None:
+        service = create_service()
+
+        payload = service._validate_request(
+            create_multiple_choice_question(),
+            AttemptCreateRequest(
+                session_id="session-a",
+                selected_option=" b ",
+            ),
+        )
+
+        self.assertEqual(payload, {"selected_option": "B"})
+
     def test_validate_multiple_choice_rejects_unknown_option(self) -> None:
         service = create_service()
 

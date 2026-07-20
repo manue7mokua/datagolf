@@ -145,17 +145,22 @@ class AttemptsService:
             )
             if not selected_option:
                 raise ValueError("selected_option is required for multiple choice attempts")
-            choice_ids = {choice.id for choice in question.display.choices}
-            if not choice_ids:
+            choice_id_by_normalized = {
+                choice.id.strip().lower(): choice.id for choice in question.display.choices
+            }
+            if not choice_id_by_normalized:
                 raise ValueError("multiple choice questions must define choices")
-            if question.evaluation.correct_option not in choice_ids:
+            if question.evaluation.correct_option not in choice_id_by_normalized.values():
                 raise ValueError(
                     "multiple choice correct option must be one of the defined choices"
                 )
-            if selected_option not in choice_ids:
-                allowed_options = ", ".join(sorted(choice_ids))
+            canonical_selected_option = choice_id_by_normalized.get(
+                selected_option.lower()
+            )
+            if canonical_selected_option is None:
+                allowed_options = ", ".join(sorted(choice_id_by_normalized.values()))
                 raise ValueError(f"selected_option must be one of: {allowed_options}")
-            return {"selected_option": selected_option}
+            return {"selected_option": canonical_selected_option}
 
         if question.type == "fill_blank":
             blanks = request.blanks or []
