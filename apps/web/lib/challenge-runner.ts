@@ -248,7 +248,10 @@ export function findNextIncompleteQuestionIndex(
 ): number | null {
   const nextIndex = questions.findIndex((question) => {
     const progress = progressByQuestion[question.id];
-    return !progress || progress.correctCount === 0;
+    return (
+      (!progress || progress.correctCount === 0) &&
+      !isQuestionAwaitingResult(progress)
+    );
   });
 
   return nextIndex >= 0 ? nextIndex : null;

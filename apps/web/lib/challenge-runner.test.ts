@@ -80,6 +80,19 @@ const progress = {
   Q2: applyAttemptToProgress(undefined, { ...retryAttempt, is_correct: false }),
   Q3: applyAttemptToProgress(undefined, pendingAttempt),
 };
+const pendingThenOpenProgress = {
+  Q1: applyAttemptToProgress(undefined, correctAttempt),
+  Q2: applyAttemptToProgress(undefined, pendingAttempt),
+};
+const pendingOnlyProgress = {
+  Q1: applyAttemptToProgress(undefined, correctAttempt),
+  Q2: applyAttemptToProgress(undefined, pendingAttempt),
+  Q3: applyAttemptToProgress(undefined, {
+    ...pendingAttempt,
+    id: "attempt-pending-2",
+    question_id: "Q3",
+  }),
+};
 const sessionProgress = buildProgressFromAttempts([
   correctAttempt,
   { ...retryAttempt, is_correct: false },
@@ -100,6 +113,8 @@ assert.deepEqual(createAnswerDraftFromAttempt(retryAttempt), {
 });
 
 assert.equal(findNextIncompleteQuestionIndex(questions, progress), 1);
+assert.equal(findNextIncompleteQuestionIndex(questions, pendingThenOpenProgress), 2);
+assert.equal(findNextIncompleteQuestionIndex(questions, pendingOnlyProgress), null);
 assert.equal(getAnswerFormatLabel("single_choice", "multiple_choice"), "Single choice");
 assert.equal(getAnswerFormatLabel("blanks", "fill_blank"), "Fill each blank");
 assert.equal(getAnswerFormatLabel("prompt", "guided_prompt"), "Plain-language prompt");
