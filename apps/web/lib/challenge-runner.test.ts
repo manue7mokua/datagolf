@@ -581,6 +581,20 @@ assert.equal(
   "2 of 15 correct / 13 remaining / 1 incorrect / 11 skipped / 1 pending / 2 retried / 6 attempts",
 );
 assert.equal(
+  getChallengeProgressDetailText({
+    totalQuestions: 1,
+    attemptedQuestions: 1,
+    correctQuestions: 1,
+    remainingQuestions: 0,
+    incorrectQuestions: 0,
+    pendingQuestions: 0,
+    skippedQuestions: 0,
+    retryQuestions: 0,
+    totalAttempts: 1,
+  }),
+  "1 of 1 correct / 0 remaining / 0 incorrect / 0 skipped / 1 attempt",
+);
+assert.equal(
   getCompletionPercent(summarizeChallengeProgress(questions, progress)),
   33,
 );

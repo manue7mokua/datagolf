@@ -274,22 +274,26 @@ export function getChallengeProgressDetailText(
 ) {
   const parts = [
     `${summary.correctQuestions} of ${summary.totalQuestions} correct`,
-    `${summary.remainingQuestions} remaining`,
-    `${summary.incorrectQuestions} incorrect`,
-    `${summary.skippedQuestions} skipped`,
+    getCountLabel(summary.remainingQuestions, "remaining", "remaining"),
+    getCountLabel(summary.incorrectQuestions, "incorrect", "incorrect"),
+    getCountLabel(summary.skippedQuestions, "skipped", "skipped"),
   ];
 
   if (summary.pendingQuestions > 0) {
-    parts.push(`${summary.pendingQuestions} pending`);
+    parts.push(getCountLabel(summary.pendingQuestions, "pending", "pending"));
   }
 
   if (summary.retryQuestions > 0) {
-    parts.push(`${summary.retryQuestions} retried`);
+    parts.push(getCountLabel(summary.retryQuestions, "retried", "retried"));
   }
 
-  parts.push(`${summary.totalAttempts} attempts`);
+  parts.push(getCountLabel(summary.totalAttempts, "attempt", "attempts"));
 
   return parts.join(" / ");
+}
+
+function getCountLabel(count: number, singularLabel: string, pluralLabel: string) {
+  return `${count} ${count === 1 ? singularLabel : pluralLabel}`;
 }
 
 export function findNextIncompleteQuestionIndex(
