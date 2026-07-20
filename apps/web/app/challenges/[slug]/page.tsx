@@ -593,6 +593,8 @@ function QuestionShell({
   const canSubmit = isAnswerDraftSubmittable(question.type, draft);
   const canClearDraft = isAnswerDraftDirty(draft);
   const canRestoreDraft = Boolean(progress?.lastAttempt);
+  const status = getQuestionProgressStatus(progress);
+  const statusLabel = getQuestionProgressStatusLabel(status);
 
   return (
     <article className="mx-auto max-w-4xl">
@@ -648,8 +650,10 @@ function QuestionShell({
         />
 
         <div className="mt-4 flex flex-col gap-3 border-t border-white/12 pt-4 xl:flex-row xl:items-center xl:justify-between">
-          <div className="text-[12px] text-[#8f8b80]">
-            Attempts: {progress?.attemptCount ?? 0}
+          <div className="flex flex-wrap items-center gap-2 text-[12px] text-[#8f8b80]">
+            <span>Status: {statusLabel}</span>
+            <span className="text-white/20">/</span>
+            <span>Attempts: {progress?.attemptCount ?? 0}</span>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <button
