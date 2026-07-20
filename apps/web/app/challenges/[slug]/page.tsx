@@ -32,6 +32,7 @@ import {
   getQuestionPositionLabel,
   getQuestionProgressStatus,
   getQuestionProgressStatusLabel,
+  getQuestionTypeLabel,
   isAnswerDraftDirty,
   isAnswerDraftSubmittable,
   type QuestionProgress,
@@ -600,6 +601,7 @@ function QuestionShell({
   const status = getQuestionProgressStatus(progress);
   const statusLabel = getQuestionProgressStatusLabel(status);
   const positionLabel = getQuestionPositionLabel(question, totalQuestions);
+  const questionTypeLabel = getQuestionTypeLabel(question.type);
 
   return (
     <article className="mx-auto max-w-4xl">
@@ -608,7 +610,7 @@ function QuestionShell({
           {positionLabel}
         </span>
         <span className="border border-white/12 px-2 py-1 text-[11px] uppercase tracking-[0.16em] text-[#8f8b80]">
-          {question.type.replace("_", " ")}
+          {questionTypeLabel}
         </span>
       </div>
 

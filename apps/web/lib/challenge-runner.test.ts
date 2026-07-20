@@ -11,6 +11,7 @@ import {
   getPreviousAttemptsNewestFirst,
   getQuestionPositionLabel,
   getQuestionProgressStatusLabel,
+  getQuestionTypeLabel,
   isAnswerDraftDirty,
   summarizeChallengeProgress,
 } from "./challenge-runner";
@@ -59,6 +60,7 @@ assert.equal(getQuestionProgressStatusLabel("unattempted"), "Open");
 assert.equal(getQuestionProgressStatusLabel("incorrect"), "Retry");
 assert.equal(getQuestionProgressStatusLabel("correct"), "Done");
 assert.equal(getQuestionPositionLabel(questions[1], questions.length), "Q2 / 3");
+assert.equal(getQuestionTypeLabel("guided_prompt"), "guided prompt");
 assert.equal(
   isAnswerDraftDirty({
     promptText: "",
