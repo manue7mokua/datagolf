@@ -18,6 +18,7 @@ import {
   buildAttemptPayload,
   createEmptyAnswerDraft,
   getAttemptFeedbackLines,
+  getQuestionProgressStatus,
   isAnswerDraftSubmittable,
   type QuestionProgress,
   type RunnerAnswerDraft,
@@ -231,30 +232,50 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
               <DatasetPreviewPanel preview={loadState.datasetPreview} />
 
               <ol className="max-h-[18rem] overflow-y-auto p-2 lg:max-h-none">
-                {loadState.questions.map((question, index) => (
-                  <li key={question.id}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActiveQuestionIndex(index);
-                        setSubmitError(null);
-                      }}
-                      className={cn(
-                        "flex w-full items-center gap-3 px-3 py-3 text-left transition-colors",
-                        index === activeQuestionIndex
-                          ? "bg-white/10 text-[#f2f1ea]"
-                          : "text-[#a8a197] hover:bg-white/5 hover:text-[#f2f1ea]",
-                      )}
-                    >
-                      <span className="w-[3ch] shrink-0 font-mono text-[12px] tabular-nums">
-                        Q{question.order}
-                      </span>
-                      <span className="min-w-0 flex-1 truncate text-[13px]">
-                        {question.title}
-                      </span>
-                    </button>
-                  </li>
-                ))}
+                {loadState.questions.map((question, index) => {
+                  const progress = progressByQuestion[question.id];
+                  const status = getQuestionProgressStatus(progress);
+
+                  return (
+                    <li key={question.id}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveQuestionIndex(index);
+                          setSubmitError(null);
+                        }}
+                        className={cn(
+                          "flex w-full items-center gap-3 px-3 py-3 text-left transition-colors",
+                          index === activeQuestionIndex
+                            ? "bg-white/10 text-[#f2f1ea]"
+                            : "text-[#a8a197] hover:bg-white/5 hover:text-[#f2f1ea]",
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            "h-2.5 w-2.5 shrink-0 border",
+                            status === "correct"
+                              ? "border-[#9be58a] bg-[#9be58a]"
+                              : status === "incorrect"
+                                ? "border-[#ffbd2e] bg-[#ffbd2e]"
+                                : "border-white/20",
+                          )}
+                        />
+                        <span className="w-[3ch] shrink-0 font-mono text-[12px] tabular-nums">
+                          Q{question.order}
+                        </span>
+                        <span className="min-w-0 flex-1 truncate text-[13px]">
+                          {question.title}
+                        </span>
+                        {progress?.attemptCount ? (
+                          <span className="font-mono text-[11px] text-[#8f8b80]">
+                            {progress.attemptCount}
+                          </span>
+                        ) : null}
+                      </button>
+                    </li>
+                  );
+                })}
               </ol>
             </aside>
 

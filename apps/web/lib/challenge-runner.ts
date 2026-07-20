@@ -34,6 +34,8 @@ export type FeedbackLine = {
   passed?: boolean;
 };
 
+export type QuestionProgressStatus = "unattempted" | "correct" | "incorrect";
+
 export function createEmptyAnswerDraft(): RunnerAnswerDraft {
   return {
     promptText: "",
@@ -129,6 +131,16 @@ export function applyAttemptToProgress(
     correctCount: (progress?.correctCount ?? 0) + (attempt.is_correct ? 1 : 0),
     lastAttempt: attempt,
   };
+}
+
+export function getQuestionProgressStatus(
+  progress: QuestionProgress | undefined,
+): QuestionProgressStatus {
+  if (!progress || progress.attemptCount === 0) {
+    return "unattempted";
+  }
+
+  return progress.correctCount > 0 ? "correct" : "incorrect";
 }
 
 export function getAttemptFeedbackLines(attempt: AttemptResponse): FeedbackLine[] {
