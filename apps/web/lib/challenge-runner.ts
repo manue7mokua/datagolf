@@ -269,6 +269,29 @@ export function getCompletionPercent(summary: ChallengeProgressSummary) {
   return Math.min(Math.max(percent, 0), 100);
 }
 
+export function getChallengeProgressDetailText(
+  summary: ChallengeProgressSummary,
+) {
+  const parts = [
+    `${summary.correctQuestions} of ${summary.totalQuestions} correct`,
+    `${summary.remainingQuestions} remaining`,
+    `${summary.incorrectQuestions} incorrect`,
+    `${summary.skippedQuestions} skipped`,
+  ];
+
+  if (summary.pendingQuestions > 0) {
+    parts.push(`${summary.pendingQuestions} pending`);
+  }
+
+  if (summary.retryQuestions > 0) {
+    parts.push(`${summary.retryQuestions} retried`);
+  }
+
+  parts.push(`${summary.totalAttempts} attempts`);
+
+  return parts.join(" / ");
+}
+
 export function findNextIncompleteQuestionIndex(
   questions: PublicQuestion[],
   progressByQuestion: Record<string, QuestionProgress>,

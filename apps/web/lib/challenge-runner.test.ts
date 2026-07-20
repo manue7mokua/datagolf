@@ -14,6 +14,7 @@ import {
   getAttemptResultLabel,
   getAttemptTone,
   getAttemptsNewestFirst,
+  getChallengeProgressDetailText,
   getCompletionPercent,
   getFeedbackLineTone,
   getFillBlankCount,
@@ -533,6 +534,10 @@ assert.deepEqual(summarizeChallengeProgress(questions, progress), {
   retryQuestions: 0,
   totalAttempts: 3,
 });
+assert.equal(
+  getChallengeProgressDetailText(summarizeChallengeProgress(questions, progress)),
+  "1 of 3 correct / 2 remaining / 1 incorrect / 0 skipped / 1 pending / 3 attempts",
+);
 assert.deepEqual(
   mapSessionChallengeSummary({
     session_id: "session-1",
@@ -560,6 +565,20 @@ assert.deepEqual(
     retryQuestions: 2,
     totalAttempts: 6,
   },
+);
+assert.equal(
+  getChallengeProgressDetailText({
+    totalQuestions: 15,
+    attemptedQuestions: 4,
+    correctQuestions: 2,
+    remainingQuestions: 13,
+    incorrectQuestions: 1,
+    pendingQuestions: 1,
+    skippedQuestions: 11,
+    retryQuestions: 2,
+    totalAttempts: 6,
+  }),
+  "2 of 15 correct / 13 remaining / 1 incorrect / 11 skipped / 1 pending / 2 retried / 6 attempts",
 );
 assert.equal(
   getCompletionPercent(summarizeChallengeProgress(questions, progress)),

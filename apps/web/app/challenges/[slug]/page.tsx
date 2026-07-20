@@ -32,6 +32,7 @@ import {
   getAttemptResultLabel,
   getAttemptFeedbackLines,
   getAttemptTone,
+  getChallengeProgressDetailText,
   getCompletionPercent,
   getFeedbackLineTone,
   getFillBlankCount,
@@ -494,15 +495,7 @@ function ChallengeSummaryPanel({
           Progress
         </div>
         <div className="mt-2 text-[14px] leading-6 text-[#f2f1ea]">
-          {summary.correctQuestions} of {summary.totalQuestions} correct /{" "}
-          {summary.remainingQuestions} remaining
-          {summary.pendingQuestions > 0
-            ? ` / ${summary.pendingQuestions} pending`
-            : ""}
-          {summary.retryQuestions > 0
-            ? ` / ${summary.retryQuestions} retried`
-            : ""}
-          / {summary.totalAttempts} attempts
+          {getChallengeProgressDetailText(summary)}
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-3 sm:justify-end">
