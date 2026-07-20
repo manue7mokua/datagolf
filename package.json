@@ -5,6 +5,7 @@
     "dev": "pnpm --filter @datagolf/web dev",
     "dev:web": "pnpm --filter @datagolf/web dev",
     "dev:api": "cd apps/api && python3 -m uvicorn app.main:app --reload",
+    "test:api": "python3 -m unittest discover apps/api/tests",
     "build:web": "pnpm --filter @datagolf/web build",
     "lint:web": "pnpm --filter @datagolf/web lint"
   },
