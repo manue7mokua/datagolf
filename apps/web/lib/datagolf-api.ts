@@ -125,7 +125,39 @@ export function getDatagolfApiErrorMessage(status: number, payload: unknown) {
     return detail.trim();
   }
 
+  if (Array.isArray(detail)) {
+    const messages = detail
+      .map(formatValidationErrorDetail)
+      .filter((message) => message.length > 0);
+
+    if (messages.length > 0) {
+      return messages.join("; ");
+    }
+  }
+
   return `Datagolf API request failed with ${status}`;
+}
+
+function formatValidationErrorDetail(detail: unknown) {
+  if (!detail || typeof detail !== "object" || Array.isArray(detail)) {
+    return "";
+  }
+
+  const record = detail as { loc?: unknown; msg?: unknown };
+  if (typeof record.msg !== "string" || !record.msg.trim()) {
+    return "";
+  }
+
+  const location = Array.isArray(record.loc)
+    ? record.loc
+        .filter((part): part is string | number => (
+          typeof part === "string" || typeof part === "number"
+        ))
+        .map(String)
+        .join(".")
+    : "";
+
+  return location ? `${location}: ${record.msg.trim()}` : record.msg.trim();
 }
 
 export function getDatagolfApiBaseUrl() {

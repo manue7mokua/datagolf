@@ -16,6 +16,32 @@ assert.equal(
   getDatagolfApiErrorMessage(500, { error: "Internal error" }),
   "Datagolf API request failed with 500",
 );
+assert.equal(
+  getDatagolfApiErrorMessage(422, {
+    detail: [
+      {
+        loc: ["query", "limit"],
+        msg: "Input should be less than or equal to 100",
+      },
+    ],
+  }),
+  "query.limit: Input should be less than or equal to 100",
+);
+assert.equal(
+  getDatagolfApiErrorMessage(422, {
+    detail: [
+      {
+        loc: ["body", "blanks", 1],
+        msg: "Input should be a valid string",
+      },
+      {
+        loc: ["body", "session_id"],
+        msg: "Field required",
+      },
+    ],
+  }),
+  "body.blanks.1: Input should be a valid string; body.session_id: Field required",
+);
 
 const originalFetch = globalThis.fetch;
 
