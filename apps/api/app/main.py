@@ -17,6 +17,7 @@ from .schemas import (
     AttemptResponse,
     ChallengeDetailResponse,
     ChallengeListItemResponse,
+    DatasetPreviewResponse,
     DatasetSummaryResponse,
     HealthResponse,
     PublicQuestionResponse,
@@ -83,6 +84,27 @@ def list_challenges() -> list[ChallengeListItemResponse]:
         )
         for challenge in container.challenge_registry.list_challenges()
     ]
+
+
+@app.get("/datasets/{slug}/preview", response_model=DatasetPreviewResponse)
+def get_dataset_preview(slug: str, limit: int = 20) -> DatasetPreviewResponse:
+    if limit < 1 or limit > 100:
+        raise HTTPException(status_code=422, detail="limit must be between 1 and 100")
+
+    try:
+        challenge = container.challenge_registry.get_dataset_challenge(slug)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    dataframe = container.dataset_loader.load(challenge.dataset.path)
+    preview_rows = dataframe.head(limit).where(dataframe.notna(), None).to_dict(
+        orient="records"
+    )
+
+    return DatasetPreviewResponse(
+        dataset=DatasetSummaryResponse.model_validate(challenge.dataset.model_dump()),
+        rows=preview_rows,
+    )
 
 
 @app.get("/challenges/{slug}", response_model=ChallengeDetailResponse)

@@ -40,6 +40,13 @@ class ChallengeRegistry:
         except KeyError as exc:
             raise KeyError(f"Unknown challenge slug: {slug}") from exc
 
+    def get_dataset_challenge(self, dataset_slug: str) -> ChallengeSpec:
+        for challenge in self._challenges.values():
+            if challenge.dataset.slug == dataset_slug:
+                return challenge
+
+        raise KeyError(f"Unknown dataset slug: {dataset_slug}")
+
     def get_question(self, question_id: str) -> tuple[ChallengeSpec, QuestionSpec]:
         try:
             return self._questions[question_id]

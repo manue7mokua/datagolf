@@ -77,6 +77,20 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual(questions[0]["id"], "Q1")
         self.assertNotIn("evaluation", questions[0])
 
+    def test_dataset_preview_returns_limited_rows(self) -> None:
+        response = self.client.get("/datasets/tiktok-posts/preview?limit=3")
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["dataset"]["slug"], "tiktok-posts")
+        self.assertEqual(len(payload["rows"]), 3)
+        self.assertIn("post_id", payload["rows"][0])
+
+    def test_dataset_preview_rejects_oversized_limits(self) -> None:
+        response = self.client.get("/datasets/tiktok-posts/preview?limit=101")
+
+        self.assertEqual(response.status_code, 422)
+
     def test_multiple_choice_attempt_can_be_created_and_retrieved(self) -> None:
         create_response = self.client.post(
             "/questions/Q8/attempts",

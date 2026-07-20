@@ -124,6 +124,11 @@ class DatasetSummaryResponse(BaseModel):
     columns: list[ColumnSpec]
 
 
+class DatasetPreviewResponse(BaseModel):
+    dataset: DatasetSummaryResponse
+    rows: list[dict[str, Any]]
+
+
 class PublicQuestionResponse(BaseModel):
     id: str
     order: int
