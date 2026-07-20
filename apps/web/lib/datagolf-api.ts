@@ -49,6 +49,16 @@ export type ChallengeDetail = {
   question_count: number;
 };
 
+export type ChallengeListItem = {
+  challenge_slug: string;
+  challenge_version: string;
+  title: string;
+  description: string;
+  dataset_slug: string;
+  dataset_version: string;
+  question_count: number;
+};
+
 export type PublicQuestion = {
   id: string;
   order: number;
@@ -109,6 +119,10 @@ export function getDatagolfApiBaseUrl() {
 
 export async function getChallenge(slug: string) {
   return requestJson<ChallengeDetail>(`/challenges/${slug}`);
+}
+
+export async function listChallenges() {
+  return requestJson<ChallengeListItem[]>("/challenges");
 }
 
 export async function getChallengeQuestions(slug: string) {
