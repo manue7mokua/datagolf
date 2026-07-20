@@ -336,16 +336,25 @@ export function getFeedbackLineTone(line: FeedbackLine) {
 }
 
 export function buildProgressFromAttempts(attempts: AttemptResponse[]) {
-  return attempts.reduce<Record<string, QuestionProgress>>(
-    (progressByQuestion, attempt) => ({
-      ...progressByQuestion,
-      [attempt.question_id]: applyAttemptToProgress(
-        progressByQuestion[attempt.question_id],
-        attempt,
-      ),
-    }),
-    {},
-  );
+  return [...attempts]
+    .sort(compareAttemptsAscending)
+    .reduce<Record<string, QuestionProgress>>(
+      (progressByQuestion, attempt) => ({
+        ...progressByQuestion,
+        [attempt.question_id]: applyAttemptToProgress(
+          progressByQuestion[attempt.question_id],
+          attempt,
+        ),
+      }),
+      {},
+    );
+}
+
+function compareAttemptsAscending(left: AttemptResponse, right: AttemptResponse) {
+  const createdAtComparison = left.created_at.localeCompare(right.created_at);
+  return createdAtComparison === 0
+    ? left.id.localeCompare(right.id)
+    : createdAtComparison;
 }
 
 export function getQuestionProgressStatus(
