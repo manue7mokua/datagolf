@@ -100,6 +100,29 @@ export function isAnswerDraftSubmittable(
   return draft.codeText.trim().length > 0;
 }
 
+export function getAnswerFormatLabel(
+  answerFormat: string | null,
+  questionType: QuestionType,
+) {
+  if (answerFormat === "single_choice") {
+    return "Single choice";
+  }
+
+  if (answerFormat === "blanks") {
+    return "Fill each blank";
+  }
+
+  if (answerFormat === "code") {
+    return "Code expression";
+  }
+
+  if (answerFormat === "prompt") {
+    return "Plain-language prompt";
+  }
+
+  return questionType.replace("_", " ");
+}
+
 export function summarizeChallengeProgress(
   questions: PublicQuestion[],
   progressByQuestion: Record<string, QuestionProgress>,

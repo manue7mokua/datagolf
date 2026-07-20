@@ -24,6 +24,7 @@ import {
   createAnswerDraftFromAttempt,
   createEmptyAnswerDraft,
   findNextIncompleteQuestionIndex,
+  getAnswerFormatLabel,
   getAttemptFeedbackLines,
   getQuestionProgressStatus,
   isAnswerDraftSubmittable,
@@ -627,8 +628,13 @@ function QuestionShell({
       ) : null}
 
       <div className="mt-6 border border-white/12 bg-[#111111] p-4">
-        <div className="text-[11px] uppercase tracking-[0.2em] text-[#8f8b80]">
-          Answer area
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="text-[11px] uppercase tracking-[0.2em] text-[#8f8b80]">
+            Answer area
+          </div>
+          <div className="border border-white/12 px-2 py-1 font-mono text-[11px] text-[#9be58a]">
+            {getAnswerFormatLabel(question.display.answer_format, question.type)}
+          </div>
         </div>
         <AnswerInput
           question={question}

@@ -4,6 +4,7 @@ import {
   applyAttemptToProgress,
   createAnswerDraftFromAttempt,
   findNextIncompleteQuestionIndex,
+  getAnswerFormatLabel,
   summarizeChallengeProgress,
 } from "./challenge-runner";
 import type { AttemptResponse, PublicQuestion } from "./datagolf-api";
@@ -40,6 +41,10 @@ assert.deepEqual(createAnswerDraftFromAttempt(retryAttempt), {
 });
 
 assert.equal(findNextIncompleteQuestionIndex(questions, progress), 1);
+assert.equal(getAnswerFormatLabel("single_choice", "multiple_choice"), "Single choice");
+assert.equal(getAnswerFormatLabel("blanks", "fill_blank"), "Fill each blank");
+assert.equal(getAnswerFormatLabel("prompt", "guided_prompt"), "Plain-language prompt");
+assert.equal(getAnswerFormatLabel(null, "micro_code"), "micro code");
 assert.deepEqual(summarizeChallengeProgress(questions, progress), {
   totalQuestions: 3,
   attemptedQuestions: 2,
