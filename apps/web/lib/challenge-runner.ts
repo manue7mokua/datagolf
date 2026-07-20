@@ -208,6 +208,20 @@ export function getQuestionProgressStatus(
   return progress.correctCount > 0 ? "correct" : "incorrect";
 }
 
+export function getQuestionProgressStatusLabel(
+  status: QuestionProgressStatus,
+) {
+  if (status === "correct") {
+    return "Done";
+  }
+
+  if (status === "incorrect") {
+    return "Retry";
+  }
+
+  return "Open";
+}
+
 export function getAttemptFeedbackLines(attempt: AttemptResponse): FeedbackLine[] {
   const payload = attempt.evaluation_payload;
   if (!payload) {

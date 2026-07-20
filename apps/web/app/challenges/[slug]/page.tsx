@@ -27,6 +27,7 @@ import {
   getAnswerFormatLabel,
   getAttemptFeedbackLines,
   getQuestionProgressStatus,
+  getQuestionProgressStatusLabel,
   isAnswerDraftSubmittable,
   type QuestionProgress,
   type RunnerAnswerDraft,
@@ -339,6 +340,7 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
                 {loadState.questions.map((question, index) => {
                   const progress = progressByQuestion[question.id];
                   const status = getQuestionProgressStatus(progress);
+                  const statusLabel = getQuestionProgressStatusLabel(status);
 
                   return (
                     <li key={question.id}>
@@ -368,11 +370,12 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
                         <span className="min-w-0 flex-1 truncate text-[13px]">
                           {question.title}
                         </span>
-                        {progress?.attemptCount ? (
-                          <span className="font-mono text-[11px] text-[#8f8b80]">
-                            {progress.attemptCount}
-                          </span>
-                        ) : null}
+                        <span className="shrink-0 text-[10px] uppercase tracking-[0.14em] text-[#8f8b80]">
+                          {statusLabel}
+                        </span>
+                        <span className="w-[2ch] shrink-0 text-right font-mono text-[11px] text-[#8f8b80]">
+                          {progress?.attemptCount ?? ""}
+                        </span>
                       </button>
                     </li>
                   );
