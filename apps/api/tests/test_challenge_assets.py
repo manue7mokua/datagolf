@@ -134,10 +134,20 @@ class ChallengeAssetTests(unittest.TestCase):
 
         for question in multiple_choice_questions:
             choices = question["display"].get("choices", [])
-            choice_ids = {choice["id"] for choice in choices}
+            choice_ids = [choice["id"].strip() for choice in choices]
+            normalized_choice_ids = [choice_id.lower() for choice_id in choice_ids]
             correct_option = question["evaluation"]["correct_option"]
 
             self.assertGreater(len(choice_ids), 0, f"{question['id']} must define choices")
+            self.assertTrue(
+                all(choice_ids),
+                f"{question['id']} choices must define non-empty ids",
+            )
+            self.assertEqual(
+                len(normalized_choice_ids),
+                len(set(normalized_choice_ids)),
+                f"{question['id']} choices must define unique ids",
+            )
             self.assertIn(
                 correct_option,
                 choice_ids,
