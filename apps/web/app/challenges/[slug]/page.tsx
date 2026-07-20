@@ -5,13 +5,18 @@ import { useEffect, useMemo, useState } from "react";
 
 import {
   type ChallengeDetail,
+  createAttempt,
   getChallenge,
   getChallengeQuestions,
   type PublicQuestion,
 } from "../../../lib/datagolf-api";
 import { getAnonymousSessionId } from "../../../lib/anonymous-session";
 import {
+  applyAttemptToProgress,
+  buildAttemptPayload,
   createEmptyAnswerDraft,
+  isAnswerDraftSubmittable,
+  type QuestionProgress,
   type RunnerAnswerDraft,
   summarizeChallengeProgress,
 } from "../../../lib/challenge-runner";
@@ -40,6 +45,13 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
   const [draftsByQuestion, setDraftsByQuestion] = useState<
     Record<string, RunnerAnswerDraft>
   >({});
+  const [progressByQuestion, setProgressByQuestion] = useState<
+    Record<string, QuestionProgress>
+  >({});
+  const [submittingQuestionId, setSubmittingQuestionId] = useState<string | null>(
+    null,
+  );
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -80,6 +92,7 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
         if (mounted) {
           setLoadState({ status: "ready", challenge, questions, sessionId });
           setActiveQuestionIndex(0);
+          setSubmitError(null);
         }
       } catch (error) {
         if (mounted) {
@@ -120,13 +133,43 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
     }));
   }
 
+  async function submitActiveAnswer() {
+    if (loadState.status !== "ready" || !activeQuestion) {
+      return;
+    }
+
+    setSubmittingQuestionId(activeQuestion.id);
+    setSubmitError(null);
+
+    try {
+      const attempt = await createAttempt(
+        activeQuestion.id,
+        buildAttemptPayload(activeQuestion, loadState.sessionId, activeDraft),
+      );
+
+      setProgressByQuestion((currentProgress) => ({
+        ...currentProgress,
+        [activeQuestion.id]: applyAttemptToProgress(
+          currentProgress[activeQuestion.id],
+          attempt,
+        ),
+      }));
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "Could not check this answer.",
+      );
+    } finally {
+      setSubmittingQuestionId(null);
+    }
+  }
+
   const progressSummary = useMemo(() => {
     if (loadState.status !== "ready") {
       return null;
     }
 
-    return summarizeChallengeProgress(loadState.questions, {});
-  }, [loadState]);
+    return summarizeChallengeProgress(loadState.questions, progressByQuestion);
+  }, [loadState, progressByQuestion]);
 
   return (
     <main className="min-h-dvh bg-[#0A0A0A] px-4 py-4 text-[#f2f1ea] sm:px-6 lg:px-8">
@@ -179,7 +222,10 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
                   <li key={question.id}>
                     <button
                       type="button"
-                      onClick={() => setActiveQuestionIndex(index)}
+                      onClick={() => {
+                        setActiveQuestionIndex(index);
+                        setSubmitError(null);
+                      }}
                       className={cn(
                         "flex w-full items-center gap-3 px-3 py-3 text-left transition-colors",
                         index === activeQuestionIndex
@@ -205,6 +251,10 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
                   question={activeQuestion}
                   draft={activeDraft}
                   onDraftChange={updateActiveDraft}
+                  progress={progressByQuestion[activeQuestion.id]}
+                  submitError={submitError}
+                  isSubmitting={submittingQuestionId === activeQuestion.id}
+                  onSubmit={submitActiveAnswer}
                 />
               ) : (
                 <StatusPanel title="No question selected" body="Choose a question to begin." />
@@ -243,11 +293,21 @@ function QuestionShell({
   question,
   draft,
   onDraftChange,
+  progress,
+  submitError,
+  isSubmitting,
+  onSubmit,
 }: {
   question: PublicQuestion;
   draft: RunnerAnswerDraft;
   onDraftChange: (draft: RunnerAnswerDraft) => void;
+  progress: QuestionProgress | undefined;
+  submitError: string | null;
+  isSubmitting: boolean;
+  onSubmit: () => void;
 }) {
+  const canSubmit = isAnswerDraftSubmittable(question.type, draft);
+
   return (
     <article className="mx-auto max-w-4xl">
       <div className="flex flex-wrap items-center gap-2">
@@ -295,8 +355,70 @@ function QuestionShell({
           draft={draft}
           onDraftChange={onDraftChange}
         />
+
+        <div className="mt-4 flex flex-col gap-3 border-t border-white/12 pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-[12px] text-[#8f8b80]">
+            Attempts: {progress?.attemptCount ?? 0}
+          </div>
+          <button
+            type="button"
+            disabled={!canSubmit || isSubmitting}
+            onClick={onSubmit}
+            className={cn(
+              "h-10 border px-4 text-[12px] uppercase tracking-[0.18em] transition-colors",
+              canSubmit && !isSubmitting
+                ? "border-[#ffbd2e] bg-[#ffbd2e] text-black hover:bg-[#ffd166]"
+                : "cursor-not-allowed border-white/12 text-[#686257]",
+            )}
+          >
+            {isSubmitting ? "Checking" : "Check Answer"}
+          </button>
+        </div>
+
+        {submitError ? (
+          <div className="mt-4 border border-[#ff6b6b]/40 bg-[#ff6b6b]/10 px-3 py-3 text-[13px] leading-6 text-[#ffd1d1]">
+            {submitError}
+          </div>
+        ) : null}
+
+        {progress?.lastAttempt ? (
+          <AttemptFeedback progress={progress} />
+        ) : null}
       </div>
     </article>
+  );
+}
+
+function AttemptFeedback({ progress }: { progress: QuestionProgress }) {
+  const attempt = progress.lastAttempt;
+
+  if (!attempt) {
+    return null;
+  }
+
+  return (
+    <section className="mt-4 border border-white/12 bg-black/30">
+      <div
+        className={cn(
+          "border-b border-white/12 px-3 py-3 text-[12px] uppercase tracking-[0.18em]",
+          attempt.is_correct ? "text-[#9be58a]" : "text-[#ffbd2e]",
+        )}
+      >
+        {attempt.is_correct ? "Correct" : "Needs another pass"}
+      </div>
+
+      {attempt.generated_code ? (
+        <pre className="max-h-72 overflow-auto border-b border-white/12 p-3 font-mono text-[12px] leading-6 text-[#c9c4b8]">
+          {attempt.generated_code}
+        </pre>
+      ) : null}
+
+      {attempt.evaluation_payload ? (
+        <pre className="max-h-72 overflow-auto p-3 font-mono text-[11px] leading-5 text-[#a8a197]">
+          {JSON.stringify(attempt.evaluation_payload, null, 2)}
+        </pre>
+      ) : null}
+    </section>
   );
 }
 
