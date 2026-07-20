@@ -110,6 +110,15 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual(fetched["id"], created["id"])
         self.assertEqual(fetched["evaluation_payload"]["expected_option"], "B")
 
+    def test_multiple_choice_attempt_rejects_unknown_option(self) -> None:
+        response = self.client.post(
+            "/questions/Q8/attempts",
+            json={"session_id": "endpoint-test-session", "selected_option": "Z"},
+        )
+
+        self.assertEqual(response.status_code, 422)
+        self.assertIn("selected_option must be one of", response.json()["detail"])
+
     def test_session_attempts_returns_attempt_history(self) -> None:
         session_id = "endpoint-history-session"
         self.client.post(
