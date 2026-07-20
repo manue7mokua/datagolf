@@ -17,6 +17,12 @@ The existing TikTok source files are preserved and mirrored into the versioned r
 
 The backend reads the structured `spec.json` at runtime. The markdown file remains the human-authored source document.
 
+## Roadmap
+
+The next product milestone is a real challenge runner that connects the
+finished UI to the FastAPI attempt flow. See [docs/roadmap.md](/Users/imanmokua/Desktop/workspace/github.com/manue7mokua/datagolf/docs/roadmap.md)
+for the feature backlog and test strategy.
+
 ## Web App
 
 Install frontend dependencies from the repo root and run the existing Next.js app:
