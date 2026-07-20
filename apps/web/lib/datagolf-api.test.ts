@@ -1,10 +1,15 @@
 import assert from "node:assert/strict";
 
 import {
+  createAttempt,
   DatagolfApiError,
+  getAttempt,
   getChallenge,
+  getChallengeQuestions,
+  getDatasetPreview,
   getDatagolfApiBaseUrl,
   getDatagolfApiErrorMessage,
+  listSessionAttempts,
 } from "./datagolf-api";
 
 const originalApiBaseUrl = process.env.NEXT_PUBLIC_DATAGOLF_API_URL;
@@ -63,11 +68,37 @@ assert.equal(
 
 const originalFetch = globalThis.fetch;
 
-runApiErrorRequestTests().catch((error) => {
+runApiRequestTests().catch((error) => {
   throw error;
 });
 
-async function runApiErrorRequestTests() {
+async function runApiRequestTests() {
+  const requestedUrls: string[] = [];
+  globalThis.fetch = async (input) => {
+    requestedUrls.push(String(input));
+    return Response.json({});
+  };
+
+  try {
+    await getChallenge("creator posts/v1");
+    await getChallengeQuestions("creator posts/v1");
+    await createAttempt("question 1/intro", { session_id: "session-1" });
+    await getAttempt("attempt 1/first");
+    await getDatasetPreview("tiktok posts/v1", 12);
+    await listSessionAttempts("session 1/user", "creator posts/v1", 25);
+
+    assert.deepEqual(requestedUrls, [
+      "http://localhost:8000/challenges/creator%20posts%2Fv1",
+      "http://localhost:8000/challenges/creator%20posts%2Fv1/questions",
+      "http://localhost:8000/questions/question%201%2Fintro/attempts",
+      "http://localhost:8000/attempts/attempt%201%2Ffirst",
+      "http://localhost:8000/datasets/tiktok%20posts%2Fv1/preview?limit=12",
+      "http://localhost:8000/sessions/session%201%2Fuser/attempts?limit=25&challenge_slug=creator+posts%2Fv1",
+    ]);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+
   globalThis.fetch = async () =>
     new Response(
       JSON.stringify({ detail: "expected 2 blanks for fill-in-the-blank attempts" }),

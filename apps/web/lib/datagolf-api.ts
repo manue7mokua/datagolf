@@ -166,7 +166,7 @@ export function getDatagolfApiBaseUrl() {
 }
 
 export async function getChallenge(slug: string) {
-  return requestJson<ChallengeDetail>(`/challenges/${slug}`);
+  return requestJson<ChallengeDetail>(`/challenges/${encodePathSegment(slug)}`);
 }
 
 export async function listChallenges() {
@@ -174,26 +174,31 @@ export async function listChallenges() {
 }
 
 export async function getChallengeQuestions(slug: string) {
-  return requestJson<PublicQuestion[]>(`/challenges/${slug}/questions`);
+  return requestJson<PublicQuestion[]>(
+    `/challenges/${encodePathSegment(slug)}/questions`,
+  );
 }
 
 export async function createAttempt(
   questionId: string,
   payload: AttemptCreateRequest,
 ) {
-  return requestJson<AttemptResponse>(`/questions/${questionId}/attempts`, {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
+  return requestJson<AttemptResponse>(
+    `/questions/${encodePathSegment(questionId)}/attempts`,
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
+  );
 }
 
 export async function getAttempt(attemptId: string) {
-  return requestJson<AttemptResponse>(`/attempts/${attemptId}`);
+  return requestJson<AttemptResponse>(`/attempts/${encodePathSegment(attemptId)}`);
 }
 
 export async function getDatasetPreview(slug: string, limit = 20) {
   return requestJson<DatasetPreview>(
-    `/datasets/${slug}/preview?limit=${encodeURIComponent(limit)}`,
+    `/datasets/${encodePathSegment(slug)}/preview?limit=${encodeURIComponent(limit)}`,
   );
 }
 
@@ -240,4 +245,8 @@ async function requestJson<T>(
   }
 
   return payload as T;
+}
+
+function encodePathSegment(segment: string) {
+  return encodeURIComponent(segment);
 }
