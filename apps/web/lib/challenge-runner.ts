@@ -310,6 +310,16 @@ export function getQuestionTypeLabel(questionType: string) {
 }
 
 export function getAttemptFeedbackLines(attempt: AttemptResponse): FeedbackLine[] {
+  if (attempt.status === "failed" && attempt.error_message?.trim()) {
+    return [
+      {
+        label: "Error",
+        value: attempt.error_message.trim(),
+        passed: false,
+      },
+    ];
+  }
+
   const payload = attempt.evaluation_payload;
   if (!payload) {
     return [];

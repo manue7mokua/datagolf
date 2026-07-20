@@ -7,6 +7,7 @@ import {
   findNextIncompleteQuestionIndex,
   getAnswerFormatLabel,
   getAttemptFeedbackTitle,
+  getAttemptFeedbackLines,
   getAttemptResultLabel,
   getAttemptTone,
   getAttemptsNewestFirst,
@@ -40,6 +41,7 @@ const failedAttempt: AttemptResponse = {
   id: "attempt-failed",
   status: "failed",
   is_correct: null,
+  error_message: "Evaluator timed out",
 };
 const thirdAttempt = createAttempt("attempt-3", "Q2", {
   blanks: ["shares", "saves"],
@@ -149,6 +151,20 @@ assert.equal(getAttemptTone(failedAttempt), "retry");
 assert.equal(getFeedbackLineTone({ label: "A", value: "ok", passed: true }), "success");
 assert.equal(getFeedbackLineTone({ label: "A", value: "no", passed: false }), "retry");
 assert.equal(getFeedbackLineTone({ label: "A", value: "n/a" }), "neutral");
+assert.deepEqual(getAttemptFeedbackLines(failedAttempt), [
+  {
+    label: "Error",
+    value: "Evaluator timed out",
+    passed: false,
+  },
+]);
+assert.deepEqual(
+  getAttemptFeedbackLines({
+    ...failedAttempt,
+    error_message: " ",
+  }),
+  [],
+);
 assert.equal(
   getPreviousAttemptCount(
     applyAttemptToProgress(
