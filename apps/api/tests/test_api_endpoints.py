@@ -199,6 +199,34 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual(payload["total_attempts"], 2)
         self.assertEqual(payload["completion_percent"], 7)
 
+    def test_session_challenge_summary_counts_retried_question_once(self) -> None:
+        session_id = "endpoint-summary-retry-session"
+        incorrect_response = self.client.post(
+            "/questions/Q8/attempts",
+            json={"session_id": session_id, "selected_option": "A"},
+        )
+        correct_response = self.client.post(
+            "/questions/Q8/attempts",
+            json={"session_id": session_id, "selected_option": "B"},
+        )
+
+        self.assertEqual(incorrect_response.status_code, 200)
+        self.assertEqual(correct_response.status_code, 200)
+
+        response = self.client.get(
+            f"/sessions/{session_id}/challenges/tiktok-creator-posts/summary"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["attempted_questions"], 1)
+        self.assertEqual(payload["correct_questions"], 1)
+        self.assertEqual(payload["remaining_questions"], 14)
+        self.assertEqual(payload["incorrect_questions"], 0)
+        self.assertEqual(payload["skipped_questions"], 14)
+        self.assertEqual(payload["total_attempts"], 2)
+        self.assertEqual(payload["completion_percent"], 7)
+
     def test_session_challenge_summary_rejects_unknown_challenge(self) -> None:
         response = self.client.get(
             "/sessions/endpoint-summary-session/challenges/unknown/summary"

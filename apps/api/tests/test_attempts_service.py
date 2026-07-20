@@ -372,17 +372,58 @@ class AttemptsServiceTests(unittest.TestCase):
             ],
         )
 
+    def test_summarize_session_challenge_counts_retried_question_once(self) -> None:
+        repo = FakeAttemptsRepository(
+            attempts=[
+                create_attempt_record("attempt-1", "Q1", is_correct=False),
+                create_attempt_record("attempt-2", "Q1", is_correct=True),
+                create_attempt_record("attempt-3", "Q2", is_correct=False),
+            ]
+        )
+        service = AttemptsService(
+            challenge_registry=FakeChallengeRegistry(question_count=3),
+            dataset_loader=None,
+            llm_service=None,
+            evaluator=None,
+            attempts_repo=repo,
+        )
+
+        summary = service.summarize_session_challenge(
+            "session-a",
+            "challenge-a",
+        )
+
+        self.assertEqual(summary["attempted_questions"], 2)
+        self.assertEqual(summary["correct_questions"], 1)
+        self.assertEqual(summary["remaining_questions"], 2)
+        self.assertEqual(summary["incorrect_questions"], 1)
+        self.assertEqual(summary["pending_questions"], 0)
+        self.assertEqual(summary["skipped_questions"], 1)
+        self.assertEqual(summary["total_attempts"], 3)
+        self.assertEqual(summary["completion_percent"], 33)
+        self.assertEqual(
+            repo.calls,
+            [
+                {
+                    "session_id": "session-a",
+                    "challenge_slug": "challenge-a",
+                    "limit": None,
+                }
+            ],
+        )
+
 
 class FakeAttemptsRepository:
-    def __init__(self) -> None:
+    def __init__(self, attempts: list[dict] | None = None) -> None:
         self.calls: list[dict] = []
+        self.attempts = attempts
 
     def list_attempts_for_session(
         self,
         session_id: str,
         *,
         challenge_slug: str | None = None,
-        limit: int = 100,
+        limit: int | None = 100,
     ):
         self.calls.append(
             {
@@ -391,7 +432,23 @@ class FakeAttemptsRepository:
                 "limit": limit,
             }
         )
-        return [{"id": "attempt-a"}]
+        return self.attempts if self.attempts is not None else [{"id": "attempt-a"}]
+
+
+class FakeChallengeRegistry:
+    def __init__(self, question_count: int) -> None:
+        self.challenge = FakeChallenge(question_count)
+
+    def get_challenge(self, challenge_slug: str):
+        self.challenge.challenge_slug = challenge_slug
+        return self.challenge
+
+
+class FakeChallenge:
+    def __init__(self, question_count: int) -> None:
+        self.challenge_slug = "challenge-a"
+        self.challenge_version = "v1"
+        self.questions = [object() for _ in range(question_count)]
 
 
 def create_service(attempts_repo=None) -> AttemptsService:
@@ -441,6 +498,21 @@ def create_question(
         display=QuestionDisplay(task_text="Fill each blank.", choices=choices or []),
         evaluation=evaluation,
     )
+
+
+def create_attempt_record(
+    attempt_id: str,
+    question_id: str,
+    *,
+    is_correct: bool | None,
+    status: str = "completed",
+) -> dict:
+    return {
+        "id": attempt_id,
+        "question_id": question_id,
+        "is_correct": is_correct,
+        "status": status,
+    }
 
 
 if __name__ == "__main__":
