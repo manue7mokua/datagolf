@@ -615,8 +615,43 @@ function QuestionShell({
         {progress?.lastAttempt ? (
           <AttemptFeedback progress={progress} />
         ) : null}
+
+        {progress && progress.attempts.length > 1 ? (
+          <AttemptHistory progress={progress} />
+        ) : null}
       </div>
     </article>
+  );
+}
+
+function AttemptHistory({ progress }: { progress: QuestionProgress }) {
+  return (
+    <section className="mt-4 border border-white/12 bg-black/20">
+      <div className="border-b border-white/12 px-3 py-3 text-[11px] uppercase tracking-[0.18em] text-[#8f8b80]">
+        Recent attempts
+      </div>
+      <ol className="divide-y divide-white/10">
+        {progress.attempts.map((attempt, index) => (
+          <li
+            key={attempt.id}
+            className="grid gap-2 px-3 py-2 text-[12px] text-[#c9c4b8] sm:grid-cols-[5rem_7rem_minmax(0,1fr)]"
+          >
+            <span className="font-mono text-[#8f8b80]">#{index + 1}</span>
+            <span
+              className={cn(
+                "uppercase tracking-[0.14em]",
+                attempt.is_correct ? "text-[#9be58a]" : "text-[#ffbd2e]",
+              )}
+            >
+              {attempt.is_correct ? "Correct" : "Retry"}
+            </span>
+            <span className="truncate font-mono text-[#8f8b80]">
+              {formatAttemptTimestamp(attempt.created_at)}
+            </span>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }
 
@@ -796,4 +831,18 @@ function formatPreviewCell(value: unknown) {
   }
 
   return String(value);
+}
+
+function formatAttemptTimestamp(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return date.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
 }

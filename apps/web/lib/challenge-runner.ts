@@ -17,6 +17,7 @@ export type QuestionProgress = {
   attemptCount: number;
   correctCount: number;
   lastAttempt: AttemptResponse | null;
+  attempts: AttemptResponse[];
 };
 
 export type ChallengeProgressSummary = {
@@ -125,11 +126,14 @@ export function applyAttemptToProgress(
   progress: QuestionProgress | undefined,
   attempt: AttemptResponse,
 ): QuestionProgress {
+  const attempts = [...(progress?.attempts ?? []), attempt].slice(-5);
+
   return {
     questionId: attempt.question_id,
     attemptCount: (progress?.attemptCount ?? 0) + 1,
     correctCount: (progress?.correctCount ?? 0) + (attempt.is_correct ? 1 : 0),
     lastAttempt: attempt,
+    attempts,
   };
 }
 
