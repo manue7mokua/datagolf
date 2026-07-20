@@ -253,6 +253,10 @@ export function getQuestionProgressStatusLabel(
   return "Open";
 }
 
+export function getQuestionPositionLabel(question: PublicQuestion, totalQuestions: number) {
+  return `Q${question.order} / ${totalQuestions}`;
+}
+
 export function getAttemptFeedbackLines(attempt: AttemptResponse): FeedbackLine[] {
   const payload = attempt.evaluation_payload;
   if (!payload) {

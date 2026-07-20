@@ -29,6 +29,7 @@ import {
   getCompletionPercent,
   getPreviousAttemptCount,
   getPreviousAttemptsNewestFirst,
+  getQuestionPositionLabel,
   getQuestionProgressStatus,
   getQuestionProgressStatusLabel,
   isAnswerDraftDirty,
@@ -399,6 +400,7 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
               {activeQuestion ? (
                 <QuestionShell
                   question={activeQuestion}
+                  totalQuestions={loadState.questions.length}
                   draft={activeDraft}
                   onDraftChange={updateActiveDraft}
                   progress={progressByQuestion[activeQuestion.id]}
@@ -563,6 +565,7 @@ function DatasetPreviewPanel({ preview }: { preview: DatasetPreview }) {
 
 function QuestionShell({
   question,
+  totalQuestions,
   draft,
   onDraftChange,
   progress,
@@ -577,6 +580,7 @@ function QuestionShell({
   onNext,
 }: {
   question: PublicQuestion;
+  totalQuestions: number;
   draft: RunnerAnswerDraft;
   onDraftChange: (draft: RunnerAnswerDraft) => void;
   progress: QuestionProgress | undefined;
@@ -595,12 +599,13 @@ function QuestionShell({
   const canRestoreDraft = Boolean(progress?.lastAttempt);
   const status = getQuestionProgressStatus(progress);
   const statusLabel = getQuestionProgressStatusLabel(status);
+  const positionLabel = getQuestionPositionLabel(question, totalQuestions);
 
   return (
     <article className="mx-auto max-w-4xl">
       <div className="flex flex-wrap items-center gap-2">
         <span className="border border-white/12 px-2 py-1 font-mono text-[11px] uppercase tracking-[0.16em] text-[#8f8b80]">
-          Q{question.order}
+          {positionLabel}
         </span>
         <span className="border border-white/12 px-2 py-1 text-[11px] uppercase tracking-[0.16em] text-[#8f8b80]">
           {question.type.replace("_", " ")}

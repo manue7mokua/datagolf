@@ -9,6 +9,7 @@ import {
   getCompletionPercent,
   getPreviousAttemptCount,
   getPreviousAttemptsNewestFirst,
+  getQuestionPositionLabel,
   getQuestionProgressStatusLabel,
   isAnswerDraftDirty,
   summarizeChallengeProgress,
@@ -57,6 +58,7 @@ assert.equal(getAnswerFormatLabel(null, "micro_code"), "micro code");
 assert.equal(getQuestionProgressStatusLabel("unattempted"), "Open");
 assert.equal(getQuestionProgressStatusLabel("incorrect"), "Retry");
 assert.equal(getQuestionProgressStatusLabel("correct"), "Done");
+assert.equal(getQuestionPositionLabel(questions[1], questions.length), "Q2 / 3");
 assert.equal(
   isAnswerDraftDirty({
     promptText: "",
