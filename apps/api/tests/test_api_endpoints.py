@@ -119,6 +119,22 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual(response.status_code, 422)
         self.assertIn("selected_option must be one of", response.json()["detail"])
 
+    def test_fill_blank_attempt_can_be_created(self) -> None:
+        response = self.client.post(
+            "/questions/Q9/attempts",
+            json={
+                "session_id": "endpoint-test-session",
+                "blanks": ["filter", "mean"],
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        created = response.json()
+        self.assertEqual(created["question_id"], "Q9")
+        self.assertEqual(created["status"], "completed")
+        self.assertTrue(created["is_correct"])
+        self.assertEqual(len(created["evaluation_payload"]["per_blank_results"]), 2)
+
     def test_fill_blank_attempt_rejects_wrong_blank_count(self) -> None:
         response = self.client.post(
             "/questions/Q9/attempts",
