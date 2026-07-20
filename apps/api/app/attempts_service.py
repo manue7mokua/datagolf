@@ -173,6 +173,11 @@ class AttemptsService:
             code_text = request.code_text.strip() if request.code_text else ""
             if not code_text:
                 raise ValueError("code_text is required for micro-code attempts")
+            if (
+                not question.evaluation.accepted_patterns
+                and not question.evaluation.accepted_regex
+            ):
+                raise ValueError("micro-code questions must define accepted answers")
             return {"code_text": code_text}
 
         raise ValueError(f"Unsupported question type: {question.type}")
