@@ -25,6 +25,7 @@ import {
   getQuestionProgressStatus,
   getQuestionProgressStatusLabel,
   getQuestionTypeLabel,
+  getSummaryAccuracyPercent,
   isAnswerDraftDirty,
   isQuestionAwaitingResult,
   isQuestionAnswerDraftSubmittable,
@@ -623,6 +624,38 @@ assert.equal(
     completionPercent: 100,
   }),
   "1 of 1 correct / 0 remaining / 0 incorrect / 0 skipped / 100% accuracy / 1 attempt",
+);
+assert.equal(
+  getSummaryAccuracyPercent({
+    totalQuestions: 3,
+    attemptedQuestions: 3,
+    correctQuestions: 3,
+    remainingQuestions: 0,
+    incorrectQuestions: 0,
+    pendingQuestions: 0,
+    skippedQuestions: 0,
+    retryQuestions: 0,
+    totalAttempts: 3,
+    accuracyPercent: 150,
+    completionPercent: 100,
+  }),
+  100,
+);
+assert.equal(
+  getChallengeProgressDetailText({
+    totalQuestions: 3,
+    attemptedQuestions: 0,
+    correctQuestions: 0,
+    remainingQuestions: 3,
+    incorrectQuestions: 0,
+    pendingQuestions: 0,
+    skippedQuestions: 3,
+    retryQuestions: 0,
+    totalAttempts: 0,
+    accuracyPercent: -20,
+    completionPercent: 0,
+  }),
+  "0 of 3 correct / 3 remaining / 0 incorrect / 3 skipped / 0% accuracy / 0 attempts",
 );
 assert.equal(
   getCompletionPercent(summarizeChallengeProgress(questions, progress)),

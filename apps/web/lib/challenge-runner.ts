@@ -280,6 +280,10 @@ export function getCompletionPercent(summary: ChallengeProgressSummary) {
   return Math.min(Math.max(summary.completionPercent, 0), 100);
 }
 
+export function getSummaryAccuracyPercent(summary: ChallengeProgressSummary) {
+  return Math.min(Math.max(summary.accuracyPercent, 0), 100);
+}
+
 function getCompletionPercentFromCounts(
   correctQuestions: number,
   totalQuestions: number,
@@ -310,7 +314,7 @@ export function getChallengeProgressDetailText(
     parts.push(getCountLabel(summary.retryQuestions, "retried", "retried"));
   }
 
-  parts.push(`${summary.accuracyPercent}% accuracy`);
+  parts.push(`${getSummaryAccuracyPercent(summary)}% accuracy`);
   parts.push(getCountLabel(summary.totalAttempts, "attempt", "attempts"));
 
   return parts.join(" / ");
