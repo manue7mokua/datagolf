@@ -155,6 +155,18 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
     }));
   }
 
+  function clearActiveDraft() {
+    if (!activeQuestion) {
+      return;
+    }
+
+    setDraftsByQuestion((currentDrafts) => ({
+      ...currentDrafts,
+      [activeQuestion.id]: createEmptyAnswerDraft(),
+    }));
+    setSubmitError(null);
+  }
+
   function selectQuestion(index: number) {
     if (loadState.status !== "ready") {
       return;
@@ -346,6 +358,7 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
                   submitError={submitError}
                   isSubmitting={submittingQuestionId === activeQuestion.id}
                   onSubmit={submitActiveAnswer}
+                  onClearDraft={clearActiveDraft}
                   canGoPrevious={activeQuestionIndex > 0}
                   canGoNext={activeQuestionIndex < loadState.questions.length - 1}
                   onPrevious={goToPreviousQuestion}
@@ -492,6 +505,7 @@ function QuestionShell({
   submitError,
   isSubmitting,
   onSubmit,
+  onClearDraft,
   canGoPrevious,
   canGoNext,
   onPrevious,
@@ -504,6 +518,7 @@ function QuestionShell({
   submitError: string | null;
   isSubmitting: boolean;
   onSubmit: () => void;
+  onClearDraft: () => void;
   canGoPrevious: boolean;
   canGoNext: boolean;
   onPrevious: () => void;
@@ -564,6 +579,13 @@ function QuestionShell({
             Attempts: {progress?.attemptCount ?? 0}
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <button
+              type="button"
+              onClick={onClearDraft}
+              className="h-10 border border-white/20 px-4 text-[12px] uppercase tracking-[0.18em] text-[#f2f1ea] transition-colors hover:bg-white/5"
+            >
+              Clear
+            </button>
             <button
               type="button"
               disabled={!canGoPrevious}
