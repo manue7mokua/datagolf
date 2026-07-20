@@ -779,7 +779,9 @@ function AttemptHistory({ progress }: { progress: QuestionProgress }) {
                   "uppercase tracking-[0.14em]",
                   attemptTone === "success"
                     ? "text-[#9be58a]"
-                    : "text-[#ffbd2e]",
+                    : attemptTone === "retry"
+                      ? "text-[#ffbd2e]"
+                      : "text-[#8f8b80]",
                 )}
               >
                 {getAttemptResultLabel(attempt)}
@@ -811,7 +813,11 @@ function AttemptFeedback({ progress }: { progress: QuestionProgress }) {
       <div
         className={cn(
           "border-b border-white/12 px-3 py-3 text-[12px] uppercase tracking-[0.18em]",
-          attemptTone === "success" ? "text-[#9be58a]" : "text-[#ffbd2e]",
+          attemptTone === "success"
+            ? "text-[#9be58a]"
+            : attemptTone === "retry"
+              ? "text-[#ffbd2e]"
+              : "text-[#8f8b80]",
         )}
       >
         {feedbackTitle}

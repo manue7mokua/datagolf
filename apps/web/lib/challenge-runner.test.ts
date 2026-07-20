@@ -104,13 +104,16 @@ assert.equal(getPreviousAttemptCount(applyAttemptToProgress(undefined, retryAtte
 assert.equal(getPreviousAttemptLabel(0), "Prev 1");
 assert.equal(getAttemptResultLabel(correctAttempt), "Correct");
 assert.equal(getAttemptResultLabel({ ...retryAttempt, is_correct: false }), "Retry");
+assert.equal(getAttemptResultLabel({ ...retryAttempt, is_correct: null }), "Pending");
 assert.equal(getAttemptFeedbackTitle(correctAttempt), "Correct");
 assert.equal(
   getAttemptFeedbackTitle({ ...retryAttempt, is_correct: false }),
   "Needs another pass",
 );
+assert.equal(getAttemptFeedbackTitle({ ...retryAttempt, is_correct: null }), "Pending");
 assert.equal(getAttemptTone(correctAttempt), "success");
 assert.equal(getAttemptTone({ ...retryAttempt, is_correct: false }), "retry");
+assert.equal(getAttemptTone({ ...retryAttempt, is_correct: null }), "pending");
 assert.equal(
   getPreviousAttemptCount(
     applyAttemptToProgress(

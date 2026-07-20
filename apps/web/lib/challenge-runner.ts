@@ -221,15 +221,27 @@ export function getPreviousAttemptLabel(index: number) {
 }
 
 export function getAttemptResultLabel(attempt: AttemptResponse) {
-  return attempt.is_correct ? "Correct" : "Retry";
+  if (attempt.is_correct === true) {
+    return "Correct";
+  }
+
+  return attempt.is_correct === false ? "Retry" : "Pending";
 }
 
 export function getAttemptFeedbackTitle(attempt: AttemptResponse) {
-  return attempt.is_correct ? "Correct" : "Needs another pass";
+  if (attempt.is_correct === true) {
+    return "Correct";
+  }
+
+  return attempt.is_correct === false ? "Needs another pass" : "Pending";
 }
 
 export function getAttemptTone(attempt: AttemptResponse) {
-  return attempt.is_correct ? "success" : "retry";
+  if (attempt.is_correct === true) {
+    return "success";
+  }
+
+  return attempt.is_correct === false ? "retry" : "pending";
 }
 
 export function buildProgressFromAttempts(attempts: AttemptResponse[]) {
