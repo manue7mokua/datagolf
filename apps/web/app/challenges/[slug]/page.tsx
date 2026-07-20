@@ -25,6 +25,7 @@ import {
   createEmptyAnswerDraft,
   findNextIncompleteQuestionIndex,
   getAnswerFormatLabel,
+  getAttemptResultLabel,
   getAttemptFeedbackLines,
   getCompletionPercent,
   getPreviousAttemptCount,
@@ -774,7 +775,7 @@ function AttemptHistory({ progress }: { progress: QuestionProgress }) {
                 attempt.is_correct ? "text-[#9be58a]" : "text-[#ffbd2e]",
               )}
             >
-              {attempt.is_correct ? "Correct" : "Retry"}
+              {getAttemptResultLabel(attempt)}
             </span>
             <span className="truncate font-mono text-[#8f8b80]">
               {formatAttemptTimestamp(attempt.created_at)}

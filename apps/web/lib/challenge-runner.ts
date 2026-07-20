@@ -220,6 +220,10 @@ export function getPreviousAttemptLabel(index: number) {
   return `Prev ${index + 1}`;
 }
 
+export function getAttemptResultLabel(attempt: AttemptResponse) {
+  return attempt.is_correct ? "Correct" : "Retry";
+}
+
 export function buildProgressFromAttempts(attempts: AttemptResponse[]) {
   return attempts.reduce<Record<string, QuestionProgress>>(
     (progressByQuestion, attempt) => ({

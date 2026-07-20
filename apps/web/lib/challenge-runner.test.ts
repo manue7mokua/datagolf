@@ -5,6 +5,7 @@ import {
   createAnswerDraftFromAttempt,
   findNextIncompleteQuestionIndex,
   getAnswerFormatLabel,
+  getAttemptResultLabel,
   getAttemptsNewestFirst,
   getCompletionPercent,
   getPreviousAttemptCount,
@@ -99,6 +100,8 @@ assert.deepEqual(
 );
 assert.equal(getPreviousAttemptCount(applyAttemptToProgress(undefined, retryAttempt)), 0);
 assert.equal(getPreviousAttemptLabel(0), "Prev 1");
+assert.equal(getAttemptResultLabel(correctAttempt), "Correct");
+assert.equal(getAttemptResultLabel({ ...retryAttempt, is_correct: false }), "Retry");
 assert.equal(
   getPreviousAttemptCount(
     applyAttemptToProgress(
