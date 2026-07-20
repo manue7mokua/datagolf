@@ -73,6 +73,22 @@ class ChallengeAssetTests(unittest.TestCase):
             self.assertIsInstance(evaluation["required_checks"], list)
             self.assertGreater(len(evaluation["required_checks"]), 0)
 
+    def test_micro_code_questions_define_accepted_answers(self) -> None:
+        micro_code_questions = [
+            question for question in self.spec["questions"] if question["type"] == "micro_code"
+        ]
+
+        for question in micro_code_questions:
+            evaluation = question["evaluation"]
+            accepted_patterns = evaluation.get("accepted_patterns", [])
+            accepted_regex = evaluation.get("accepted_regex", [])
+            accepted_answers = [*accepted_patterns, *accepted_regex]
+
+            self.assertTrue(
+                any(answer.strip() for answer in accepted_answers),
+                f"{question['id']} must define an accepted micro-code answer",
+            )
+
     def test_dataset_slug_resolves_to_challenge(self) -> None:
         challenge = self.registry.get_dataset_challenge("tiktok-posts")
 
