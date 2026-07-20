@@ -3,6 +3,7 @@ import type {
   AttemptResponse,
   PublicQuestion,
   QuestionType,
+  SessionChallengeSummary,
 } from "./datagolf-api";
 
 export type RunnerAnswerDraft = {
@@ -231,6 +232,21 @@ export function summarizeChallengeProgress(
     pendingQuestions,
     skippedQuestions: questions.length - attemptedQuestions,
     totalAttempts,
+  };
+}
+
+export function mapSessionChallengeSummary(
+  summary: SessionChallengeSummary,
+): ChallengeProgressSummary {
+  return {
+    totalQuestions: summary.total_questions,
+    attemptedQuestions: summary.attempted_questions,
+    correctQuestions: summary.correct_questions,
+    remainingQuestions: summary.remaining_questions,
+    incorrectQuestions: summary.incorrect_questions,
+    pendingQuestions: summary.pending_questions,
+    skippedQuestions: summary.skipped_questions,
+    totalAttempts: summary.total_attempts,
   };
 }
 

@@ -27,6 +27,7 @@ import {
   isAnswerDraftDirty,
   isQuestionAwaitingResult,
   isQuestionAnswerDraftSubmittable,
+  mapSessionChallengeSummary,
   normalizeFillBlankDrafts,
   summarizeChallengeProgress,
 } from "./challenge-runner";
@@ -531,6 +532,32 @@ assert.deepEqual(summarizeChallengeProgress(questions, progress), {
   skippedQuestions: 0,
   totalAttempts: 3,
 });
+assert.deepEqual(
+  mapSessionChallengeSummary({
+    session_id: "session-1",
+    challenge_slug: "tiktok-creator-posts",
+    challenge_version: "v1",
+    total_questions: 15,
+    attempted_questions: 4,
+    correct_questions: 2,
+    remaining_questions: 13,
+    incorrect_questions: 1,
+    pending_questions: 1,
+    skipped_questions: 11,
+    total_attempts: 6,
+    completion_percent: 13,
+  }),
+  {
+    totalQuestions: 15,
+    attemptedQuestions: 4,
+    correctQuestions: 2,
+    remainingQuestions: 13,
+    incorrectQuestions: 1,
+    pendingQuestions: 1,
+    skippedQuestions: 11,
+    totalAttempts: 6,
+  },
+);
 assert.equal(
   getCompletionPercent(summarizeChallengeProgress(questions, progress)),
   33,

@@ -10,6 +10,7 @@ import {
   getChallenge,
   getChallengeQuestions,
   getDatasetPreview,
+  getSessionChallengeSummary,
   listSessionAttempts,
   type PublicQuestion,
 } from "../../../lib/datagolf-api";
@@ -21,6 +22,7 @@ import {
   applyAttemptToProgress,
   buildProgressFromAttempts,
   buildAttemptPayload,
+  type ChallengeProgressSummary,
   createAnswerDraftFromAttempt,
   createEmptyAnswerDraft,
   findNextIncompleteQuestionIndex,
@@ -43,6 +45,7 @@ import {
   isAnswerDraftDirty,
   isQuestionAwaitingResult,
   isQuestionAnswerDraftSubmittable,
+  mapSessionChallengeSummary,
   normalizeFillBlankDrafts,
   type QuestionProgress,
   type RunnerAnswerDraft,
@@ -77,6 +80,8 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
   const [progressByQuestion, setProgressByQuestion] = useState<
     Record<string, QuestionProgress>
   >({});
+  const [progressSummaryOverride, setProgressSummaryOverride] =
+    useState<ChallengeProgressSummary | null>(null);
   const [submittingQuestionId, setSubmittingQuestionId] = useState<string | null>(
     null,
   );
@@ -118,12 +123,15 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
           getChallenge(challengeSlug),
           getChallengeQuestions(challengeSlug),
         ]);
-        const [datasetPreview, sessionAttempts] = await Promise.all([
+        const [datasetPreview, sessionAttempts, sessionSummary] = await Promise.all([
           getDatasetPreview(challenge.dataset.slug, 8),
           listSessionAttempts(sessionId, challenge.challenge_slug, 100),
+          getSessionChallengeSummary(sessionId, challenge.challenge_slug),
         ]);
 
         if (mounted) {
+          const progress = buildProgressFromAttempts(sessionAttempts);
+
           setLoadState({
             status: "ready",
             challenge,
@@ -131,7 +139,8 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
             questions,
             sessionId,
           });
-          setProgressByQuestion(buildProgressFromAttempts(sessionAttempts));
+          setProgressByQuestion(progress);
+          setProgressSummaryOverride(mapSessionChallengeSummary(sessionSummary));
           setActiveQuestionIndex(0);
           setSubmitError(null);
         }
@@ -244,6 +253,7 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
 
     setDraftsByQuestion({});
     setProgressByQuestion({});
+    setProgressSummaryOverride(null);
     setSubmitError(null);
     setActiveQuestionIndex(0);
     setReloadNonce((current) => current + 1);
@@ -270,13 +280,28 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
         buildAttemptPayload(activeQuestion, loadState.sessionId, activeDraft),
       );
 
-      setProgressByQuestion((currentProgress) => ({
-        ...currentProgress,
-        [activeQuestion.id]: applyAttemptToProgress(
-          currentProgress[activeQuestion.id],
-          attempt,
-        ),
-      }));
+      setProgressByQuestion((currentProgress) => {
+        const nextProgress = {
+          ...currentProgress,
+          [activeQuestion.id]: applyAttemptToProgress(
+            currentProgress[activeQuestion.id],
+            attempt,
+          ),
+        };
+        setProgressSummaryOverride(
+          summarizeChallengeProgress(loadState.questions, nextProgress),
+        );
+        return nextProgress;
+      });
+
+      getSessionChallengeSummary(
+        loadState.sessionId,
+        loadState.challenge.challenge_slug,
+      )
+        .then((summary) => {
+          setProgressSummaryOverride(mapSessionChallengeSummary(summary));
+        })
+        .catch(() => undefined);
 
       if (attempt.is_correct) {
         goToNextQuestion();
@@ -295,8 +320,11 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
       return null;
     }
 
-    return summarizeChallengeProgress(loadState.questions, progressByQuestion);
-  }, [loadState, progressByQuestion]);
+    return (
+      progressSummaryOverride ??
+      summarizeChallengeProgress(loadState.questions, progressByQuestion)
+    );
+  }, [loadState, progressByQuestion, progressSummaryOverride]);
 
   const nextIncompleteQuestionIndex = useMemo(() => {
     if (loadState.status !== "ready") {
@@ -452,7 +480,7 @@ function ChallengeSummaryPanel({
   canGoNextOpen,
   onNextOpen,
 }: {
-  summary: NonNullable<ReturnType<typeof summarizeChallengeProgress>>;
+  summary: ChallengeProgressSummary;
   canGoNextOpen: boolean;
   onNextOpen: () => void;
 }) {
