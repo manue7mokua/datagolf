@@ -126,6 +126,19 @@ export function isQuestionAnswerDraftSubmittable(
   return isAnswerDraftSubmittable(question.type, draft);
 }
 
+export function isQuestionAwaitingResult(
+  progress: QuestionProgress | undefined,
+) {
+  if (!progress) {
+    return false;
+  }
+
+  return (
+    progress.correctCount === 0 &&
+    progress.lastAttempt?.status === "pending"
+  );
+}
+
 export function getAnswerDraftGuidance(
   question: PublicQuestion,
   draft: RunnerAnswerDraft,

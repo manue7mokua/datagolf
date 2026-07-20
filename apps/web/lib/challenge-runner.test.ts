@@ -25,6 +25,7 @@ import {
   getQuestionProgressStatusLabel,
   getQuestionTypeLabel,
   isAnswerDraftDirty,
+  isQuestionAwaitingResult,
   isQuestionAnswerDraftSubmittable,
   normalizeFillBlankDrafts,
   summarizeChallengeProgress,
@@ -114,14 +115,33 @@ assert.equal(
   "pending",
 );
 assert.equal(
+  isQuestionAwaitingResult(applyAttemptToProgress(undefined, pendingAttempt)),
+  true,
+);
+assert.equal(
   getQuestionProgressStatus(
     applyAttemptToProgress(undefined, { ...retryAttempt, is_correct: false }),
   ),
   "incorrect",
 );
 assert.equal(
+  isQuestionAwaitingResult(
+    applyAttemptToProgress(undefined, { ...retryAttempt, is_correct: false }),
+  ),
+  false,
+);
+assert.equal(
   getQuestionProgressStatus(applyAttemptToProgress(undefined, correctAttempt)),
   "correct",
+);
+assert.equal(
+  isQuestionAwaitingResult(
+    applyAttemptToProgress(
+      applyAttemptToProgress(undefined, correctAttempt),
+      pendingAttempt,
+    ),
+  ),
+  false,
 );
 assert.equal(getQuestionPositionLabel(questions[1], questions.length), "Q2 / 3");
 assert.equal(getQuestionTypeLabel("guided_prompt"), "guided prompt");

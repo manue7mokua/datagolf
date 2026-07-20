@@ -41,6 +41,7 @@ import {
   getQuestionProgressStatusLabel,
   getQuestionTypeLabel,
   isAnswerDraftDirty,
+  isQuestionAwaitingResult,
   isQuestionAnswerDraftSubmittable,
   normalizeFillBlankDrafts,
   type QuestionProgress,
@@ -161,6 +162,9 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
   const activeDraft = activeQuestion
     ? draftsByQuestion[activeQuestion.id] ?? createEmptyAnswerDraft()
     : createEmptyAnswerDraft();
+  const activeProgress = activeQuestion
+    ? progressByQuestion[activeQuestion.id]
+    : undefined;
 
   function updateActiveDraft(nextDraft: RunnerAnswerDraft) {
     if (!activeQuestion) {
@@ -247,6 +251,13 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
 
   async function submitActiveAnswer() {
     if (loadState.status !== "ready" || !activeQuestion) {
+      return;
+    }
+
+    if (
+      !isQuestionAnswerDraftSubmittable(activeQuestion, activeDraft) ||
+      isQuestionAwaitingResult(activeProgress)
+    ) {
       return;
     }
 
@@ -414,7 +425,7 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
                   totalQuestions={loadState.questions.length}
                   draft={activeDraft}
                   onDraftChange={updateActiveDraft}
-                  progress={progressByQuestion[activeQuestion.id]}
+                  progress={activeProgress}
                   submitError={submitError}
                   isSubmitting={submittingQuestionId === activeQuestion.id}
                   onSubmit={submitActiveAnswer}
@@ -609,7 +620,9 @@ function QuestionShell({
   onPrevious: () => void;
   onNext: () => void;
 }) {
-  const canSubmit = isQuestionAnswerDraftSubmittable(question, draft);
+  const isAwaitingResult = isQuestionAwaitingResult(progress);
+  const canSubmit =
+    isQuestionAnswerDraftSubmittable(question, draft) && !isAwaitingResult;
   const canClearDraft = isAnswerDraftDirty(draft);
   const canRestoreDraft = Boolean(progress?.lastAttempt);
   const status = getQuestionProgressStatus(progress);
@@ -747,7 +760,11 @@ function QuestionShell({
                   : "cursor-not-allowed border-white/12 text-[#686257]",
               )}
             >
-              {isSubmitting ? "Checking" : "Check Answer"}
+              {isSubmitting
+                ? "Checking"
+                : isAwaitingResult
+                  ? "Pending"
+                  : "Check Answer"}
             </button>
           </div>
         </div>
