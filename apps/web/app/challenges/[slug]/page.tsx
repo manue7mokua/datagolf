@@ -13,7 +13,10 @@ import {
   listSessionAttempts,
   type PublicQuestion,
 } from "../../../lib/datagolf-api";
-import { getAnonymousSessionId } from "../../../lib/anonymous-session";
+import {
+  getAnonymousSessionId,
+  resetAnonymousSessionId,
+} from "../../../lib/anonymous-session";
 import {
   applyAttemptToProgress,
   buildProgressFromAttempts,
@@ -59,6 +62,7 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
     null,
   );
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [reloadNonce, setReloadNonce] = useState(0);
 
   useEffect(() => {
     let mounted = true;
@@ -130,7 +134,7 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
     return () => {
       mounted = false;
     };
-  }, [slug]);
+  }, [slug, reloadNonce]);
 
   const activeQuestion =
     loadState.status === "ready"
@@ -170,6 +174,20 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
 
   function goToNextQuestion() {
     selectQuestion(activeQuestionIndex + 1);
+  }
+
+  function resetRunnerSession() {
+    const sessionId = resetAnonymousSessionId();
+    if (!sessionId) {
+      setSubmitError("Could not reset this session.");
+      return;
+    }
+
+    setDraftsByQuestion({});
+    setProgressByQuestion({});
+    setSubmitError(null);
+    setActiveQuestionIndex(0);
+    setReloadNonce((current) => current + 1);
   }
 
   async function submitActiveAnswer() {
@@ -258,6 +276,13 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
                 <div className="mt-2 truncate font-mono text-[12px] text-[#c9c4b8]">
                   {loadState.sessionId}
                 </div>
+                <button
+                  type="button"
+                  onClick={resetRunnerSession}
+                  className="mt-3 h-8 border border-white/12 px-3 text-[10px] uppercase tracking-[0.18em] text-[#8f8b80] transition-colors hover:border-[#ffbd2e] hover:text-[#f2f1ea]"
+                >
+                  New session
+                </button>
               </div>
 
               <DatasetPreviewPanel preview={loadState.datasetPreview} />
