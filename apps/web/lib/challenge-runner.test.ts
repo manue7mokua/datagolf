@@ -56,6 +56,7 @@ assert.equal(getAnswerFormatLabel("single_choice", "multiple_choice"), "Single c
 assert.equal(getAnswerFormatLabel("blanks", "fill_blank"), "Fill each blank");
 assert.equal(getAnswerFormatLabel("prompt", "guided_prompt"), "Plain-language prompt");
 assert.equal(getAnswerFormatLabel(null, "micro_code"), "micro code");
+assert.equal(getAnswerFormatLabel("unknown", "guided_prompt"), "guided prompt");
 assert.equal(getQuestionProgressStatusLabel("unattempted"), "Open");
 assert.equal(getQuestionProgressStatusLabel("incorrect"), "Retry");
 assert.equal(getQuestionProgressStatusLabel("correct"), "Done");

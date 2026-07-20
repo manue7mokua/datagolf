@@ -130,7 +130,7 @@ export function getAnswerFormatLabel(
     return "Plain-language prompt";
   }
 
-  return questionType.replace("_", " ");
+  return getQuestionTypeLabel(questionType);
 }
 
 export function summarizeChallengeProgress(
