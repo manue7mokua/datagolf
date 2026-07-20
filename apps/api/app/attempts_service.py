@@ -145,9 +145,10 @@ class AttemptsService:
 
         if question.type == "fill_blank":
             blanks = request.blanks or []
-            if not blanks:
+            trimmed_blanks = [blank.strip() for blank in blanks]
+            if not trimmed_blanks or any(not blank for blank in trimmed_blanks):
                 raise ValueError("blanks is required for fill-in-the-blank attempts")
-            return {"blanks": blanks}
+            return {"blanks": trimmed_blanks}
 
         if question.type == "micro_code":
             if not request.code_text or not request.code_text.strip():

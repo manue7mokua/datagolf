@@ -10,9 +10,50 @@ API_ROOT = REPO_ROOT / "apps" / "api"
 sys.path.insert(0, str(API_ROOT))
 
 from app.attempts_service import AttemptsService
+from app.schemas import AttemptCreateRequest, QuestionDisplay, QuestionSpec
 
 
 class AttemptsServiceTests(unittest.TestCase):
+    def test_validate_fill_blank_trims_values(self) -> None:
+        service = AttemptsService(
+            challenge_registry=None,
+            dataset_loader=None,
+            llm_service=None,
+            evaluator=None,
+            attempts_repo=FakeAttemptsRepository(),
+        )
+
+        payload = service._validate_request(
+            create_fill_blank_question(),
+            AttemptCreateRequest(
+                session_id="session-a",
+                blanks=[" views ", " likes"],
+            ),
+        )
+
+        self.assertEqual(payload, {"blanks": ["views", "likes"]})
+
+    def test_validate_fill_blank_rejects_empty_values(self) -> None:
+        service = AttemptsService(
+            challenge_registry=None,
+            dataset_loader=None,
+            llm_service=None,
+            evaluator=None,
+            attempts_repo=FakeAttemptsRepository(),
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "blanks is required for fill-in-the-blank attempts",
+        ):
+            service._validate_request(
+                create_fill_blank_question(),
+                AttemptCreateRequest(
+                    session_id="session-a",
+                    blanks=["views", " "],
+                ),
+            )
+
     def test_list_attempts_for_session_delegates_filter_and_limit(self) -> None:
         repo = FakeAttemptsRepository()
         service = AttemptsService(
@@ -61,6 +102,20 @@ class FakeAttemptsRepository:
             }
         )
         return [{"id": "attempt-a"}]
+
+
+def create_fill_blank_question() -> QuestionSpec:
+    return QuestionSpec(
+        id="Q-fill",
+        order=1,
+        type="fill_blank",
+        title="Fill blanks",
+        display=QuestionDisplay(task_text="Fill each blank."),
+        evaluation={
+            "kind": "fill_blank",
+            "accepted_answers": [["views"], ["likes"]],
+        },
+    )
 
 
 if __name__ == "__main__":
