@@ -34,6 +34,21 @@ pnpm dev
 
 The web workspace lives in `apps/web`.
 
+## Testing
+
+Run the current reliable project gates from the repo root:
+
+```bash
+pnpm test
+```
+
+This runs:
+
+- `pnpm test:api`: Python unit tests for challenge assets, evaluator behavior, repositories, and services.
+- `pnpm test:web:runner`: a focused TypeScript check for the interactive challenge runner and its support modules.
+
+FastAPI endpoint tests are included in the API suite. They run when the active Python environment has `apps/api/requirements.txt` installed; otherwise they are skipped with an explicit dependency message.
+
 ## API
 
 Create a Python environment, install the API requirements, and run FastAPI from the repo root:
