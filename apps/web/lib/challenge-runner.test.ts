@@ -5,6 +5,7 @@ import {
   createAnswerDraftFromAttempt,
   findNextIncompleteQuestionIndex,
   getAnswerFormatLabel,
+  getAttemptFeedbackTitle,
   getAttemptResultLabel,
   getAttemptsNewestFirst,
   getCompletionPercent,
@@ -102,6 +103,11 @@ assert.equal(getPreviousAttemptCount(applyAttemptToProgress(undefined, retryAtte
 assert.equal(getPreviousAttemptLabel(0), "Prev 1");
 assert.equal(getAttemptResultLabel(correctAttempt), "Correct");
 assert.equal(getAttemptResultLabel({ ...retryAttempt, is_correct: false }), "Retry");
+assert.equal(getAttemptFeedbackTitle(correctAttempt), "Correct");
+assert.equal(
+  getAttemptFeedbackTitle({ ...retryAttempt, is_correct: false }),
+  "Needs another pass",
+);
 assert.equal(
   getPreviousAttemptCount(
     applyAttemptToProgress(

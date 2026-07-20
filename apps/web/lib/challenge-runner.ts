@@ -224,6 +224,10 @@ export function getAttemptResultLabel(attempt: AttemptResponse) {
   return attempt.is_correct ? "Correct" : "Retry";
 }
 
+export function getAttemptFeedbackTitle(attempt: AttemptResponse) {
+  return attempt.is_correct ? "Correct" : "Needs another pass";
+}
+
 export function buildProgressFromAttempts(attempts: AttemptResponse[]) {
   return attempts.reduce<Record<string, QuestionProgress>>(
     (progressByQuestion, attempt) => ({

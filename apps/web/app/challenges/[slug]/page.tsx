@@ -25,6 +25,7 @@ import {
   createEmptyAnswerDraft,
   findNextIncompleteQuestionIndex,
   getAnswerFormatLabel,
+  getAttemptFeedbackTitle,
   getAttemptResultLabel,
   getAttemptFeedbackLines,
   getCompletionPercent,
@@ -795,6 +796,7 @@ function AttemptFeedback({ progress }: { progress: QuestionProgress }) {
   }
 
   const feedbackLines = getAttemptFeedbackLines(attempt);
+  const feedbackTitle = getAttemptFeedbackTitle(attempt);
 
   return (
     <section className="mt-4 border border-white/12 bg-black/30">
@@ -804,7 +806,7 @@ function AttemptFeedback({ progress }: { progress: QuestionProgress }) {
           attempt.is_correct ? "text-[#9be58a]" : "text-[#ffbd2e]",
         )}
       >
-        {attempt.is_correct ? "Correct" : "Needs another pass"}
+        {feedbackTitle}
       </div>
 
       {feedbackLines.length > 0 ? (
