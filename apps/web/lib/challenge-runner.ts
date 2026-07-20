@@ -466,17 +466,24 @@ export function getAttemptFeedbackLines(attempt: AttemptResponse): FeedbackLine[
   }
 
   if (attempt.question_type === "micro_code") {
+    const acceptedPatterns = getPayloadArray(payload.accepted_patterns);
     const regexMatches = getPayloadArray(payload.regex_matches);
-    return [
+    const feedbackLines: FeedbackLine[] = [
       {
         label: "Submitted",
         value: formatPayloadValue(payload.normalized_submission),
         passed: attempt.is_correct ?? undefined,
       },
-      {
+    ];
+
+    if (acceptedPatterns.length > 0) {
+      feedbackLines.push({
         label: "Accepted",
-        value: formatPayloadValue(payload.accepted_patterns),
-      },
+        value: formatPayloadValue(acceptedPatterns),
+      });
+    }
+
+    feedbackLines.push(
       ...regexMatches.map((match, index) => {
         const matchRecord = getPayloadRecord(match);
         return {
@@ -488,7 +495,9 @@ export function getAttemptFeedbackLines(attempt: AttemptResponse): FeedbackLine[
               : undefined,
         };
       }),
-    ];
+    );
+
+    return feedbackLines;
   }
 
   return [];

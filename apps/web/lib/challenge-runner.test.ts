@@ -370,10 +370,6 @@ assert.deepEqual(
       passed: true,
     },
     {
-      label: "Accepted",
-      value: "",
-    },
-    {
       label: "Regex 1",
       value: "engagement_rate=\\(.+\\)/views",
       passed: true,
@@ -382,6 +378,29 @@ assert.deepEqual(
       label: "Regex 2",
       value: "mutate\\(",
       passed: false,
+    },
+  ],
+);
+assert.deepEqual(
+  getAttemptFeedbackLines({
+    ...retryAttempt,
+    question_type: "micro_code",
+    evaluation_payload: {
+      normalized_submission: "select(post_id)",
+      accepted_patterns: ["select(post_id)"],
+      accepted_regex: [],
+    },
+    is_correct: true,
+  }),
+  [
+    {
+      label: "Submitted",
+      value: "select(post_id)",
+      passed: true,
+    },
+    {
+      label: "Accepted",
+      value: "select(post_id)",
     },
   ],
 );
