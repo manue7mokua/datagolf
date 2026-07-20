@@ -115,6 +115,19 @@ export class DatagolfApiError extends Error {
   }
 }
 
+export function getDatagolfApiErrorMessage(status: number, payload: unknown) {
+  const detail =
+    payload && typeof payload === "object" && "detail" in payload
+      ? (payload as { detail?: unknown }).detail
+      : null;
+
+  if (typeof detail === "string" && detail.trim()) {
+    return detail.trim();
+  }
+
+  return `Datagolf API request failed with ${status}`;
+}
+
 export function getDatagolfApiBaseUrl() {
   return (
     process.env.NEXT_PUBLIC_DATAGOLF_API_URL?.replace(/\/$/, "") ??
@@ -185,7 +198,7 @@ async function requestJson<T>(
 
   if (!response.ok) {
     throw new DatagolfApiError(
-      `Datagolf API request failed with ${response.status}`,
+      getDatagolfApiErrorMessage(response.status, payload),
       response.status,
       payload,
     );
