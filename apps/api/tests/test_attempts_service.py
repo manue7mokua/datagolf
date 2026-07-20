@@ -101,6 +101,33 @@ class AttemptsServiceTests(unittest.TestCase):
                 ),
             )
 
+    def test_validate_fill_blank_rejects_wrong_blank_count(self) -> None:
+        service = create_service()
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "expected 2 blanks for fill-in-the-blank attempts",
+        ):
+            service._validate_request(
+                create_fill_blank_question(),
+                AttemptCreateRequest(
+                    session_id="session-a",
+                    blanks=["views"],
+                ),
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "expected 2 blanks for fill-in-the-blank attempts",
+        ):
+            service._validate_request(
+                create_fill_blank_question(),
+                AttemptCreateRequest(
+                    session_id="session-a",
+                    blanks=["views", "likes", "shares"],
+                ),
+            )
+
     def test_list_attempts_for_session_delegates_filter_and_limit(self) -> None:
         repo = FakeAttemptsRepository()
         service = AttemptsService(

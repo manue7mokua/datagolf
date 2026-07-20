@@ -152,6 +152,11 @@ class AttemptsService:
             trimmed_blanks = [blank.strip() for blank in blanks]
             if not trimmed_blanks or any(not blank for blank in trimmed_blanks):
                 raise ValueError("blanks is required for fill-in-the-blank attempts")
+            expected_blank_count = len(question.evaluation.accepted_answers)
+            if len(trimmed_blanks) != expected_blank_count:
+                raise ValueError(
+                    f"expected {expected_blank_count} blanks for fill-in-the-blank attempts"
+                )
             return {"blanks": trimmed_blanks}
 
         if question.type == "micro_code":
