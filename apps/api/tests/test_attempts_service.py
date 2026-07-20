@@ -97,6 +97,53 @@ class AttemptsServiceTests(unittest.TestCase):
                 ),
             )
 
+    def test_validate_multiple_choice_requires_unique_non_empty_choice_ids(self) -> None:
+        service = create_service()
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "multiple choice choices must define unique non-empty ids",
+        ):
+            service._validate_request(
+                create_question(
+                    question_type="multiple_choice",
+                    evaluation={
+                        "kind": "multiple_choice",
+                        "correct_option": "B",
+                    },
+                    choices=[
+                        {"id": "A", "text": "First"},
+                        {"id": "a", "text": "Duplicate"},
+                    ],
+                ),
+                AttemptCreateRequest(
+                    session_id="session-a",
+                    selected_option="A",
+                ),
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "multiple choice choices must define unique non-empty ids",
+        ):
+            service._validate_request(
+                create_question(
+                    question_type="multiple_choice",
+                    evaluation={
+                        "kind": "multiple_choice",
+                        "correct_option": "B",
+                    },
+                    choices=[
+                        {"id": " ", "text": "Blank"},
+                        {"id": "B", "text": "Second"},
+                    ],
+                ),
+                AttemptCreateRequest(
+                    session_id="session-a",
+                    selected_option="B",
+                ),
+            )
+
     def test_validate_multiple_choice_requires_correct_option_in_choices(self) -> None:
         service = create_service()
 

@@ -146,8 +146,14 @@ class AttemptsService:
             )
             if not selected_option:
                 raise ValueError("selected_option is required for multiple choice attempts")
+            choice_ids = [choice.id.strip() for choice in question.display.choices]
+            normalized_choice_ids = [choice_id.lower() for choice_id in choice_ids]
+            if any(not choice_id for choice_id in choice_ids) or len(
+                normalized_choice_ids
+            ) != len(set(normalized_choice_ids)):
+                raise ValueError("multiple choice choices must define unique non-empty ids")
             choice_id_by_normalized = {
-                choice.id.strip().lower(): choice.id for choice in question.display.choices
+                choice_id.lower(): choice_id for choice_id in choice_ids
             }
             if not choice_id_by_normalized:
                 raise ValueError("multiple choice questions must define choices")
