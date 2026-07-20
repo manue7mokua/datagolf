@@ -196,6 +196,10 @@ export function applyAttemptToProgress(
   };
 }
 
+export function getAttemptsNewestFirst(attempts: AttemptResponse[]) {
+  return [...attempts].reverse();
+}
+
 export function buildProgressFromAttempts(attempts: AttemptResponse[]) {
   return attempts.reduce<Record<string, QuestionProgress>>(
     (progressByQuestion, attempt) => ({

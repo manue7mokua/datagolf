@@ -5,6 +5,7 @@ import {
   createAnswerDraftFromAttempt,
   findNextIncompleteQuestionIndex,
   getAnswerFormatLabel,
+  getAttemptsNewestFirst,
   getQuestionProgressStatusLabel,
   isAnswerDraftDirty,
   summarizeChallengeProgress,
@@ -22,6 +23,9 @@ const correctAttempt = createAttempt("attempt-1", "Q1", {
 });
 const retryAttempt = createAttempt("attempt-2", "Q2", {
   blanks: ["views", "likes"],
+});
+const thirdAttempt = createAttempt("attempt-3", "Q2", {
+  blanks: ["shares", "saves"],
 });
 
 const progress = {
@@ -67,6 +71,12 @@ assert.equal(
     codeText: "",
   }),
   true,
+);
+assert.deepEqual(
+  getAttemptsNewestFirst([correctAttempt, retryAttempt, thirdAttempt]).map(
+    (attempt) => attempt.id,
+  ),
+  ["attempt-3", "attempt-2", "attempt-1"],
 );
 assert.deepEqual(summarizeChallengeProgress(questions, progress), {
   totalQuestions: 3,

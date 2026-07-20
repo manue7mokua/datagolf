@@ -25,6 +25,7 @@ import {
   createEmptyAnswerDraft,
   findNextIncompleteQuestionIndex,
   getAnswerFormatLabel,
+  getAttemptsNewestFirst,
   getAttemptFeedbackLines,
   getQuestionProgressStatus,
   getQuestionProgressStatusLabel,
@@ -743,18 +744,22 @@ function QuestionShell({
 }
 
 function AttemptHistory({ progress }: { progress: QuestionProgress }) {
+  const attempts = getAttemptsNewestFirst(progress.attempts);
+
   return (
     <section className="mt-4 border border-white/12 bg-black/20">
       <div className="border-b border-white/12 px-3 py-3 text-[11px] uppercase tracking-[0.18em] text-[#8f8b80]">
         Recent attempts
       </div>
       <ol className="divide-y divide-white/10">
-        {progress.attempts.map((attempt, index) => (
+        {attempts.map((attempt, index) => (
           <li
             key={attempt.id}
             className="grid gap-2 px-3 py-2 text-[12px] text-[#c9c4b8] sm:grid-cols-[5rem_7rem_minmax(0,1fr)]"
           >
-            <span className="font-mono text-[#8f8b80]">#{index + 1}</span>
+            <span className="font-mono text-[#8f8b80]">
+              {index === 0 ? "Latest" : `-${index}`}
+            </span>
             <span
               className={cn(
                 "uppercase tracking-[0.14em]",
