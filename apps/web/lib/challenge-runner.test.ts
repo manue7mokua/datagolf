@@ -342,6 +342,49 @@ assert.deepEqual(
     },
   ],
 );
+assert.deepEqual(
+  getAttemptFeedbackLines({
+    ...retryAttempt,
+    question_type: "micro_code",
+    evaluation_payload: {
+      normalized_submission: "engagement_rate=(likes+comments+shares)/views",
+      accepted_patterns: [],
+      accepted_regex: ["engagement_rate=\\(.+\\)/views", "mutate\\("],
+      regex_matches: [
+        {
+          pattern: "engagement_rate=\\(.+\\)/views",
+          passed: true,
+        },
+        {
+          pattern: "mutate\\(",
+          passed: false,
+        },
+      ],
+    },
+    is_correct: true,
+  }),
+  [
+    {
+      label: "Submitted",
+      value: "engagement_rate=(likes+comments+shares)/views",
+      passed: true,
+    },
+    {
+      label: "Accepted",
+      value: "",
+    },
+    {
+      label: "Regex 1",
+      value: "engagement_rate=\\(.+\\)/views",
+      passed: true,
+    },
+    {
+      label: "Regex 2",
+      value: "mutate\\(",
+      passed: false,
+    },
+  ],
+);
 assert.equal(
   getPreviousAttemptCount(
     applyAttemptToProgress(

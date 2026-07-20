@@ -466,6 +466,7 @@ export function getAttemptFeedbackLines(attempt: AttemptResponse): FeedbackLine[
   }
 
   if (attempt.question_type === "micro_code") {
+    const regexMatches = getPayloadArray(payload.regex_matches);
     return [
       {
         label: "Submitted",
@@ -476,6 +477,17 @@ export function getAttemptFeedbackLines(attempt: AttemptResponse): FeedbackLine[
         label: "Accepted",
         value: formatPayloadValue(payload.accepted_patterns),
       },
+      ...regexMatches.map((match, index) => {
+        const matchRecord = getPayloadRecord(match);
+        return {
+          label: `Regex ${index + 1}`,
+          value: formatPayloadValue(matchRecord.pattern),
+          passed:
+            typeof matchRecord.passed === "boolean"
+              ? matchRecord.passed
+              : undefined,
+        };
+      }),
     ];
   }
 
