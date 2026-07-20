@@ -163,6 +163,28 @@ export function getAnswerDraftGuidance(
   return missingCount === 1 ? "1 blank left" : `${missingCount} blanks left`;
 }
 
+export function getSubmitAnswerLabel({
+  question,
+  draft,
+  isAwaitingResult,
+  isSubmitting,
+}: {
+  question: PublicQuestion;
+  draft: RunnerAnswerDraft;
+  isAwaitingResult: boolean;
+  isSubmitting: boolean;
+}) {
+  if (isSubmitting) {
+    return "Checking";
+  }
+
+  if (isAwaitingResult) {
+    return "Pending";
+  }
+
+  return getAnswerDraftGuidance(question, draft) ?? "Check Answer";
+}
+
 export function isAnswerDraftDirty(draft: RunnerAnswerDraft) {
   return (
     draft.promptText.trim().length > 0 ||

@@ -44,6 +44,7 @@ import {
   getQuestionProgressStatus,
   getQuestionProgressStatusLabel,
   getQuestionTypeLabel,
+  getSubmitAnswerLabel,
   isAnswerDraftDirty,
   isChallengeComplete,
   isQuestionAwaitingResult,
@@ -658,6 +659,12 @@ function QuestionShell({
   const status = getQuestionProgressStatus(progress);
   const statusLabel = getQuestionProgressStatusLabel(status);
   const answerGuidance = getAnswerDraftGuidance(question, draft);
+  const submitAnswerLabel = getSubmitAnswerLabel({
+    question,
+    draft,
+    isAwaitingResult,
+    isSubmitting,
+  });
   const positionLabel = getQuestionPositionLabel(question, totalQuestions);
   const questionTypeLabel = getQuestionTypeLabel(question.type);
 
@@ -790,11 +797,7 @@ function QuestionShell({
                   : "cursor-not-allowed border-white/12 text-[#686257]",
               )}
             >
-              {isSubmitting
-                ? "Checking"
-                : isAwaitingResult
-                  ? "Pending"
-                  : "Check Answer"}
+              {submitAnswerLabel}
             </button>
           </div>
         </div>

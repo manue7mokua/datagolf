@@ -26,6 +26,7 @@ import {
   getQuestionProgressStatus,
   getQuestionProgressStatusLabel,
   getQuestionTypeLabel,
+  getSubmitAnswerLabel,
   getSummaryAccuracyPercent,
   isAnswerDraftDirty,
   isChallengeComplete,
@@ -229,6 +230,52 @@ assert.equal(
   null,
 );
 assert.equal(getAnswerDraftGuidance(questions[0], createEmptyAnswerDraft()), null);
+assert.equal(
+  getSubmitAnswerLabel({
+    question: questions[0],
+    draft: {
+      promptText: "",
+      selectedOption: "B",
+      blanks: [],
+      codeText: "",
+    },
+    isAwaitingResult: false,
+    isSubmitting: false,
+  }),
+  "Check Answer",
+);
+assert.equal(
+  getSubmitAnswerLabel({
+    question: fillBlankQuestion,
+    draft: {
+      promptText: "",
+      selectedOption: "",
+      blanks: ["views", ""],
+      codeText: "",
+    },
+    isAwaitingResult: false,
+    isSubmitting: false,
+  }),
+  "1 blank left",
+);
+assert.equal(
+  getSubmitAnswerLabel({
+    question: fillBlankQuestion,
+    draft: createEmptyAnswerDraft(),
+    isAwaitingResult: true,
+    isSubmitting: false,
+  }),
+  "Pending",
+);
+assert.equal(
+  getSubmitAnswerLabel({
+    question: fillBlankQuestion,
+    draft: createEmptyAnswerDraft(),
+    isAwaitingResult: false,
+    isSubmitting: true,
+  }),
+  "Checking",
+);
 assert.equal(
   isQuestionAnswerDraftSubmittable(fillBlankQuestion, {
     promptText: "",
