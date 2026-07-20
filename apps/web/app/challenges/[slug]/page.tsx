@@ -6,8 +6,10 @@ import { useEffect, useMemo, useState } from "react";
 import {
   type ChallengeDetail,
   createAttempt,
+  type DatasetPreview,
   getChallenge,
   getChallengeQuestions,
+  getDatasetPreview,
   type PublicQuestion,
 } from "../../../lib/datagolf-api";
 import { getAnonymousSessionId } from "../../../lib/anonymous-session";
@@ -34,6 +36,7 @@ type LoadState =
   | {
       status: "ready";
       challenge: ChallengeDetail;
+      datasetPreview: DatasetPreview;
       questions: PublicQuestion[];
       sessionId: string;
     }
@@ -89,9 +92,16 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
           getChallenge(challengeSlug),
           getChallengeQuestions(challengeSlug),
         ]);
+        const datasetPreview = await getDatasetPreview(challenge.dataset.slug, 8);
 
         if (mounted) {
-          setLoadState({ status: "ready", challenge, questions, sessionId });
+          setLoadState({
+            status: "ready",
+            challenge,
+            datasetPreview,
+            questions,
+            sessionId,
+          });
           setActiveQuestionIndex(0);
           setSubmitError(null);
         }
@@ -218,6 +228,8 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
                 </div>
               </div>
 
+              <DatasetPreviewPanel preview={loadState.datasetPreview} />
+
               <ol className="max-h-[18rem] overflow-y-auto p-2 lg:max-h-none">
                 {loadState.questions.map((question, index) => (
                   <li key={question.id}>
@@ -285,6 +297,65 @@ function StatusPanel({ title, body }: { title: string; body: string }) {
           {title}
         </h2>
         <p className="mt-3 text-[13px] leading-6 text-[#c9c4b8]">{body}</p>
+      </div>
+    </section>
+  );
+}
+
+function DatasetPreviewPanel({ preview }: { preview: DatasetPreview }) {
+  const visibleColumns = preview.dataset.columns.slice(0, 6);
+  const tableColumns = preview.dataset.columns.slice(0, 4);
+
+  return (
+    <section className="border-b border-white/12 px-4 py-4">
+      <div className="text-[11px] uppercase tracking-[0.22em] text-[#8f8b80]">
+        Dataset
+      </div>
+      <div className="mt-2 text-[13px] text-[#f2f1ea]">
+        {preview.dataset.slug} / {preview.dataset.row_count} rows /{" "}
+        {preview.dataset.column_count} columns
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        {visibleColumns.map((column) => (
+          <span
+            key={column.name}
+            className="border border-white/12 px-2 py-1 font-mono text-[10px] text-[#9be58a]"
+          >
+            {column.name}
+          </span>
+        ))}
+      </div>
+
+      <div className="mt-4 max-h-48 overflow-auto border border-white/12">
+        <table className="w-full border-collapse text-left font-mono text-[10px]">
+          <thead className="sticky top-0 bg-[#111111] text-[#8f8b80]">
+            <tr>
+              {tableColumns.map((column) => (
+                <th
+                  key={column.name}
+                  className="border-b border-white/12 px-2 py-2 font-normal"
+                >
+                  {column.name}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {preview.rows.slice(0, 5).map((row, rowIndex) => (
+              <tr key={rowIndex} className="text-[#c9c4b8]">
+                {tableColumns.map((column) => (
+                  <td
+                    key={column.name}
+                    className="max-w-28 truncate border-b border-white/8 px-2 py-2"
+                  >
+                    {formatPreviewCell(row[column.name])}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </section>
   );
@@ -554,4 +625,16 @@ function countBlanks(codeSnippet: string | null) {
 
 function normalizeBlankDrafts(blanks: string[], blankCount: number) {
   return Array.from({ length: blankCount }, (_, index) => blanks[index] ?? "");
+}
+
+function formatPreviewCell(value: unknown) {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  if (typeof value === "number") {
+    return Number.isInteger(value) ? String(value) : value.toFixed(2);
+  }
+
+  return String(value);
 }
