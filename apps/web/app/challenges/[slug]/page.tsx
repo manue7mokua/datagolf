@@ -28,6 +28,7 @@ import {
   getAttemptFeedbackLines,
   getQuestionProgressStatus,
   getQuestionProgressStatusLabel,
+  isAnswerDraftDirty,
   isAnswerDraftSubmittable,
   type QuestionProgress,
   type RunnerAnswerDraft,
@@ -590,6 +591,7 @@ function QuestionShell({
   onNext: () => void;
 }) {
   const canSubmit = isAnswerDraftSubmittable(question.type, draft);
+  const canClearDraft = isAnswerDraftDirty(draft);
   const canRestoreDraft = Boolean(progress?.lastAttempt);
 
   return (
@@ -652,8 +654,14 @@ function QuestionShell({
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <button
               type="button"
+              disabled={!canClearDraft}
               onClick={onClearDraft}
-              className="h-10 border border-white/20 px-4 text-[12px] uppercase tracking-[0.18em] text-[#f2f1ea] transition-colors hover:bg-white/5"
+              className={cn(
+                "h-10 border px-4 text-[12px] uppercase tracking-[0.18em] transition-colors",
+                canClearDraft
+                  ? "border-white/20 text-[#f2f1ea] hover:bg-white/5"
+                  : "cursor-not-allowed border-white/10 text-[#686257]",
+              )}
             >
               Clear
             </button>

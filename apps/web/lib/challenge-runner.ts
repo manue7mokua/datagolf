@@ -101,6 +101,15 @@ export function isAnswerDraftSubmittable(
   return draft.codeText.trim().length > 0;
 }
 
+export function isAnswerDraftDirty(draft: RunnerAnswerDraft) {
+  return (
+    draft.promptText.trim().length > 0 ||
+    draft.selectedOption.trim().length > 0 ||
+    draft.blanks.some((blank) => blank.trim().length > 0) ||
+    draft.codeText.trim().length > 0
+  );
+}
+
 export function getAnswerFormatLabel(
   answerFormat: string | null,
   questionType: QuestionType,

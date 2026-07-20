@@ -6,6 +6,7 @@ import {
   findNextIncompleteQuestionIndex,
   getAnswerFormatLabel,
   getQuestionProgressStatusLabel,
+  isAnswerDraftDirty,
   summarizeChallengeProgress,
 } from "./challenge-runner";
 import type { AttemptResponse, PublicQuestion } from "./datagolf-api";
@@ -49,6 +50,24 @@ assert.equal(getAnswerFormatLabel(null, "micro_code"), "micro code");
 assert.equal(getQuestionProgressStatusLabel("unattempted"), "Open");
 assert.equal(getQuestionProgressStatusLabel("incorrect"), "Retry");
 assert.equal(getQuestionProgressStatusLabel("correct"), "Done");
+assert.equal(
+  isAnswerDraftDirty({
+    promptText: "",
+    selectedOption: "",
+    blanks: [],
+    codeText: "",
+  }),
+  false,
+);
+assert.equal(
+  isAnswerDraftDirty({
+    promptText: "",
+    selectedOption: "",
+    blanks: [" views "],
+    codeText: "",
+  }),
+  true,
+);
 assert.deepEqual(summarizeChallengeProgress(questions, progress), {
   totalQuestions: 3,
   attemptedQuestions: 2,
