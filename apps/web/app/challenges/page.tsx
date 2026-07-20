@@ -346,8 +346,20 @@ const creatorDatasetColumns: DatasetColumn<
   { key: "completion_rate_pct", cellClassName: "font-mono" },
 ]
 
-const challengeCatalog = [
-  { label: "TikTok Creators", available: true, active: true },
+type ChallengeCatalogItem = {
+  label: string
+  href?: string
+  available: boolean
+  active: boolean
+}
+
+const challengeCatalog: ChallengeCatalogItem[] = [
+  {
+    label: "TikTok Creators",
+    href: "/challenges/tiktok-creator-posts",
+    available: true,
+    active: true,
+  },
   { label: "Spotify Songs", available: false, active: false },
   { label: "NBA Player Stats", available: false, active: false },
   { label: "Netflix Titles", available: false, active: false },
@@ -497,16 +509,27 @@ export default function ChallengesPage() {
                         >
                           {index + 1}.
                         </span>
-                        <span
-                          aria-disabled={!challenge.available}
-                          className={cn(
-                            "min-w-0 flex-1 truncate text-[14px] leading-8 tracking-[0.04em]",
-                            challenge.active ? rowTextClass : mutedTextClass,
-                            !challenge.available && "cursor-not-allowed opacity-75"
-                          )}
-                        >
-                          {challenge.label}
-                        </span>
+                        {challenge.available && challenge.href ? (
+                          <Link
+                            href={challenge.href}
+                            className={cn(
+                              "min-w-0 flex-1 truncate text-[14px] leading-8 tracking-[0.04em]",
+                              challenge.active ? rowTextClass : mutedTextClass
+                            )}
+                          >
+                            {challenge.label}
+                          </Link>
+                        ) : (
+                          <span
+                            aria-disabled={!challenge.available}
+                            className={cn(
+                              "min-w-0 flex-1 cursor-not-allowed truncate text-[14px] leading-8 tracking-[0.04em] opacity-75",
+                              mutedTextClass
+                            )}
+                          >
+                            {challenge.label}
+                          </span>
+                        )}
                       </li>
                     ))}
                   </ol>
