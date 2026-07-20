@@ -22,6 +22,7 @@ import {
   buildProgressFromAttempts,
   buildAttemptPayload,
   createEmptyAnswerDraft,
+  findNextIncompleteQuestionIndex,
   getAttemptFeedbackLines,
   getQuestionProgressStatus,
   isAnswerDraftSubmittable,
@@ -188,6 +189,14 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
     selectQuestion(activeQuestionIndex + 1);
   }
 
+  function goToNextOpenQuestion() {
+    if (nextIncompleteQuestionIndex === null) {
+      return;
+    }
+
+    selectQuestion(nextIncompleteQuestionIndex);
+  }
+
   function resetRunnerSession() {
     const sessionId = resetAnonymousSessionId();
     if (!sessionId) {
@@ -242,6 +251,14 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
     }
 
     return summarizeChallengeProgress(loadState.questions, progressByQuestion);
+  }, [loadState, progressByQuestion]);
+
+  const nextIncompleteQuestionIndex = useMemo(() => {
+    if (loadState.status !== "ready") {
+      return null;
+    }
+
+    return findNextIncompleteQuestionIndex(loadState.questions, progressByQuestion);
   }, [loadState, progressByQuestion]);
 
   return (
@@ -346,7 +363,11 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
 
             <section className="min-h-0 overflow-y-auto px-4 py-5 sm:px-6">
               {progressSummary && progressSummary.attemptedQuestions > 0 ? (
-                <ChallengeSummaryPanel summary={progressSummary} />
+                <ChallengeSummaryPanel
+                  summary={progressSummary}
+                  canGoNextOpen={nextIncompleteQuestionIndex !== null}
+                  onNextOpen={goToNextOpenQuestion}
+                />
               ) : null}
 
               {activeQuestion ? (
@@ -377,8 +398,12 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
 
 function ChallengeSummaryPanel({
   summary,
+  canGoNextOpen,
+  onNextOpen,
 }: {
   summary: NonNullable<ReturnType<typeof summarizeChallengeProgress>>;
+  canGoNextOpen: boolean;
+  onNextOpen: () => void;
 }) {
   const isComplete = summary.correctQuestions === summary.totalQuestions;
   const completionPercent =
@@ -397,7 +422,7 @@ function ChallengeSummaryPanel({
           {summary.totalAttempts} attempts
         </div>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3 sm:justify-end">
         <div className="font-mono text-[24px] text-[#ffbd2e]">
           {completionPercent}%
         </div>
@@ -411,6 +436,21 @@ function ChallengeSummaryPanel({
         >
           {isComplete ? "Complete" : "In progress"}
         </div>
+        {!isComplete ? (
+          <button
+            type="button"
+            disabled={!canGoNextOpen}
+            onClick={onNextOpen}
+            className={cn(
+              "h-9 border px-3 text-[11px] uppercase tracking-[0.18em] transition-colors",
+              canGoNextOpen
+                ? "border-[#ffbd2e] text-[#ffbd2e] hover:bg-[#ffbd2e] hover:text-black"
+                : "cursor-not-allowed border-white/10 text-[#686257]",
+            )}
+          >
+            Next open
+          </button>
+        ) : null}
       </div>
     </section>
   );

@@ -122,6 +122,18 @@ export function summarizeChallengeProgress(
   };
 }
 
+export function findNextIncompleteQuestionIndex(
+  questions: PublicQuestion[],
+  progressByQuestion: Record<string, QuestionProgress>,
+): number | null {
+  const nextIndex = questions.findIndex((question) => {
+    const progress = progressByQuestion[question.id];
+    return !progress || progress.correctCount === 0;
+  });
+
+  return nextIndex >= 0 ? nextIndex : null;
+}
+
 export function applyAttemptToProgress(
   progress: QuestionProgress | undefined,
   attempt: AttemptResponse,
