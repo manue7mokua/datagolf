@@ -387,7 +387,7 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
             </aside>
 
             <section className="min-h-0 overflow-y-auto px-4 py-5 sm:px-6">
-              {progressSummary && progressSummary.attemptedQuestions > 0 ? (
+              {progressSummary ? (
                 <ChallengeSummaryPanel
                   summary={progressSummary}
                   canGoNextOpen={nextIncompleteQuestionIndex !== null}
