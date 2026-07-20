@@ -113,6 +113,28 @@ const shuffledSessionProgress = buildProgressFromAttempts([
     created_at: "2026-01-01T00:00:01.000Z",
   },
 ]);
+const sameTimestampProgress = buildProgressFromAttempts([
+  {
+    ...retryAttempt,
+    id: "attempt-b",
+    question_id: "Q2",
+    created_at: "2026-01-01T00:00:02.000Z",
+    is_correct: false,
+  },
+  {
+    ...thirdAttempt,
+    id: "attempt-c",
+    question_id: "Q2",
+    created_at: "2026-01-01T00:00:02.000Z",
+  },
+  {
+    ...retryAttempt,
+    id: "attempt-a",
+    question_id: "Q2",
+    created_at: "2026-01-01T00:00:02.000Z",
+    is_correct: false,
+  },
+]);
 
 assert.deepEqual(createAnswerDraftFromAttempt(correctAttempt), {
   promptText: "",
@@ -291,6 +313,11 @@ assert.equal(sessionProgress.Q1.attemptCount, 1);
 assert.equal(sessionProgress.Q2.attemptCount, 2);
 assert.equal(sessionProgress.Q2.lastAttempt?.id, "attempt-3");
 assert.equal(shuffledSessionProgress.Q2.lastAttempt?.id, "attempt-3");
+assert.deepEqual(sameTimestampProgress.Q2.attempts.map((attempt) => attempt.id), [
+  "attempt-a",
+  "attempt-b",
+  "attempt-c",
+]);
 assert.equal(getAttemptResultLabel(correctAttempt), "Correct");
 assert.equal(getAttemptResultLabel({ ...retryAttempt, is_correct: false }), "Retry");
 assert.equal(getAttemptResultLabel({ ...retryAttempt, is_correct: null }), "Pending");
