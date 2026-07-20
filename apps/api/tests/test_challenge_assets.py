@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import json
 from pathlib import Path
+import re
 import sys
 import unittest
 
@@ -88,6 +89,19 @@ class ChallengeAssetTests(unittest.TestCase):
                 any(answer.strip() for answer in accepted_answers),
                 f"{question['id']} must define an accepted micro-code answer",
             )
+
+    def test_micro_code_regex_answers_compile(self) -> None:
+        micro_code_questions = [
+            question for question in self.spec["questions"] if question["type"] == "micro_code"
+        ]
+
+        for question in micro_code_questions:
+            accepted_regex = question["evaluation"].get("accepted_regex", [])
+            for pattern in accepted_regex:
+                if not pattern.strip():
+                    continue
+                with self.subTest(question_id=question["id"], pattern=pattern):
+                    re.compile(pattern)
 
     def test_fill_blank_questions_define_accepted_answers(self) -> None:
         fill_blank_questions = [
