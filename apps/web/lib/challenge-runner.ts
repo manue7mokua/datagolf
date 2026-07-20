@@ -208,6 +208,10 @@ export function getAttemptsNewestFirst(attempts: AttemptResponse[]) {
   return [...attempts].reverse();
 }
 
+export function getPreviousAttemptsNewestFirst(progress: QuestionProgress) {
+  return getAttemptsNewestFirst(progress.attempts.slice(0, -1));
+}
+
 export function buildProgressFromAttempts(attempts: AttemptResponse[]) {
   return attempts.reduce<Record<string, QuestionProgress>>(
     (progressByQuestion, attempt) => ({

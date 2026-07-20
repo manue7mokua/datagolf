@@ -7,6 +7,7 @@ import {
   getAnswerFormatLabel,
   getAttemptsNewestFirst,
   getCompletionPercent,
+  getPreviousAttemptsNewestFirst,
   getQuestionProgressStatusLabel,
   isAnswerDraftDirty,
   summarizeChallengeProgress,
@@ -78,6 +79,15 @@ assert.deepEqual(
     (attempt) => attempt.id,
   ),
   ["attempt-3", "attempt-2", "attempt-1"],
+);
+assert.deepEqual(
+  getPreviousAttemptsNewestFirst(
+    applyAttemptToProgress(
+      applyAttemptToProgress(undefined, retryAttempt),
+      thirdAttempt,
+    ),
+  ).map((attempt) => attempt.id),
+  ["attempt-2"],
 );
 assert.deepEqual(summarizeChallengeProgress(questions, progress), {
   totalQuestions: 3,
