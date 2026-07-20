@@ -216,13 +216,18 @@ async function requestJson<T>(
   path: string,
   init: RequestInit = {},
 ): Promise<T> {
-  const response = await fetch(`${getDatagolfApiBaseUrl()}${path}`, {
-    ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...init.headers,
-    },
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${getDatagolfApiBaseUrl()}${path}`, {
+      ...init,
+      headers: {
+        "Content-Type": "application/json",
+        ...init.headers,
+      },
+    });
+  } catch (error) {
+    throw new DatagolfApiError("Could not reach Datagolf API", 0, error);
+  }
 
   const payload = await response.json().catch(() => null);
 

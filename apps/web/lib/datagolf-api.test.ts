@@ -63,11 +63,11 @@ assert.equal(
 
 const originalFetch = globalThis.fetch;
 
-runApiErrorRequestTest().catch((error) => {
+runApiErrorRequestTests().catch((error) => {
   throw error;
 });
 
-async function runApiErrorRequestTest() {
+async function runApiErrorRequestTests() {
   globalThis.fetch = async () =>
     new Response(
       JSON.stringify({ detail: "expected 2 blanks for fill-in-the-blank attempts" }),
@@ -90,6 +90,23 @@ async function runApiErrorRequestTest() {
     assert.deepEqual(error.payload, {
       detail: "expected 2 blanks for fill-in-the-blank attempts",
     });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+
+  const networkError = new TypeError("fetch failed");
+  globalThis.fetch = async () => {
+    throw networkError;
+  };
+
+  try {
+    await getChallenge("tiktok-creator-posts");
+    assert.fail("Expected getChallenge to throw");
+  } catch (error) {
+    assert.ok(error instanceof DatagolfApiError);
+    assert.equal(error.status, 0);
+    assert.equal(error.message, "Could not reach Datagolf API");
+    assert.equal(error.payload, networkError);
   } finally {
     globalThis.fetch = originalFetch;
   }
