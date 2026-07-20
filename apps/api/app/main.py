@@ -16,6 +16,7 @@ from .schemas import (
     AttemptCreateRequest,
     AttemptResponse,
     ChallengeDetailResponse,
+    ChallengeListItemResponse,
     DatasetSummaryResponse,
     HealthResponse,
     PublicQuestionResponse,
@@ -66,6 +67,22 @@ def get_health() -> HealthResponse:
         challenge_count=len(container.challenge_registry.list_challenges()),
         database_path=str(container.settings.database_path),
     )
+
+
+@app.get("/challenges", response_model=list[ChallengeListItemResponse])
+def list_challenges() -> list[ChallengeListItemResponse]:
+    return [
+        ChallengeListItemResponse(
+            challenge_slug=challenge.challenge_slug,
+            challenge_version=challenge.challenge_version,
+            title=challenge.title,
+            description=challenge.description,
+            dataset_slug=challenge.dataset.slug,
+            dataset_version=challenge.dataset.version,
+            question_count=len(challenge.questions),
+        )
+        for challenge in container.challenge_registry.list_challenges()
+    ]
 
 
 @app.get("/challenges/{slug}", response_model=ChallengeDetailResponse)

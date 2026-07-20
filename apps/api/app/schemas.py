@@ -132,6 +132,16 @@ class PublicQuestionResponse(BaseModel):
     display: QuestionDisplay
 
 
+class ChallengeListItemResponse(BaseModel):
+    challenge_slug: str
+    challenge_version: str
+    title: str
+    description: str
+    dataset_slug: str
+    dataset_version: str
+    question_count: int
+
+
 class ChallengeDetailResponse(BaseModel):
     challenge_slug: str
     challenge_version: str

@@ -47,6 +47,18 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual(payload["status"], "ok")
         self.assertGreaterEqual(payload["challenge_count"], 1)
 
+    def test_challenge_list_returns_catalog_safe_fields(self) -> None:
+        response = self.client.get("/challenges")
+
+        self.assertEqual(response.status_code, 200)
+        challenges = response.json()
+        self.assertGreaterEqual(len(challenges), 1)
+        first_challenge = challenges[0]
+        self.assertEqual(first_challenge["challenge_slug"], "tiktok-creator-posts")
+        self.assertEqual(first_challenge["question_count"], 15)
+        self.assertIn("dataset_slug", first_challenge)
+        self.assertNotIn("questions", first_challenge)
+
     def test_challenge_detail_returns_dataset_summary(self) -> None:
         response = self.client.get("/challenges/tiktok-creator-posts")
 
