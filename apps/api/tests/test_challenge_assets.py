@@ -89,6 +89,30 @@ class ChallengeAssetTests(unittest.TestCase):
                 f"{question['id']} must define an accepted micro-code answer",
             )
 
+    def test_fill_blank_questions_define_accepted_answers(self) -> None:
+        fill_blank_questions = [
+            question for question in self.spec["questions"] if question["type"] == "fill_blank"
+        ]
+
+        for question in fill_blank_questions:
+            accepted_answers = question["evaluation"]["accepted_answers"]
+            self.assertGreater(
+                len(accepted_answers),
+                0,
+                f"{question['id']} must define accepted blank answers",
+            )
+
+            for index, answer_group in enumerate(accepted_answers, start=1):
+                self.assertGreater(
+                    len(answer_group),
+                    0,
+                    f"{question['id']} blank {index} must define accepted answers",
+                )
+                self.assertTrue(
+                    any(answer.strip() for answer in answer_group),
+                    f"{question['id']} blank {index} must define a non-empty accepted answer",
+                )
+
     def test_multiple_choice_questions_define_valid_choices(self) -> None:
         multiple_choice_questions = [
             question for question in self.spec["questions"] if question["type"] == "multiple_choice"
