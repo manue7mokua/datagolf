@@ -308,6 +308,10 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
             </aside>
 
             <section className="min-h-0 overflow-y-auto px-4 py-5 sm:px-6">
+              {progressSummary && progressSummary.attemptedQuestions > 0 ? (
+                <ChallengeSummaryPanel summary={progressSummary} />
+              ) : null}
+
               {activeQuestion ? (
                 <QuestionShell
                   question={activeQuestion}
@@ -330,6 +334,47 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
         ) : null}
       </div>
     </main>
+  );
+}
+
+function ChallengeSummaryPanel({
+  summary,
+}: {
+  summary: NonNullable<ReturnType<typeof summarizeChallengeProgress>>;
+}) {
+  const isComplete = summary.correctQuestions === summary.totalQuestions;
+  const completionPercent =
+    summary.totalQuestions === 0
+      ? 0
+      : Math.round((summary.correctQuestions / summary.totalQuestions) * 100);
+
+  return (
+    <section className="mx-auto mb-5 grid max-w-4xl gap-3 border border-white/12 bg-[#111111] p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+      <div>
+        <div className="text-[11px] uppercase tracking-[0.22em] text-[#8f8b80]">
+          Progress
+        </div>
+        <div className="mt-2 text-[14px] leading-6 text-[#f2f1ea]">
+          {summary.correctQuestions} of {summary.totalQuestions} correct /{" "}
+          {summary.totalAttempts} attempts
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        <div className="font-mono text-[24px] text-[#ffbd2e]">
+          {completionPercent}%
+        </div>
+        <div
+          className={cn(
+            "border px-3 py-2 text-[11px] uppercase tracking-[0.18em]",
+            isComplete
+              ? "border-[#9be58a] text-[#9be58a]"
+              : "border-white/12 text-[#8f8b80]",
+          )}
+        >
+          {isComplete ? "Complete" : "In progress"}
+        </div>
+      </div>
+    </section>
   );
 }
 
