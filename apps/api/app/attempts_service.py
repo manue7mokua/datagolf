@@ -174,8 +174,14 @@ class AttemptsService:
             if not code_text:
                 raise ValueError("code_text is required for micro-code attempts")
             if (
-                not question.evaluation.accepted_patterns
-                and not question.evaluation.accepted_regex
+                not any(
+                    pattern.strip()
+                    for pattern in question.evaluation.accepted_patterns
+                )
+                and not any(
+                    pattern.strip()
+                    for pattern in question.evaluation.accepted_regex
+                )
             ):
                 raise ValueError("micro-code questions must define accepted answers")
             return {"code_text": code_text}
