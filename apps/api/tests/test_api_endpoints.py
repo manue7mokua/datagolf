@@ -110,6 +110,26 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual(fetched["id"], created["id"])
         self.assertEqual(fetched["evaluation_payload"]["expected_option"], "B")
 
+    def test_session_attempts_returns_attempt_history(self) -> None:
+        session_id = "endpoint-history-session"
+        self.client.post(
+            "/questions/Q8/attempts",
+            json={"session_id": session_id, "selected_option": "B"},
+        )
+        self.client.post(
+            "/questions/Q11/attempts",
+            json={"session_id": session_id, "selected_option": "C"},
+        )
+
+        response = self.client.get(
+            f"/sessions/{session_id}/attempts?challenge_slug=tiktok-creator-posts"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        attempts = response.json()
+        self.assertEqual([attempt["question_id"] for attempt in attempts], ["Q8", "Q11"])
+        self.assertTrue(all(attempt["is_correct"] for attempt in attempts))
+
 
 if __name__ == "__main__":
     unittest.main()

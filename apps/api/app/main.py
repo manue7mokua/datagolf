@@ -165,3 +165,15 @@ def get_attempt(attempt_id: str) -> AttemptResponse:
     if attempt is None:
         raise HTTPException(status_code=404, detail=f"Unknown attempt id: {attempt_id}")
     return AttemptResponse.model_validate(attempt)
+
+
+@app.get("/sessions/{session_id}/attempts", response_model=list[AttemptResponse])
+def list_session_attempts(
+    session_id: str,
+    challenge_slug: str | None = None,
+) -> list[AttemptResponse]:
+    attempts = container.attempts_service.list_attempts_for_session(
+        session_id,
+        challenge_slug=challenge_slug,
+    )
+    return [AttemptResponse.model_validate(attempt) for attempt in attempts]

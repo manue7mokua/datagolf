@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Iterator
+from contextlib import contextmanager
 import json
 from pathlib import Path
 import sqlite3
@@ -12,7 +14,7 @@ class AttemptsRepository:
 
     def initialize(self) -> None:
         self.database_path.parent.mkdir(parents=True, exist_ok=True)
-        with self._connect() as connection:
+        with self._connection() as connection:
             connection.execute(
                 """
                 CREATE TABLE IF NOT EXISTS attempts (
@@ -41,7 +43,7 @@ class AttemptsRepository:
             connection.commit()
 
     def create_attempt(self, record: dict[str, Any]) -> dict[str, Any]:
-        with self._connect() as connection:
+        with self._connection() as connection:
             connection.execute(
                 """
                 INSERT INTO attempts (
@@ -92,7 +94,7 @@ class AttemptsRepository:
         error_message: str | None,
         updated_at: str,
     ) -> dict[str, Any] | None:
-        with self._connect() as connection:
+        with self._connection() as connection:
             connection.execute(
                 """
                 UPDATE attempts
@@ -120,7 +122,7 @@ class AttemptsRepository:
         return self.get_attempt(attempt_id)
 
     def get_attempt(self, attempt_id: str) -> dict[str, Any] | None:
-        with self._connect() as connection:
+        with self._connection() as connection:
             cursor = connection.execute(
                 "SELECT * FROM attempts WHERE id = ?",
                 (attempt_id,),
@@ -130,10 +132,39 @@ class AttemptsRepository:
             return None
         return self._deserialize_row(row)
 
+    def list_attempts_for_session(
+        self,
+        session_id: str,
+        *,
+        challenge_slug: str | None = None,
+    ) -> list[dict[str, Any]]:
+        query = "SELECT * FROM attempts WHERE session_id = ?"
+        params: list[Any] = [session_id]
+
+        if challenge_slug is not None:
+            query += " AND challenge_slug = ?"
+            params.append(challenge_slug)
+
+        query += " ORDER BY created_at ASC"
+
+        with self._connection() as connection:
+            cursor = connection.execute(query, params)
+            rows = cursor.fetchall()
+
+        return [self._deserialize_row(row) for row in rows]
+
     def _connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(self.database_path)
         connection.row_factory = sqlite3.Row
         return connection
+
+    @contextmanager
+    def _connection(self) -> Iterator[sqlite3.Connection]:
+        connection = self._connect()
+        try:
+            yield connection
+        finally:
+            connection.close()
 
     def _deserialize_row(self, row: sqlite3.Row) -> dict[str, Any]:
         payload = dict(row)

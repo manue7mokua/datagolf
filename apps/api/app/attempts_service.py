@@ -117,6 +117,16 @@ class AttemptsService:
     def get_attempt(self, attempt_id: str):
         return self.attempts_repo.get_attempt(attempt_id)
 
+    def list_attempts_for_session(
+        self,
+        session_id: str,
+        challenge_slug: str | None = None,
+    ):
+        return self.attempts_repo.list_attempts_for_session(
+            session_id,
+            challenge_slug=challenge_slug,
+        )
+
     def _validate_request(self, question: QuestionSpec, request: AttemptCreateRequest):
         if question.type == "guided_prompt":
             if not request.prompt_text or not request.prompt_text.strip():
