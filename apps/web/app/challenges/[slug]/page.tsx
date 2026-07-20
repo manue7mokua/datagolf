@@ -31,6 +31,7 @@ import {
   getAttemptTone,
   getCompletionPercent,
   getFeedbackLineTone,
+  getFillBlankCount,
   getPreviousAttemptCount,
   getPreviousAttemptLabel,
   getPreviousAttemptsNewestFirst,
@@ -39,7 +40,8 @@ import {
   getQuestionProgressStatusLabel,
   getQuestionTypeLabel,
   isAnswerDraftDirty,
-  isAnswerDraftSubmittable,
+  isQuestionAnswerDraftSubmittable,
+  normalizeFillBlankDrafts,
   type QuestionProgress,
   type RunnerAnswerDraft,
   summarizeChallengeProgress,
@@ -600,7 +602,7 @@ function QuestionShell({
   onPrevious: () => void;
   onNext: () => void;
 }) {
-  const canSubmit = isAnswerDraftSubmittable(question.type, draft);
+  const canSubmit = isQuestionAnswerDraftSubmittable(question, draft);
   const canClearDraft = isAnswerDraftDirty(draft);
   const canRestoreDraft = Boolean(progress?.lastAttempt);
   const status = getQuestionProgressStatus(progress);
@@ -907,8 +909,8 @@ function AnswerInput({
   }
 
   if (question.type === "fill_blank") {
-    const blankCount = countBlanks(question.display.code_snippet);
-    const blanks = normalizeBlankDrafts(draft.blanks, blankCount);
+    const blankCount = getFillBlankCount(question.display.code_snippet);
+    const blanks = normalizeFillBlankDrafts(draft.blanks, blankCount);
 
     return (
       <div className="mt-4 space-y-4">
@@ -964,14 +966,6 @@ function AnswerInput({
       placeholder="Find the top posts by engagement rate..."
     />
   );
-}
-
-function countBlanks(codeSnippet: string | null) {
-  return Math.max(codeSnippet?.match(/______+/g)?.length ?? 0, 1);
-}
-
-function normalizeBlankDrafts(blanks: string[], blankCount: number) {
-  return Array.from({ length: blankCount }, (_, index) => blanks[index] ?? "");
 }
 
 function formatPreviewCell(value: unknown) {

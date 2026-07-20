@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   applyAttemptToProgress,
   buildProgressFromAttempts,
+  buildAttemptPayload,
   createAnswerDraftFromAttempt,
   findNextIncompleteQuestionIndex,
   getAnswerFormatLabel,
@@ -13,6 +14,7 @@ import {
   getAttemptsNewestFirst,
   getCompletionPercent,
   getFeedbackLineTone,
+  getFillBlankCount,
   getPreviousAttemptCount,
   getPreviousAttemptLabel,
   getPreviousAttemptsNewestFirst,
@@ -20,6 +22,8 @@ import {
   getQuestionProgressStatusLabel,
   getQuestionTypeLabel,
   isAnswerDraftDirty,
+  isQuestionAnswerDraftSubmittable,
+  normalizeFillBlankDrafts,
   summarizeChallengeProgress,
 } from "./challenge-runner";
 import type { AttemptResponse, PublicQuestion } from "./datagolf-api";
@@ -29,6 +33,15 @@ const questions: PublicQuestion[] = [
   createQuestion("Q2", 2),
   createQuestion("Q3", 3),
 ];
+const fillBlankQuestion: PublicQuestion = {
+  ...createQuestion("Q4", 4),
+  type: "fill_blank",
+  display: {
+    ...createQuestion("Q4", 4).display,
+    code_snippet: "select ______ from posts where ______ > 0",
+    answer_format: "blanks",
+  },
+};
 
 const correctAttempt = createAttempt("attempt-1", "Q1", {
   selected_option: "B",
@@ -87,6 +100,39 @@ assert.equal(getQuestionProgressStatusLabel("correct"), "Done");
 assert.equal(getQuestionPositionLabel(questions[1], questions.length), "Q2 / 3");
 assert.equal(getQuestionTypeLabel("guided_prompt"), "guided prompt");
 assert.equal(getQuestionTypeLabel("multi_part_question"), "multi part question");
+assert.equal(getFillBlankCount(fillBlankQuestion.display.code_snippet), 2);
+assert.equal(getFillBlankCount(null), 1);
+assert.deepEqual(normalizeFillBlankDrafts([" views "], 2), [" views ", ""]);
+assert.equal(
+  isQuestionAnswerDraftSubmittable(fillBlankQuestion, {
+    promptText: "",
+    selectedOption: "",
+    blanks: ["views", ""],
+    codeText: "",
+  }),
+  false,
+);
+assert.equal(
+  isQuestionAnswerDraftSubmittable(fillBlankQuestion, {
+    promptText: "",
+    selectedOption: "",
+    blanks: ["views", "likes"],
+    codeText: "",
+  }),
+  true,
+);
+assert.deepEqual(
+  buildAttemptPayload(fillBlankQuestion, "session-1", {
+    promptText: "",
+    selectedOption: "",
+    blanks: [" views ", " likes ", "stale"],
+    codeText: "",
+  }),
+  {
+    session_id: "session-1",
+    blanks: ["views", "likes"],
+  },
+);
 assert.equal(
   isAnswerDraftDirty({
     promptText: "",

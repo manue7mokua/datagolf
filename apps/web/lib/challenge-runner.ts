@@ -76,7 +76,13 @@ export function buildAttemptPayload(
   }
 
   if (question.type === "fill_blank") {
-    return { ...basePayload, blanks: draft.blanks.map((blank) => blank.trim()) };
+    const blankCount = getFillBlankCount(question.display.code_snippet);
+    return {
+      ...basePayload,
+      blanks: normalizeFillBlankDrafts(draft.blanks, blankCount).map((blank) =>
+        blank.trim(),
+      ),
+    };
   }
 
   return { ...basePayload, code_text: draft.codeText.trim() };
@@ -99,6 +105,20 @@ export function isAnswerDraftSubmittable(
   }
 
   return draft.codeText.trim().length > 0;
+}
+
+export function isQuestionAnswerDraftSubmittable(
+  question: PublicQuestion,
+  draft: RunnerAnswerDraft,
+) {
+  if (question.type === "fill_blank") {
+    return normalizeFillBlankDrafts(
+      draft.blanks,
+      getFillBlankCount(question.display.code_snippet),
+    ).every((blank) => blank.trim().length > 0);
+  }
+
+  return isAnswerDraftSubmittable(question.type, draft);
 }
 
 export function isAnswerDraftDirty(draft: RunnerAnswerDraft) {
@@ -307,6 +327,14 @@ export function getQuestionPositionLabel(question: PublicQuestion, totalQuestion
 
 export function getQuestionTypeLabel(questionType: string) {
   return questionType.replace(/_/g, " ");
+}
+
+export function getFillBlankCount(codeSnippet: string | null) {
+  return Math.max(codeSnippet?.match(/______+/g)?.length ?? 0, 1);
+}
+
+export function normalizeFillBlankDrafts(blanks: string[], blankCount: number) {
+  return Array.from({ length: blankCount }, (_, index) => blanks[index] ?? "");
 }
 
 export function getAttemptFeedbackLines(attempt: AttemptResponse): FeedbackLine[] {
