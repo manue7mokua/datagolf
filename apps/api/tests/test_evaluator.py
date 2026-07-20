@@ -119,6 +119,10 @@ class EvaluatorTests(unittest.TestCase):
         )
 
         self.assertTrue(result["passed"])
+        self.assertEqual(
+            result["regex_matches"],
+            [{"pattern": r"engagement_rate=\(.+\)/views", "passed": True}],
+        )
 
 
 if __name__ == "__main__":

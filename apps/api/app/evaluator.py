@@ -97,17 +97,21 @@ class Evaluator:
         evaluation = self._expect_micro_code(question)
         normalized = normalize_code(code_text)
         accepted_patterns = [normalize_code(pattern) for pattern in evaluation.accepted_patterns]
-        regex_matches = [
-            bool(re.search(pattern, code_text, flags=re.IGNORECASE))
-            or bool(re.search(pattern, normalized, flags=re.IGNORECASE))
-            for pattern in evaluation.accepted_regex
-        ]
-        passed = normalized in accepted_patterns or any(regex_matches)
+        regex_matches = []
+        for pattern in evaluation.accepted_regex:
+            matched = bool(re.search(pattern, code_text, flags=re.IGNORECASE)) or bool(
+                re.search(pattern, normalized, flags=re.IGNORECASE)
+            )
+            regex_matches.append({"pattern": pattern, "passed": matched})
+        passed = normalized in accepted_patterns or any(
+            match["passed"] for match in regex_matches
+        )
         return {
             "passed": passed,
             "normalized_submission": normalized,
             "accepted_patterns": evaluation.accepted_patterns,
             "accepted_regex": evaluation.accepted_regex,
+            "regex_matches": regex_matches,
         }
 
     def _run_required_check(
