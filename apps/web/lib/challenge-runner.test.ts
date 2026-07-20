@@ -11,6 +11,7 @@ import {
   getAttemptTone,
   getAttemptsNewestFirst,
   getCompletionPercent,
+  getFeedbackLineTone,
   getPreviousAttemptCount,
   getPreviousAttemptLabel,
   getPreviousAttemptsNewestFirst,
@@ -136,6 +137,9 @@ assert.equal(getAttemptFeedbackTitle({ ...retryAttempt, is_correct: null }), "Pe
 assert.equal(getAttemptTone(correctAttempt), "success");
 assert.equal(getAttemptTone({ ...retryAttempt, is_correct: false }), "retry");
 assert.equal(getAttemptTone({ ...retryAttempt, is_correct: null }), "pending");
+assert.equal(getFeedbackLineTone({ label: "A", value: "ok", passed: true }), "success");
+assert.equal(getFeedbackLineTone({ label: "A", value: "no", passed: false }), "retry");
+assert.equal(getFeedbackLineTone({ label: "A", value: "n/a" }), "neutral");
 assert.equal(
   getPreviousAttemptCount(
     applyAttemptToProgress(

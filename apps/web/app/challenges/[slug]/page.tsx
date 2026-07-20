@@ -30,6 +30,7 @@ import {
   getAttemptFeedbackLines,
   getAttemptTone,
   getCompletionPercent,
+  getFeedbackLineTone,
   getPreviousAttemptCount,
   getPreviousAttemptLabel,
   getPreviousAttemptsNewestFirst,
@@ -825,28 +826,32 @@ function AttemptFeedback({ progress }: { progress: QuestionProgress }) {
 
       {feedbackLines.length > 0 ? (
         <div className="grid gap-2 border-b border-white/12 p-3">
-          {feedbackLines.map((line, index) => (
-            <div
-              key={`${line.label}-${index}`}
-              className="grid gap-1 border border-white/10 px-3 py-2 sm:grid-cols-[9rem_minmax(0,1fr)]"
-            >
+          {feedbackLines.map((line, index) => {
+            const lineTone = getFeedbackLineTone(line);
+
+            return (
               <div
-                className={cn(
-                  "text-[11px] uppercase tracking-[0.16em]",
-                  line.passed === false
-                    ? "text-[#ffbd2e]"
-                    : line.passed === true
-                      ? "text-[#9be58a]"
-                      : "text-[#8f8b80]",
-                )}
+                key={`${line.label}-${index}`}
+                className="grid gap-1 border border-white/10 px-3 py-2 sm:grid-cols-[9rem_minmax(0,1fr)]"
               >
-                {line.label}
+                <div
+                  className={cn(
+                    "text-[11px] uppercase tracking-[0.16em]",
+                    lineTone === "success"
+                      ? "text-[#9be58a]"
+                      : lineTone === "retry"
+                        ? "text-[#ffbd2e]"
+                        : "text-[#8f8b80]",
+                  )}
+                >
+                  {line.label}
+                </div>
+                <div className="min-w-0 break-words font-mono text-[12px] leading-5 text-[#c9c4b8]">
+                  {line.value}
+                </div>
               </div>
-              <div className="min-w-0 break-words font-mono text-[12px] leading-5 text-[#c9c4b8]">
-                {line.value}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : null}
 

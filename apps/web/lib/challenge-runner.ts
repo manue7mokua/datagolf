@@ -244,6 +244,14 @@ export function getAttemptTone(attempt: AttemptResponse) {
   return attempt.is_correct === false ? "retry" : "pending";
 }
 
+export function getFeedbackLineTone(line: FeedbackLine) {
+  if (line.passed === true) {
+    return "success";
+  }
+
+  return line.passed === false ? "retry" : "neutral";
+}
+
 export function buildProgressFromAttempts(attempts: AttemptResponse[]) {
   return attempts.reduce<Record<string, QuestionProgress>>(
     (progressByQuestion, attempt) => ({
