@@ -8,8 +8,13 @@ export function getAnonymousSessionId() {
 
   try {
     const existing = window.localStorage.getItem(sessionStorageKey);
-    if (existing) {
-      return existing;
+    const storedSessionId = existing?.trim();
+    if (storedSessionId) {
+      if (storedSessionId !== existing) {
+        window.localStorage.setItem(sessionStorageKey, storedSessionId);
+      }
+      fallbackSessionId = storedSessionId;
+      return storedSessionId;
     }
 
     const sessionId = createSessionId();

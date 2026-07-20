@@ -18,9 +18,19 @@ assert.equal(typeof firstSessionId, "string");
 assert.equal(storage.getItem(sessionStorageKey), firstSessionId);
 assert.equal(getAnonymousSessionId(), firstSessionId);
 
+storage.setItem(sessionStorageKey, ` ${firstSessionId} `);
+assert.equal(getAnonymousSessionId(), firstSessionId);
+assert.equal(storage.getItem(sessionStorageKey), firstSessionId);
+
+storage.setItem(sessionStorageKey, "   ");
+const regeneratedSessionId = getAnonymousSessionId();
+assert.equal(typeof regeneratedSessionId, "string");
+assert.notEqual(regeneratedSessionId, firstSessionId);
+assert.equal(storage.getItem(sessionStorageKey), regeneratedSessionId);
+
 const resetSessionId = resetAnonymousSessionId();
 assert.equal(typeof resetSessionId, "string");
-assert.notEqual(resetSessionId, firstSessionId);
+assert.notEqual(resetSessionId, regeneratedSessionId);
 assert.equal(storage.getItem(sessionStorageKey), resetSessionId);
 
 setWindowStorage(createThrowingStorageMock());
