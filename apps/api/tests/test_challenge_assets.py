@@ -89,6 +89,23 @@ class ChallengeAssetTests(unittest.TestCase):
                 f"{question['id']} must define an accepted micro-code answer",
             )
 
+    def test_multiple_choice_questions_define_valid_choices(self) -> None:
+        multiple_choice_questions = [
+            question for question in self.spec["questions"] if question["type"] == "multiple_choice"
+        ]
+
+        for question in multiple_choice_questions:
+            choices = question["display"].get("choices", [])
+            choice_ids = {choice["id"] for choice in choices}
+            correct_option = question["evaluation"]["correct_option"]
+
+            self.assertGreater(len(choice_ids), 0, f"{question['id']} must define choices")
+            self.assertIn(
+                correct_option,
+                choice_ids,
+                f"{question['id']} correct option must match a defined choice",
+            )
+
     def test_dataset_slug_resolves_to_challenge(self) -> None:
         challenge = self.registry.get_dataset_challenge("tiktok-posts")
 
