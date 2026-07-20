@@ -74,6 +74,28 @@ class ChallengeAssetTests(unittest.TestCase):
             self.assertIsInstance(evaluation["required_checks"], list)
             self.assertGreater(len(evaluation["required_checks"]), 0)
 
+            for check in evaluation["required_checks"]:
+                patterns = check["patterns"]
+                self.assertGreater(
+                    len(patterns),
+                    0,
+                    f"{question['id']} required check {check['name']} must define patterns",
+                )
+                self.assertTrue(
+                    any(pattern.strip() for pattern in patterns),
+                    f"{question['id']} required check {check['name']} must define non-empty patterns",
+                )
+                if check["mode"].startswith("regex_"):
+                    for pattern in patterns:
+                        if not pattern.strip():
+                            continue
+                        with self.subTest(
+                            question_id=question["id"],
+                            check_name=check["name"],
+                            pattern=pattern,
+                        ):
+                            re.compile(pattern)
+
     def test_micro_code_questions_define_accepted_answers(self) -> None:
         micro_code_questions = [
             question for question in self.spec["questions"] if question["type"] == "micro_code"
