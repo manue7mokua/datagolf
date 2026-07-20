@@ -10,7 +10,11 @@ import {
   type PublicQuestion,
 } from "../../../lib/datagolf-api";
 import { getAnonymousSessionId } from "../../../lib/anonymous-session";
-import { summarizeChallengeProgress } from "../../../lib/challenge-runner";
+import {
+  createEmptyAnswerDraft,
+  type RunnerAnswerDraft,
+  summarizeChallengeProgress,
+} from "../../../lib/challenge-runner";
 import { cn } from "../../../lib/utils";
 
 type ChallengeRunnerPageProps = {
@@ -33,6 +37,9 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
   const [slug, setSlug] = useState<string | null>(null);
   const [loadState, setLoadState] = useState<LoadState>({ status: "loading" });
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
+  const [draftsByQuestion, setDraftsByQuestion] = useState<
+    Record<string, RunnerAnswerDraft>
+  >({});
 
   useEffect(() => {
     let mounted = true;
@@ -98,6 +105,20 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
     loadState.status === "ready"
       ? loadState.questions[activeQuestionIndex] ?? null
       : null;
+  const activeDraft = activeQuestion
+    ? draftsByQuestion[activeQuestion.id] ?? createEmptyAnswerDraft()
+    : createEmptyAnswerDraft();
+
+  function updateActiveDraft(nextDraft: RunnerAnswerDraft) {
+    if (!activeQuestion) {
+      return;
+    }
+
+    setDraftsByQuestion((currentDrafts) => ({
+      ...currentDrafts,
+      [activeQuestion.id]: nextDraft,
+    }));
+  }
 
   const progressSummary = useMemo(() => {
     if (loadState.status !== "ready") {
@@ -180,7 +201,11 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
 
             <section className="min-h-0 overflow-y-auto px-4 py-5 sm:px-6">
               {activeQuestion ? (
-                <QuestionShell question={activeQuestion} />
+                <QuestionShell
+                  question={activeQuestion}
+                  draft={activeDraft}
+                  onDraftChange={updateActiveDraft}
+                />
               ) : (
                 <StatusPanel title="No question selected" body="Choose a question to begin." />
               )}
@@ -214,7 +239,15 @@ function StatusPanel({ title, body }: { title: string; body: string }) {
   );
 }
 
-function QuestionShell({ question }: { question: PublicQuestion }) {
+function QuestionShell({
+  question,
+  draft,
+  onDraftChange,
+}: {
+  question: PublicQuestion;
+  draft: RunnerAnswerDraft;
+  onDraftChange: (draft: RunnerAnswerDraft) => void;
+}) {
   return (
     <article className="mx-auto max-w-4xl">
       <div className="flex flex-wrap items-center gap-2">
@@ -257,10 +290,116 @@ function QuestionShell({ question }: { question: PublicQuestion }) {
         <div className="text-[11px] uppercase tracking-[0.2em] text-[#8f8b80]">
           Answer area
         </div>
-        <p className="mt-3 text-[13px] leading-6 text-[#c9c4b8]">
-          Draft your response here.
-        </p>
+        <AnswerInput
+          question={question}
+          draft={draft}
+          onDraftChange={onDraftChange}
+        />
       </div>
     </article>
   );
+}
+
+function AnswerInput({
+  question,
+  draft,
+  onDraftChange,
+}: {
+  question: PublicQuestion;
+  draft: RunnerAnswerDraft;
+  onDraftChange: (draft: RunnerAnswerDraft) => void;
+}) {
+  if (question.type === "multiple_choice") {
+    return (
+      <div className="mt-4 grid gap-2">
+        {question.display.choices.map((choice) => (
+          <button
+            key={choice.id}
+            type="button"
+            onClick={() =>
+              onDraftChange({ ...draft, selectedOption: choice.id })
+            }
+            className={cn(
+              "flex items-start gap-3 border px-3 py-3 text-left transition-colors",
+              draft.selectedOption === choice.id
+                ? "border-[#ffbd2e] bg-[#ffbd2e]/10 text-[#f2f1ea]"
+                : "border-white/12 text-[#c9c4b8] hover:bg-white/5",
+            )}
+          >
+            <span className="font-mono text-[12px] text-[#ffbd2e]">
+              {choice.id}
+            </span>
+            <span className="text-[13px] leading-6">{choice.text}</span>
+          </button>
+        ))}
+      </div>
+    );
+  }
+
+  if (question.type === "fill_blank") {
+    const blankCount = countBlanks(question.display.code_snippet);
+    const blanks = normalizeBlankDrafts(draft.blanks, blankCount);
+
+    return (
+      <div className="mt-4 space-y-4">
+        {question.display.code_snippet ? (
+          <pre className="overflow-x-auto border border-white/12 bg-black/40 p-3 font-mono text-[12px] leading-6 text-[#c9c4b8]">
+            {question.display.code_snippet}
+          </pre>
+        ) : null}
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          {blanks.map((blank, index) => (
+            <label key={index} className="block">
+              <span className="text-[11px] uppercase tracking-[0.18em] text-[#8f8b80]">
+                Blank {index + 1}
+              </span>
+              <input
+                value={blank}
+                onChange={(event) => {
+                  const nextBlanks = [...blanks];
+                  nextBlanks[index] = event.target.value;
+                  onDraftChange({ ...draft, blanks: nextBlanks });
+                }}
+                className="mt-2 h-10 w-full border border-white/12 bg-black/35 px-3 font-mono text-[13px] text-[#f2f1ea] outline-none transition-colors placeholder:text-[#686257] focus:border-[#ffbd2e]"
+              />
+            </label>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (question.type === "micro_code") {
+    return (
+      <textarea
+        value={draft.codeText}
+        onChange={(event) =>
+          onDraftChange({ ...draft, codeText: event.target.value })
+        }
+        spellCheck={false}
+        className="mt-4 min-h-32 w-full resize-y border border-white/12 bg-black/35 p-3 font-mono text-[13px] leading-6 text-[#f2f1ea] outline-none transition-colors placeholder:text-[#686257] focus:border-[#ffbd2e]"
+        placeholder="select(post_id, creator_handle, views)"
+      />
+    );
+  }
+
+  return (
+    <textarea
+      value={draft.promptText}
+      onChange={(event) =>
+        onDraftChange({ ...draft, promptText: event.target.value })
+      }
+      className="mt-4 min-h-40 w-full resize-y border border-white/12 bg-black/35 p-3 text-[13px] leading-6 text-[#f2f1ea] outline-none transition-colors placeholder:text-[#686257] focus:border-[#ffbd2e]"
+      placeholder="Find the top posts by engagement rate..."
+    />
+  );
+}
+
+function countBlanks(codeSnippet: string | null) {
+  return Math.max(codeSnippet?.match(/______+/g)?.length ?? 0, 1);
+}
+
+function normalizeBlankDrafts(blanks: string[], blankCount: number) {
+  return Array.from({ length: blankCount }, (_, index) => blanks[index] ?? "");
 }
