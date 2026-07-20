@@ -151,6 +151,27 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
     }));
   }
 
+  function selectQuestion(index: number) {
+    if (loadState.status !== "ready") {
+      return;
+    }
+
+    const boundedIndex = Math.min(
+      Math.max(index, 0),
+      loadState.questions.length - 1,
+    );
+    setActiveQuestionIndex(boundedIndex);
+    setSubmitError(null);
+  }
+
+  function goToPreviousQuestion() {
+    selectQuestion(activeQuestionIndex - 1);
+  }
+
+  function goToNextQuestion() {
+    selectQuestion(activeQuestionIndex + 1);
+  }
+
   async function submitActiveAnswer() {
     if (loadState.status !== "ready" || !activeQuestion) {
       return;
@@ -172,6 +193,10 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
           attempt,
         ),
       }));
+
+      if (attempt.is_correct) {
+        goToNextQuestion();
+      }
     } catch (error) {
       setSubmitError(
         error instanceof Error ? error.message : "Could not check this answer.",
@@ -246,10 +271,7 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
                     <li key={question.id}>
                       <button
                         type="button"
-                        onClick={() => {
-                          setActiveQuestionIndex(index);
-                          setSubmitError(null);
-                        }}
+                        onClick={() => selectQuestion(index)}
                         className={cn(
                           "flex w-full items-center gap-3 px-3 py-3 text-left transition-colors",
                           index === activeQuestionIndex
@@ -295,6 +317,10 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
                   submitError={submitError}
                   isSubmitting={submittingQuestionId === activeQuestion.id}
                   onSubmit={submitActiveAnswer}
+                  canGoPrevious={activeQuestionIndex > 0}
+                  canGoNext={activeQuestionIndex < loadState.questions.length - 1}
+                  onPrevious={goToPreviousQuestion}
+                  onNext={goToNextQuestion}
                 />
               ) : (
                 <StatusPanel title="No question selected" body="Choose a question to begin." />
@@ -396,6 +422,10 @@ function QuestionShell({
   submitError,
   isSubmitting,
   onSubmit,
+  canGoPrevious,
+  canGoNext,
+  onPrevious,
+  onNext,
 }: {
   question: PublicQuestion;
   draft: RunnerAnswerDraft;
@@ -404,6 +434,10 @@ function QuestionShell({
   submitError: string | null;
   isSubmitting: boolean;
   onSubmit: () => void;
+  canGoPrevious: boolean;
+  canGoNext: boolean;
+  onPrevious: () => void;
+  onNext: () => void;
 }) {
   const canSubmit = isAnswerDraftSubmittable(question.type, draft);
 
@@ -455,23 +489,51 @@ function QuestionShell({
           onDraftChange={onDraftChange}
         />
 
-        <div className="mt-4 flex flex-col gap-3 border-t border-white/12 pt-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-4 flex flex-col gap-3 border-t border-white/12 pt-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="text-[12px] text-[#8f8b80]">
             Attempts: {progress?.attemptCount ?? 0}
           </div>
-          <button
-            type="button"
-            disabled={!canSubmit || isSubmitting}
-            onClick={onSubmit}
-            className={cn(
-              "h-10 border px-4 text-[12px] uppercase tracking-[0.18em] transition-colors",
-              canSubmit && !isSubmitting
-                ? "border-[#ffbd2e] bg-[#ffbd2e] text-black hover:bg-[#ffd166]"
-                : "cursor-not-allowed border-white/12 text-[#686257]",
-            )}
-          >
-            {isSubmitting ? "Checking" : "Check Answer"}
-          </button>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <button
+              type="button"
+              disabled={!canGoPrevious}
+              onClick={onPrevious}
+              className={cn(
+                "h-10 border px-4 text-[12px] uppercase tracking-[0.18em] transition-colors",
+                canGoPrevious
+                  ? "border-white/20 text-[#f2f1ea] hover:bg-white/5"
+                  : "cursor-not-allowed border-white/10 text-[#686257]",
+              )}
+            >
+              Previous
+            </button>
+            <button
+              type="button"
+              disabled={!canGoNext}
+              onClick={onNext}
+              className={cn(
+                "h-10 border px-4 text-[12px] uppercase tracking-[0.18em] transition-colors",
+                canGoNext
+                  ? "border-white/20 text-[#f2f1ea] hover:bg-white/5"
+                  : "cursor-not-allowed border-white/10 text-[#686257]",
+              )}
+            >
+              Next
+            </button>
+            <button
+              type="button"
+              disabled={!canSubmit || isSubmitting}
+              onClick={onSubmit}
+              className={cn(
+                "h-10 border px-4 text-[12px] uppercase tracking-[0.18em] transition-colors",
+                canSubmit && !isSubmitting
+                  ? "border-[#ffbd2e] bg-[#ffbd2e] text-black hover:bg-[#ffd166]"
+                  : "cursor-not-allowed border-white/12 text-[#686257]",
+              )}
+            >
+              {isSubmitting ? "Checking" : "Check Answer"}
+            </button>
+          </div>
         </div>
 
         {submitError ? (
