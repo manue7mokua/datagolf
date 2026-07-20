@@ -53,6 +53,7 @@ assert.deepEqual(summarizeChallengeProgress(questions, progress), {
   totalQuestions: 3,
   attemptedQuestions: 2,
   correctQuestions: 1,
+  remainingQuestions: 2,
   incorrectQuestions: 1,
   skippedQuestions: 1,
   totalAttempts: 2,

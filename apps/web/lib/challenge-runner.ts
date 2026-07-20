@@ -24,6 +24,7 @@ export type ChallengeProgressSummary = {
   totalQuestions: number;
   attemptedQuestions: number;
   correctQuestions: number;
+  remainingQuestions: number;
   incorrectQuestions: number;
   skippedQuestions: number;
   totalAttempts: number;
@@ -152,6 +153,7 @@ export function summarizeChallengeProgress(
     totalQuestions: questions.length,
     attemptedQuestions,
     correctQuestions,
+    remainingQuestions: questions.length - correctQuestions,
     incorrectQuestions: attemptedQuestions - correctQuestions,
     skippedQuestions: questions.length - attemptedQuestions,
     totalAttempts,
