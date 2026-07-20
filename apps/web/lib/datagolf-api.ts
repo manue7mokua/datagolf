@@ -24,6 +24,11 @@ export type DatasetSummary = {
   columns: ColumnSpec[];
 };
 
+export type DatasetPreview = {
+  dataset: DatasetSummary;
+  rows: Record<string, unknown>[];
+};
+
 export type ChoiceSpec = {
   id: string;
   text: string;
@@ -141,6 +146,12 @@ export async function createAttempt(
 
 export async function getAttempt(attemptId: string) {
   return requestJson<AttemptResponse>(`/attempts/${attemptId}`);
+}
+
+export async function getDatasetPreview(slug: string, limit = 20) {
+  return requestJson<DatasetPreview>(
+    `/datasets/${slug}/preview?limit=${encodeURIComponent(limit)}`,
+  );
 }
 
 async function requestJson<T>(
