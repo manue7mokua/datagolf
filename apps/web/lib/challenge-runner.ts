@@ -212,6 +212,10 @@ export function getPreviousAttemptsNewestFirst(progress: QuestionProgress) {
   return getAttemptsNewestFirst(progress.attempts.slice(0, -1));
 }
 
+export function getPreviousAttemptCount(progress: QuestionProgress) {
+  return Math.max(progress.attempts.length - 1, 0);
+}
+
 export function buildProgressFromAttempts(attempts: AttemptResponse[]) {
   return attempts.reduce<Record<string, QuestionProgress>>(
     (progressByQuestion, attempt) => ({

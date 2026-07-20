@@ -27,6 +27,7 @@ import {
   getAnswerFormatLabel,
   getAttemptFeedbackLines,
   getCompletionPercent,
+  getPreviousAttemptCount,
   getPreviousAttemptsNewestFirst,
   getQuestionProgressStatus,
   getQuestionProgressStatusLabel,
@@ -733,7 +734,7 @@ function QuestionShell({
           <AttemptFeedback progress={progress} />
         ) : null}
 
-        {progress && progress.attempts.length > 1 ? (
+        {progress && getPreviousAttemptCount(progress) > 0 ? (
           <AttemptHistory progress={progress} />
         ) : null}
       </div>
@@ -743,11 +744,12 @@ function QuestionShell({
 
 function AttemptHistory({ progress }: { progress: QuestionProgress }) {
   const attempts = getPreviousAttemptsNewestFirst(progress);
+  const attemptCount = getPreviousAttemptCount(progress);
 
   return (
     <section className="mt-4 border border-white/12 bg-black/20">
       <div className="border-b border-white/12 px-3 py-3 text-[11px] uppercase tracking-[0.18em] text-[#8f8b80]">
-        Previous attempts
+        Previous attempts ({attemptCount})
       </div>
       <ol className="divide-y divide-white/10">
         {attempts.map((attempt, index) => (
