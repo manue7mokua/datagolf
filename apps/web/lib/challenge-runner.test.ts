@@ -8,6 +8,7 @@ import {
   getAttemptsNewestFirst,
   getCompletionPercent,
   getPreviousAttemptCount,
+  getPreviousAttemptLabel,
   getPreviousAttemptsNewestFirst,
   getQuestionPositionLabel,
   getQuestionProgressStatusLabel,
@@ -97,6 +98,7 @@ assert.deepEqual(
   ["attempt-2"],
 );
 assert.equal(getPreviousAttemptCount(applyAttemptToProgress(undefined, retryAttempt)), 0);
+assert.equal(getPreviousAttemptLabel(0), "Prev 1");
 assert.equal(
   getPreviousAttemptCount(
     applyAttemptToProgress(

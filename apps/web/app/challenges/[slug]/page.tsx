@@ -28,6 +28,7 @@ import {
   getAttemptFeedbackLines,
   getCompletionPercent,
   getPreviousAttemptCount,
+  getPreviousAttemptLabel,
   getPreviousAttemptsNewestFirst,
   getQuestionPositionLabel,
   getQuestionProgressStatus,
@@ -765,7 +766,7 @@ function AttemptHistory({ progress }: { progress: QuestionProgress }) {
             className="grid gap-2 px-3 py-2 text-[12px] text-[#c9c4b8] sm:grid-cols-[5rem_7rem_minmax(0,1fr)]"
           >
             <span className="font-mono text-[#8f8b80]">
-              Prev {index + 1}
+              {getPreviousAttemptLabel(index)}
             </span>
             <span
               className={cn(

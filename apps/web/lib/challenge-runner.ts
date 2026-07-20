@@ -216,6 +216,10 @@ export function getPreviousAttemptCount(progress: QuestionProgress) {
   return Math.max(progress.attempts.length - 1, 0);
 }
 
+export function getPreviousAttemptLabel(index: number) {
+  return `Prev ${index + 1}`;
+}
+
 export function buildProgressFromAttempts(attempts: AttemptResponse[]) {
   return attempts.reduce<Record<string, QuestionProgress>>(
     (progressByQuestion, attempt) => ({
