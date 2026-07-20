@@ -5,7 +5,9 @@ import {
   buildProgressFromAttempts,
   buildAttemptPayload,
   createAnswerDraftFromAttempt,
+  createEmptyAnswerDraft,
   findNextIncompleteQuestionIndex,
+  getAnswerDraftGuidance,
   getAnswerFormatLabel,
   getAttemptFeedbackTitle,
   getAttemptFeedbackLines,
@@ -103,6 +105,29 @@ assert.equal(getQuestionTypeLabel("multi_part_question"), "multi part question")
 assert.equal(getFillBlankCount(fillBlankQuestion.display.code_snippet), 2);
 assert.equal(getFillBlankCount(null), 1);
 assert.deepEqual(normalizeFillBlankDrafts([" views "], 2), [" views ", ""]);
+assert.equal(
+  getAnswerDraftGuidance(fillBlankQuestion, createEmptyAnswerDraft()),
+  "2 blanks left",
+);
+assert.equal(
+  getAnswerDraftGuidance(fillBlankQuestion, {
+    promptText: "",
+    selectedOption: "",
+    blanks: ["views", ""],
+    codeText: "",
+  }),
+  "1 blank left",
+);
+assert.equal(
+  getAnswerDraftGuidance(fillBlankQuestion, {
+    promptText: "",
+    selectedOption: "",
+    blanks: ["views", "likes"],
+    codeText: "",
+  }),
+  null,
+);
+assert.equal(getAnswerDraftGuidance(questions[0], createEmptyAnswerDraft()), null);
 assert.equal(
   isQuestionAnswerDraftSubmittable(fillBlankQuestion, {
     promptText: "",

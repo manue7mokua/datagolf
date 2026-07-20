@@ -24,6 +24,7 @@ import {
   createAnswerDraftFromAttempt,
   createEmptyAnswerDraft,
   findNextIncompleteQuestionIndex,
+  getAnswerDraftGuidance,
   getAnswerFormatLabel,
   getAttemptFeedbackTitle,
   getAttemptResultLabel,
@@ -607,6 +608,7 @@ function QuestionShell({
   const canRestoreDraft = Boolean(progress?.lastAttempt);
   const status = getQuestionProgressStatus(progress);
   const statusLabel = getQuestionProgressStatusLabel(status);
+  const answerGuidance = getAnswerDraftGuidance(question, draft);
   const positionLabel = getQuestionPositionLabel(question, totalQuestions);
   const questionTypeLabel = getQuestionTypeLabel(question.type);
 
@@ -668,6 +670,12 @@ function QuestionShell({
             <span>Status: {statusLabel}</span>
             <span className="text-white/20">/</span>
             <span>Attempts: {progress?.attemptCount ?? 0}</span>
+            {answerGuidance ? (
+              <>
+                <span className="text-white/20">/</span>
+                <span className="text-[#ffbd2e]">{answerGuidance}</span>
+              </>
+            ) : null}
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <button

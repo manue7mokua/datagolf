@@ -121,6 +121,26 @@ export function isQuestionAnswerDraftSubmittable(
   return isAnswerDraftSubmittable(question.type, draft);
 }
 
+export function getAnswerDraftGuidance(
+  question: PublicQuestion,
+  draft: RunnerAnswerDraft,
+) {
+  if (question.type !== "fill_blank") {
+    return null;
+  }
+
+  const missingCount = normalizeFillBlankDrafts(
+    draft.blanks,
+    getFillBlankCount(question.display.code_snippet),
+  ).filter((blank) => blank.trim().length === 0).length;
+
+  if (missingCount === 0) {
+    return null;
+  }
+
+  return missingCount === 1 ? "1 blank left" : `${missingCount} blanks left`;
+}
+
 export function isAnswerDraftDirty(draft: RunnerAnswerDraft) {
   return (
     draft.promptText.trim().length > 0 ||
