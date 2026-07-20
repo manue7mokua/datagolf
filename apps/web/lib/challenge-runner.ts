@@ -257,8 +257,8 @@ export function getQuestionPositionLabel(question: PublicQuestion, totalQuestion
   return `Q${question.order} / ${totalQuestions}`;
 }
 
-export function getQuestionTypeLabel(questionType: QuestionType) {
-  return questionType.replace("_", " ");
+export function getQuestionTypeLabel(questionType: string) {
+  return questionType.replace(/_/g, " ");
 }
 
 export function getAttemptFeedbackLines(attempt: AttemptResponse): FeedbackLine[] {

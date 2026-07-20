@@ -62,6 +62,7 @@ assert.equal(getQuestionProgressStatusLabel("incorrect"), "Retry");
 assert.equal(getQuestionProgressStatusLabel("correct"), "Done");
 assert.equal(getQuestionPositionLabel(questions[1], questions.length), "Q2 / 3");
 assert.equal(getQuestionTypeLabel("guided_prompt"), "guided prompt");
+assert.equal(getQuestionTypeLabel("multi_part_question"), "multi part question");
 assert.equal(
   isAnswerDraftDirty({
     promptText: "",
