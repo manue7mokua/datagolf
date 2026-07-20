@@ -5,6 +5,7 @@
     "dev": "pnpm --filter @datagolf/web dev",
     "dev:web": "pnpm --filter @datagolf/web dev",
     "dev:api": "cd apps/api && python3 -m uvicorn app.main:app --reload",
+    "test": "pnpm test:api && pnpm test:web:runner",
     "test:api": "python3 -m unittest discover apps/api/tests",
     "test:web:runner": "tsc --noEmit --strict --target ES2017 --lib dom,dom.iterable,esnext --module esnext --moduleResolution bundler --jsx react-jsx --esModuleInterop --allowSyntheticDefaultImports 'apps/web/app/challenges/[slug]/page.tsx' apps/web/lib/anonymous-session.ts apps/web/lib/datagolf-api.ts apps/web/lib/challenge-runner.ts apps/web/lib/utils.ts",
     "build:web": "pnpm --filter @datagolf/web build",
