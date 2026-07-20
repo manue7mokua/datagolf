@@ -171,9 +171,14 @@ def get_attempt(attempt_id: str) -> AttemptResponse:
 def list_session_attempts(
     session_id: str,
     challenge_slug: str | None = None,
+    limit: int = 100,
 ) -> list[AttemptResponse]:
+    if limit < 1 or limit > 500:
+        raise HTTPException(status_code=422, detail="limit must be between 1 and 500")
+
     attempts = container.attempts_service.list_attempts_for_session(
         session_id,
         challenge_slug=challenge_slug,
+        limit=limit,
     )
     return [AttemptResponse.model_validate(attempt) for attempt in attempts]

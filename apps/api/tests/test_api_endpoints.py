@@ -122,13 +122,18 @@ class ApiEndpointTests(unittest.TestCase):
         )
 
         response = self.client.get(
-            f"/sessions/{session_id}/attempts?challenge_slug=tiktok-creator-posts"
+            f"/sessions/{session_id}/attempts?challenge_slug=tiktok-creator-posts&limit=10"
         )
 
         self.assertEqual(response.status_code, 200)
         attempts = response.json()
         self.assertEqual([attempt["question_id"] for attempt in attempts], ["Q8", "Q11"])
         self.assertTrue(all(attempt["is_correct"] for attempt in attempts))
+
+    def test_session_attempts_rejects_oversized_limits(self) -> None:
+        response = self.client.get("/sessions/any-session/attempts?limit=501")
+
+        self.assertEqual(response.status_code, 422)
 
 
 if __name__ == "__main__":

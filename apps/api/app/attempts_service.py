@@ -121,10 +121,12 @@ class AttemptsService:
         self,
         session_id: str,
         challenge_slug: str | None = None,
+        limit: int = 100,
     ):
         return self.attempts_repo.list_attempts_for_session(
             session_id,
             challenge_slug=challenge_slug,
+            limit=limit,
         )
 
     def _validate_request(self, question: QuestionSpec, request: AttemptCreateRequest):

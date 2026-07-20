@@ -137,6 +137,7 @@ class AttemptsRepository:
         session_id: str,
         *,
         challenge_slug: str | None = None,
+        limit: int = 100,
     ) -> list[dict[str, Any]]:
         query = "SELECT * FROM attempts WHERE session_id = ?"
         params: list[Any] = [session_id]
@@ -145,7 +146,8 @@ class AttemptsRepository:
             query += " AND challenge_slug = ?"
             params.append(challenge_slug)
 
-        query += " ORDER BY created_at ASC"
+        query += " ORDER BY created_at ASC LIMIT ?"
+        params.append(limit)
 
         with self._connection() as connection:
             cursor = connection.execute(query, params)
