@@ -12,6 +12,7 @@ sys.path.insert(0, str(API_ROOT))
 from app.challenge_registry import ChallengeRegistry
 from app.dataset_loader import DatasetLoader
 from app.evaluator import Evaluator
+from app.schemas import RequiredCodeCheck
 
 
 class EvaluatorTests(unittest.TestCase):
@@ -44,6 +45,20 @@ class EvaluatorTests(unittest.TestCase):
         self.assertTrue(
             all(check["passed"] for check in result["required_code_checks"])
         )
+
+    def test_required_regex_checks_are_case_insensitive_and_dotall(self) -> None:
+        check = RequiredCodeCheck(
+            name="filter_then_slice",
+            mode="regex_any",
+            patterns=[r"filter\(.+slice_head"],
+        )
+
+        result = self.evaluator._run_required_check(
+            check,
+            "DF %>%\n  FILTER(video_length_sec < 30) %>%\n  slice_head(n = 5)",
+        )
+
+        self.assertTrue(result["passed"])
 
     def test_multiple_choice_accepts_correct_option_and_rejects_wrong_option(self) -> None:
         correct = self.evaluator.evaluate_multiple_choice(self.questions["Q8"], "B")
