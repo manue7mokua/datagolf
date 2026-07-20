@@ -442,14 +442,20 @@ export function getAttemptFeedbackLines(attempt: AttemptResponse): FeedbackLine[
 
   if (attempt.question_type === "guided_prompt") {
     const codeChecks = getPayloadArray(payload.required_code_checks);
+    const referenceMatchesDataset =
+      typeof payload.reference_matches_dataset === "boolean"
+        ? payload.reference_matches_dataset
+        : null;
     return [
       {
         label: "Dataset result",
-        value: payload.reference_matches_dataset ? "Matched" : "Did not match",
-        passed:
-          typeof payload.reference_matches_dataset === "boolean"
-            ? payload.reference_matches_dataset
-            : undefined,
+        value:
+          referenceMatchesDataset === null
+            ? "Unknown"
+            : referenceMatchesDataset
+              ? "Matched"
+              : "Did not match",
+        passed: referenceMatchesDataset ?? undefined,
       },
       ...codeChecks.map((check) => {
         const checkRecord = getPayloadRecord(check);

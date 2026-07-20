@@ -404,6 +404,34 @@ assert.deepEqual(
     },
   ],
 );
+assert.deepEqual(
+  getAttemptFeedbackLines({
+    ...retryAttempt,
+    question_type: "guided_prompt",
+    evaluation_payload: {
+      required_code_checks: [
+        {
+          name: "uses_filter",
+          description: "Filter the dataset",
+          passed: true,
+        },
+      ],
+    },
+    is_correct: null,
+  }),
+  [
+    {
+      label: "Dataset result",
+      value: "Unknown",
+      passed: undefined,
+    },
+    {
+      label: "uses_filter",
+      value: "Filter the dataset",
+      passed: true,
+    },
+  ],
+);
 assert.equal(
   getPreviousAttemptCount(
     applyAttemptToProgress(
