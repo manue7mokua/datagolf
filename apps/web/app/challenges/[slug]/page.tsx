@@ -498,7 +498,10 @@ function ChallengeSummaryPanel({
           {summary.remainingQuestions} remaining
           {summary.pendingQuestions > 0
             ? ` / ${summary.pendingQuestions} pending`
-            : ""}{" "}
+            : ""}
+          {summary.retryQuestions > 0
+            ? ` / ${summary.retryQuestions} retried`
+            : ""}
           / {summary.totalAttempts} attempts
         </div>
       </div>

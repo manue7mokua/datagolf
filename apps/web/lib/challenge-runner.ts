@@ -29,6 +29,7 @@ export type ChallengeProgressSummary = {
   incorrectQuestions: number;
   pendingQuestions: number;
   skippedQuestions: number;
+  retryQuestions: number;
   totalAttempts: number;
 };
 
@@ -199,6 +200,7 @@ export function summarizeChallengeProgress(
   let attemptedQuestions = 0;
   let correctQuestions = 0;
   let pendingQuestions = 0;
+  let retryQuestions = 0;
   let totalAttempts = 0;
 
   for (const question of questions) {
@@ -211,6 +213,10 @@ export function summarizeChallengeProgress(
 
     if (progress.attemptCount > 0) {
       attemptedQuestions += 1;
+    }
+
+    if (progress.attemptCount > 1) {
+      retryQuestions += 1;
     }
 
     if (progress.correctCount > 0) {
@@ -231,6 +237,7 @@ export function summarizeChallengeProgress(
     incorrectQuestions: attemptedQuestions - correctQuestions - pendingQuestions,
     pendingQuestions,
     skippedQuestions: questions.length - attemptedQuestions,
+    retryQuestions,
     totalAttempts,
   };
 }
@@ -246,6 +253,7 @@ export function mapSessionChallengeSummary(
     incorrectQuestions: summary.incorrect_questions,
     pendingQuestions: summary.pending_questions,
     skippedQuestions: summary.skipped_questions,
+    retryQuestions: summary.retry_questions,
     totalAttempts: summary.total_attempts,
   };
 }

@@ -530,6 +530,7 @@ assert.deepEqual(summarizeChallengeProgress(questions, progress), {
   incorrectQuestions: 1,
   pendingQuestions: 1,
   skippedQuestions: 0,
+  retryQuestions: 0,
   totalAttempts: 3,
 });
 assert.deepEqual(
@@ -544,6 +545,7 @@ assert.deepEqual(
     incorrect_questions: 1,
     pending_questions: 1,
     skipped_questions: 11,
+    retry_questions: 2,
     total_attempts: 6,
     completion_percent: 13,
   }),
@@ -555,6 +557,7 @@ assert.deepEqual(
     incorrectQuestions: 1,
     pendingQuestions: 1,
     skippedQuestions: 11,
+    retryQuestions: 2,
     totalAttempts: 6,
   },
 );
@@ -571,6 +574,7 @@ assert.equal(
     incorrectQuestions: 0,
     pendingQuestions: 0,
     skippedQuestions: 0,
+    retryQuestions: 0,
     totalAttempts: 0,
   }),
   0,
@@ -584,6 +588,7 @@ assert.equal(
     incorrectQuestions: 0,
     pendingQuestions: 0,
     skippedQuestions: 0,
+    retryQuestions: 1,
     totalAttempts: 5,
   }),
   100,
@@ -597,6 +602,7 @@ assert.equal(
     incorrectQuestions: 0,
     pendingQuestions: 0,
     skippedQuestions: 3,
+    retryQuestions: 0,
     totalAttempts: 0,
   }),
   0,

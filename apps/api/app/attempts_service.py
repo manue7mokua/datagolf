@@ -176,6 +176,11 @@ class AttemptsService:
             if int(progress["correct_count"]) == 0
             and progress["last_status"] == "pending"
         )
+        retry_questions = sum(
+            1
+            for progress in progress_by_question.values()
+            if int(progress["attempt_count"]) > 1
+        )
         incorrect_questions = (
             attempted_questions - correct_questions - pending_questions
         )
@@ -196,6 +201,7 @@ class AttemptsService:
             "incorrect_questions": incorrect_questions,
             "pending_questions": pending_questions,
             "skipped_questions": total_questions - attempted_questions,
+            "retry_questions": retry_questions,
             "total_attempts": total_current_attempts,
             "completion_percent": min(max(completion_percent, 0), 100),
         }

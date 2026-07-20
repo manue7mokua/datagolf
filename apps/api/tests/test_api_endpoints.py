@@ -196,6 +196,7 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual(payload["incorrect_questions"], 1)
         self.assertEqual(payload["pending_questions"], 0)
         self.assertEqual(payload["skipped_questions"], 13)
+        self.assertEqual(payload["retry_questions"], 0)
         self.assertEqual(payload["total_attempts"], 2)
         self.assertEqual(payload["completion_percent"], 7)
 
@@ -224,6 +225,7 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual(payload["remaining_questions"], 14)
         self.assertEqual(payload["incorrect_questions"], 0)
         self.assertEqual(payload["skipped_questions"], 14)
+        self.assertEqual(payload["retry_questions"], 1)
         self.assertEqual(payload["total_attempts"], 2)
         self.assertEqual(payload["completion_percent"], 7)
 
