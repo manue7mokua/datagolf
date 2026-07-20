@@ -7,6 +7,7 @@ import {
   getAnswerFormatLabel,
   getAttemptFeedbackTitle,
   getAttemptResultLabel,
+  getAttemptTone,
   getAttemptsNewestFirst,
   getCompletionPercent,
   getPreviousAttemptCount,
@@ -108,6 +109,8 @@ assert.equal(
   getAttemptFeedbackTitle({ ...retryAttempt, is_correct: false }),
   "Needs another pass",
 );
+assert.equal(getAttemptTone(correctAttempt), "success");
+assert.equal(getAttemptTone({ ...retryAttempt, is_correct: false }), "retry");
 assert.equal(
   getPreviousAttemptCount(
     applyAttemptToProgress(

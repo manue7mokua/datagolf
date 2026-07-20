@@ -28,6 +28,7 @@ import {
   getAttemptFeedbackTitle,
   getAttemptResultLabel,
   getAttemptFeedbackLines,
+  getAttemptTone,
   getCompletionPercent,
   getPreviousAttemptCount,
   getPreviousAttemptLabel,
@@ -762,27 +763,33 @@ function AttemptHistory({ progress }: { progress: QuestionProgress }) {
         Previous attempts ({attemptCount})
       </div>
       <ol className="divide-y divide-white/10">
-        {attempts.map((attempt, index) => (
-          <li
-            key={attempt.id}
-            className="grid gap-2 px-3 py-2 text-[12px] text-[#c9c4b8] sm:grid-cols-[5rem_7rem_minmax(0,1fr)]"
-          >
-            <span className="font-mono text-[#8f8b80]">
-              {getPreviousAttemptLabel(index)}
-            </span>
-            <span
-              className={cn(
-                "uppercase tracking-[0.14em]",
-                attempt.is_correct ? "text-[#9be58a]" : "text-[#ffbd2e]",
-              )}
+        {attempts.map((attempt, index) => {
+          const attemptTone = getAttemptTone(attempt);
+
+          return (
+            <li
+              key={attempt.id}
+              className="grid gap-2 px-3 py-2 text-[12px] text-[#c9c4b8] sm:grid-cols-[5rem_7rem_minmax(0,1fr)]"
             >
-              {getAttemptResultLabel(attempt)}
-            </span>
-            <span className="truncate font-mono text-[#8f8b80]">
-              {formatAttemptTimestamp(attempt.created_at)}
-            </span>
-          </li>
-        ))}
+              <span className="font-mono text-[#8f8b80]">
+                {getPreviousAttemptLabel(index)}
+              </span>
+              <span
+                className={cn(
+                  "uppercase tracking-[0.14em]",
+                  attemptTone === "success"
+                    ? "text-[#9be58a]"
+                    : "text-[#ffbd2e]",
+                )}
+              >
+                {getAttemptResultLabel(attempt)}
+              </span>
+              <span className="truncate font-mono text-[#8f8b80]">
+                {formatAttemptTimestamp(attempt.created_at)}
+              </span>
+            </li>
+          );
+        })}
       </ol>
     </section>
   );
@@ -797,13 +804,14 @@ function AttemptFeedback({ progress }: { progress: QuestionProgress }) {
 
   const feedbackLines = getAttemptFeedbackLines(attempt);
   const feedbackTitle = getAttemptFeedbackTitle(attempt);
+  const attemptTone = getAttemptTone(attempt);
 
   return (
     <section className="mt-4 border border-white/12 bg-black/30">
       <div
         className={cn(
           "border-b border-white/12 px-3 py-3 text-[12px] uppercase tracking-[0.18em]",
-          attempt.is_correct ? "text-[#9be58a]" : "text-[#ffbd2e]",
+          attemptTone === "success" ? "text-[#9be58a]" : "text-[#ffbd2e]",
         )}
       >
         {feedbackTitle}
