@@ -77,6 +77,7 @@ const cappedProgress = Array.from({ length: 6 }, (_, index) =>
 const progress = {
   Q1: applyAttemptToProgress(undefined, correctAttempt),
   Q2: applyAttemptToProgress(undefined, { ...retryAttempt, is_correct: false }),
+  Q3: applyAttemptToProgress(undefined, pendingAttempt),
 };
 const sessionProgress = buildProgressFromAttempts([
   correctAttempt,
@@ -270,12 +271,13 @@ assert.equal(
 );
 assert.deepEqual(summarizeChallengeProgress(questions, progress), {
   totalQuestions: 3,
-  attemptedQuestions: 2,
+  attemptedQuestions: 3,
   correctQuestions: 1,
   remainingQuestions: 2,
   incorrectQuestions: 1,
-  skippedQuestions: 1,
-  totalAttempts: 2,
+  pendingQuestions: 1,
+  skippedQuestions: 0,
+  totalAttempts: 3,
 });
 assert.equal(
   getCompletionPercent(summarizeChallengeProgress(questions, progress)),
@@ -288,6 +290,7 @@ assert.equal(
     correctQuestions: 0,
     remainingQuestions: 0,
     incorrectQuestions: 0,
+    pendingQuestions: 0,
     skippedQuestions: 0,
     totalAttempts: 0,
   }),

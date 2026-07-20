@@ -456,7 +456,11 @@ function ChallengeSummaryPanel({
         </div>
         <div className="mt-2 text-[14px] leading-6 text-[#f2f1ea]">
           {summary.correctQuestions} of {summary.totalQuestions} correct /{" "}
-          {summary.remainingQuestions} remaining / {summary.totalAttempts} attempts
+          {summary.remainingQuestions} remaining
+          {summary.pendingQuestions > 0
+            ? ` / ${summary.pendingQuestions} pending`
+            : ""}{" "}
+          / {summary.totalAttempts} attempts
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-3 sm:justify-end">

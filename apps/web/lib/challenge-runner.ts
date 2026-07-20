@@ -26,6 +26,7 @@ export type ChallengeProgressSummary = {
   correctQuestions: number;
   remainingQuestions: number;
   incorrectQuestions: number;
+  pendingQuestions: number;
   skippedQuestions: number;
   totalAttempts: number;
 };
@@ -183,6 +184,7 @@ export function summarizeChallengeProgress(
 ): ChallengeProgressSummary {
   let attemptedQuestions = 0;
   let correctQuestions = 0;
+  let pendingQuestions = 0;
   let totalAttempts = 0;
 
   for (const question of questions) {
@@ -199,6 +201,11 @@ export function summarizeChallengeProgress(
 
     if (progress.correctCount > 0) {
       correctQuestions += 1;
+      continue;
+    }
+
+    if (progress.lastAttempt?.status === "pending") {
+      pendingQuestions += 1;
     }
   }
 
@@ -207,7 +214,8 @@ export function summarizeChallengeProgress(
     attemptedQuestions,
     correctQuestions,
     remainingQuestions: questions.length - correctQuestions,
-    incorrectQuestions: attemptedQuestions - correctQuestions,
+    incorrectQuestions: attemptedQuestions - correctQuestions - pendingQuestions,
+    pendingQuestions,
     skippedQuestions: questions.length - attemptedQuestions,
     totalAttempts,
   };
