@@ -77,7 +77,7 @@ export function buildAttemptPayload(
   }
 
   if (question.type === "multiple_choice") {
-    return { ...basePayload, selected_option: draft.selectedOption };
+    return { ...basePayload, selected_option: draft.selectedOption.trim() };
   }
 
   if (question.type === "fill_blank") {

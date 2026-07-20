@@ -217,6 +217,18 @@ assert.deepEqual(
     blanks: ["views", "likes"],
   },
 );
+assert.deepEqual(
+  buildAttemptPayload(questions[0], "session-1", {
+    promptText: "",
+    selectedOption: " B ",
+    blanks: [],
+    codeText: "",
+  }),
+  {
+    session_id: "session-1",
+    selected_option: "B",
+  },
+);
 assert.equal(
   isAnswerDraftDirty({
     promptText: "",
