@@ -3,10 +3,16 @@ from __future__ import annotations
 import csv
 import json
 from pathlib import Path
+import sys
 import unittest
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
+API_ROOT = REPO_ROOT / "apps" / "api"
+sys.path.insert(0, str(API_ROOT))
+
+from app.challenge_registry import ChallengeRegistry
+
 SPEC_PATH = REPO_ROOT / "packages" / "challenges" / "tiktok" / "v1" / "spec.json"
 DATASET_PATH = (
     REPO_ROOT
@@ -23,6 +29,7 @@ class ChallengeAssetTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         with SPEC_PATH.open("r", encoding="utf-8") as handle:
             cls.spec = json.load(handle)
+        cls.registry = ChallengeRegistry(REPO_ROOT / "packages" / "challenges")
 
     def test_dataset_shape_matches_runtime_asset(self) -> None:
         with DATASET_PATH.open("r", encoding="utf-8") as handle:
@@ -65,6 +72,16 @@ class ChallengeAssetTests(unittest.TestCase):
             self.assertGreater(len(evaluation["expected_rows"]), 0)
             self.assertIsInstance(evaluation["required_checks"], list)
             self.assertGreater(len(evaluation["required_checks"]), 0)
+
+    def test_dataset_slug_resolves_to_challenge(self) -> None:
+        challenge = self.registry.get_dataset_challenge("tiktok-posts")
+
+        self.assertEqual(challenge.challenge_slug, "tiktok-creator-posts")
+        self.assertEqual(challenge.dataset.slug, "tiktok-posts")
+
+    def test_unknown_dataset_slug_raises_key_error(self) -> None:
+        with self.assertRaises(KeyError):
+            self.registry.get_dataset_challenge("missing-dataset")
 
 
 if __name__ == "__main__":
