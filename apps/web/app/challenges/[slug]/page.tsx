@@ -36,6 +36,7 @@ import {
   getCompletionPercent,
   getFeedbackLineTone,
   getFillBlankCount,
+  getNextOpenQuestionActionLabel,
   getPreviousAttemptCount,
   getPreviousAttemptLabel,
   getPreviousAttemptsNewestFirst,
@@ -488,6 +489,10 @@ function ChallengeSummaryPanel({
 }) {
   const isComplete = isChallengeComplete(summary);
   const completionPercent = getCompletionPercent(summary);
+  const nextOpenActionLabel = getNextOpenQuestionActionLabel(
+    summary,
+    canGoNextOpen,
+  );
 
   return (
     <section className="mx-auto mb-5 grid max-w-4xl gap-3 border border-white/12 bg-[#111111] p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
@@ -525,7 +530,7 @@ function ChallengeSummaryPanel({
                 : "cursor-not-allowed border-white/10 text-[#686257]",
             )}
           >
-            Next open
+            {nextOpenActionLabel}
           </button>
         ) : null}
       </div>

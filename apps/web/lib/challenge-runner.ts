@@ -291,6 +291,17 @@ export function isChallengeComplete(summary: ChallengeProgressSummary) {
   );
 }
 
+export function getNextOpenQuestionActionLabel(
+  summary: ChallengeProgressSummary,
+  canGoNextOpen: boolean,
+) {
+  if (canGoNextOpen) {
+    return "Next open";
+  }
+
+  return summary.pendingQuestions > 0 ? "Waiting" : "Next open";
+}
+
 function getCompletionPercentFromCounts(
   correctQuestions: number,
   totalQuestions: number,

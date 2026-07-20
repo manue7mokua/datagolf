@@ -18,6 +18,7 @@ import {
   getCompletionPercent,
   getFeedbackLineTone,
   getFillBlankCount,
+  getNextOpenQuestionActionLabel,
   getPreviousAttemptCount,
   getPreviousAttemptLabel,
   getPreviousAttemptsNewestFirst,
@@ -709,6 +710,63 @@ assert.equal(
     completionPercent: 0,
   }),
   false,
+);
+assert.equal(
+  getNextOpenQuestionActionLabel(
+    {
+      totalQuestions: 3,
+      attemptedQuestions: 2,
+      correctQuestions: 1,
+      remainingQuestions: 2,
+      incorrectQuestions: 1,
+      pendingQuestions: 0,
+      skippedQuestions: 1,
+      retryQuestions: 0,
+      totalAttempts: 2,
+      accuracyPercent: 50,
+      completionPercent: 33,
+    },
+    true,
+  ),
+  "Next open",
+);
+assert.equal(
+  getNextOpenQuestionActionLabel(
+    {
+      totalQuestions: 3,
+      attemptedQuestions: 3,
+      correctQuestions: 1,
+      remainingQuestions: 2,
+      incorrectQuestions: 0,
+      pendingQuestions: 2,
+      skippedQuestions: 0,
+      retryQuestions: 0,
+      totalAttempts: 3,
+      accuracyPercent: 33,
+      completionPercent: 33,
+    },
+    false,
+  ),
+  "Waiting",
+);
+assert.equal(
+  getNextOpenQuestionActionLabel(
+    {
+      totalQuestions: 3,
+      attemptedQuestions: 3,
+      correctQuestions: 1,
+      remainingQuestions: 2,
+      incorrectQuestions: 2,
+      pendingQuestions: 0,
+      skippedQuestions: 0,
+      retryQuestions: 0,
+      totalAttempts: 3,
+      accuracyPercent: 33,
+      completionPercent: 33,
+    },
+    false,
+  ),
+  "Next open",
 );
 assert.equal(
   getCompletionPercent({
