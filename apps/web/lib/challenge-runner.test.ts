@@ -307,6 +307,41 @@ assert.deepEqual(
   }),
   [],
 );
+assert.deepEqual(
+  getAttemptFeedbackLines({
+    ...retryAttempt,
+    question_type: "fill_blank",
+    evaluation_payload: {
+      per_blank_results: [
+        {
+          blank_index: 0,
+          accepted: ["filter"],
+          received: "filter",
+          passed: true,
+        },
+        {
+          blank_index: 1,
+          accepted: ["mean", "avg"],
+          received: "sum",
+          passed: false,
+        },
+      ],
+    },
+    is_correct: false,
+  }),
+  [
+    {
+      label: "Blank 1",
+      value: "filter -> filter",
+      passed: true,
+    },
+    {
+      label: "Blank 2",
+      value: "sum -> mean, avg",
+      passed: false,
+    },
+  ],
+);
 assert.equal(
   getPreviousAttemptCount(
     applyAttemptToProgress(
