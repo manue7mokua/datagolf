@@ -12,7 +12,7 @@ sys.path.insert(0, str(API_ROOT))
 from app.challenge_registry import ChallengeRegistry
 from app.dataset_loader import DatasetLoader
 from app.evaluator import Evaluator
-from app.schemas import RequiredCodeCheck
+from app.schemas import MicroCodeEvaluation, RequiredCodeCheck
 
 
 class EvaluatorTests(unittest.TestCase):
@@ -97,6 +97,24 @@ class EvaluatorTests(unittest.TestCase):
     def test_micro_code_accepts_fenced_r_snippets(self) -> None:
         result = self.evaluator.evaluate_micro_code(
             self.questions["Q10"],
+            "```R\nengagement_rate = (likes + comments + shares) / views\n```",
+        )
+
+        self.assertTrue(result["passed"])
+
+    def test_micro_code_regex_matches_normalized_submission(self) -> None:
+        question = self.questions["Q10"].model_copy(
+            update={
+                "evaluation": MicroCodeEvaluation(
+                    kind="micro_code",
+                    accepted_patterns=[],
+                    accepted_regex=[r"engagement_rate=\(.+\)/views"],
+                )
+            }
+        )
+
+        result = self.evaluator.evaluate_micro_code(
+            question,
             "```R\nengagement_rate = (likes + comments + shares) / views\n```",
         )
 
