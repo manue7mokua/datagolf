@@ -308,6 +308,26 @@ assert.deepEqual(
   ["attempt-3", "attempt-2", "attempt-1"],
 );
 assert.deepEqual(
+  getAttemptsNewestFirst([
+    {
+      ...retryAttempt,
+      id: "attempt-b",
+      created_at: "2026-01-01T00:00:02.000Z",
+    },
+    {
+      ...thirdAttempt,
+      id: "attempt-c",
+      created_at: "2026-01-01T00:00:02.000Z",
+    },
+    {
+      ...correctAttempt,
+      id: "attempt-a",
+      created_at: "2026-01-01T00:00:02.000Z",
+    },
+  ]).map((attempt) => attempt.id),
+  ["attempt-c", "attempt-b", "attempt-a"],
+);
+assert.deepEqual(
   getPreviousAttemptsNewestFirst(
     applyAttemptToProgress(
       applyAttemptToProgress(undefined, retryAttempt),
