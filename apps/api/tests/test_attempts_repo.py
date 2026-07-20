@@ -14,6 +14,18 @@ from app.attempts_repo import AttemptsRepository
 
 
 class AttemptsRepositoryTests(unittest.TestCase):
+    def test_initialize_creates_session_history_indexes(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            repo = AttemptsRepository(Path(tempdir) / "attempts.sqlite3")
+            repo.initialize()
+
+            with repo._connection() as connection:
+                cursor = connection.execute("PRAGMA index_list(attempts)")
+                index_names = {row["name"] for row in cursor.fetchall()}
+
+        self.assertIn("idx_attempts_session_created_at", index_names)
+        self.assertIn("idx_attempts_session_challenge_created_at", index_names)
+
     def test_list_attempts_for_session_orders_and_filters_results(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:
             repo = AttemptsRepository(Path(tempdir) / "attempts.sqlite3")

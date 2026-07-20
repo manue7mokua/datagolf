@@ -40,6 +40,18 @@ class AttemptsRepository:
                 )
                 """
             )
+            connection.execute(
+                """
+                CREATE INDEX IF NOT EXISTS idx_attempts_session_created_at
+                ON attempts (session_id, created_at)
+                """
+            )
+            connection.execute(
+                """
+                CREATE INDEX IF NOT EXISTS idx_attempts_session_challenge_created_at
+                ON attempts (session_id, challenge_slug, created_at)
+                """
+            )
             connection.commit()
 
     def create_attempt(self, record: dict[str, Any]) -> dict[str, Any]:
