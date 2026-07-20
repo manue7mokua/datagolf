@@ -154,6 +154,18 @@ export async function getDatasetPreview(slug: string, limit = 20) {
   );
 }
 
+export async function listSessionAttempts(
+  sessionId: string,
+  challengeSlug?: string,
+) {
+  const query = challengeSlug
+    ? `?challenge_slug=${encodeURIComponent(challengeSlug)}`
+    : "";
+  return requestJson<AttemptResponse[]>(
+    `/sessions/${encodeURIComponent(sessionId)}/attempts${query}`,
+  );
+}
+
 async function requestJson<T>(
   path: string,
   init: RequestInit = {},
