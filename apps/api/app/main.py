@@ -21,6 +21,7 @@ from .schemas import (
     DatasetSummaryResponse,
     HealthResponse,
     PublicQuestionResponse,
+    SessionChallengeSummaryResponse,
 )
 
 
@@ -182,3 +183,22 @@ def list_session_attempts(
         limit=limit,
     )
     return [AttemptResponse.model_validate(attempt) for attempt in attempts]
+
+
+@app.get(
+    "/sessions/{session_id}/challenges/{challenge_slug}/summary",
+    response_model=SessionChallengeSummaryResponse,
+)
+def get_session_challenge_summary(
+    session_id: str,
+    challenge_slug: str,
+) -> SessionChallengeSummaryResponse:
+    try:
+        summary = container.attempts_service.summarize_session_challenge(
+            session_id,
+            challenge_slug,
+        )
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    return SessionChallengeSummaryResponse.model_validate(summary)

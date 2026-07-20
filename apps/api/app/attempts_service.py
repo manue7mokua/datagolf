@@ -130,6 +130,70 @@ class AttemptsService:
             limit=limit,
         )
 
+    def summarize_session_challenge(self, session_id: str, challenge_slug: str):
+        challenge = self.challenge_registry.get_challenge(challenge_slug)
+        attempts = self.attempts_repo.list_attempts_for_session(
+            session_id,
+            challenge_slug=challenge_slug,
+            limit=None,
+        )
+        progress_by_question: dict[str, dict[str, object]] = {}
+
+        for attempt in attempts:
+            question_progress = progress_by_question.setdefault(
+                attempt["question_id"],
+                {
+                    "attempt_count": 0,
+                    "correct_count": 0,
+                    "last_status": None,
+                },
+            )
+            question_progress["attempt_count"] = (
+                int(question_progress["attempt_count"]) + 1
+            )
+            if attempt["is_correct"] is True:
+                question_progress["correct_count"] = (
+                    int(question_progress["correct_count"]) + 1
+                )
+            question_progress["last_status"] = attempt["status"]
+
+        total_questions = len(challenge.questions)
+        attempted_questions = len(progress_by_question)
+        correct_questions = sum(
+            1
+            for progress in progress_by_question.values()
+            if int(progress["correct_count"]) > 0
+        )
+        pending_questions = sum(
+            1
+            for progress in progress_by_question.values()
+            if int(progress["correct_count"]) == 0
+            and progress["last_status"] == "pending"
+        )
+        incorrect_questions = (
+            attempted_questions - correct_questions - pending_questions
+        )
+        completion_percent = (
+            round((correct_questions / total_questions) * 100)
+            if total_questions > 0
+            else 0
+        )
+
+        return {
+            "session_id": session_id,
+            "challenge_slug": challenge.challenge_slug,
+            "challenge_version": challenge.challenge_version,
+            "total_questions": total_questions,
+            "attempted_questions": attempted_questions,
+            "correct_questions": correct_questions,
+            "remaining_questions": total_questions - correct_questions,
+            "incorrect_questions": incorrect_questions,
+            "pending_questions": pending_questions,
+            "skipped_questions": total_questions - attempted_questions,
+            "total_attempts": len(attempts),
+            "completion_percent": min(max(completion_percent, 0), 100),
+        }
+
     def _validate_request(self, question: QuestionSpec, request: AttemptCreateRequest):
         if question.type == "guided_prompt":
             prompt_text = request.prompt_text.strip() if request.prompt_text else ""

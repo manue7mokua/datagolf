@@ -9,6 +9,7 @@ import {
   getDatasetPreview,
   getDatagolfApiBaseUrl,
   getDatagolfApiErrorMessage,
+  getSessionChallengeSummary,
   listSessionAttempts,
 } from "./datagolf-api";
 
@@ -86,6 +87,7 @@ async function runApiRequestTests() {
     await getAttempt("attempt 1/first");
     await getDatasetPreview("tiktok posts/v1", 12);
     await listSessionAttempts("session 1/user", "creator posts/v1", 25);
+    await getSessionChallengeSummary("session 1/user", "creator posts/v1");
 
     assert.deepEqual(requestedUrls, [
       "http://localhost:8000/challenges/creator%20posts%2Fv1",
@@ -94,6 +96,7 @@ async function runApiRequestTests() {
       "http://localhost:8000/attempts/attempt%201%2Ffirst",
       "http://localhost:8000/datasets/tiktok%20posts%2Fv1/preview?limit=12",
       "http://localhost:8000/sessions/session%201%2Fuser/attempts?limit=25&challenge_slug=creator+posts%2Fv1",
+      "http://localhost:8000/sessions/session%201%2Fuser/challenges/creator%20posts%2Fv1/summary",
     ]);
   } finally {
     globalThis.fetch = originalFetch;

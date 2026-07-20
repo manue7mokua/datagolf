@@ -167,6 +167,45 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual([attempt["question_id"] for attempt in attempts], ["Q8", "Q11"])
         self.assertTrue(all(attempt["is_correct"] for attempt in attempts))
 
+    def test_session_challenge_summary_returns_progress_counts(self) -> None:
+        session_id = "endpoint-summary-session"
+        incorrect_response = self.client.post(
+            "/questions/Q8/attempts",
+            json={"session_id": session_id, "selected_option": "A"},
+        )
+        correct_response = self.client.post(
+            "/questions/Q11/attempts",
+            json={"session_id": session_id, "selected_option": "C"},
+        )
+
+        self.assertEqual(incorrect_response.status_code, 200)
+        self.assertEqual(correct_response.status_code, 200)
+
+        response = self.client.get(
+            f"/sessions/{session_id}/challenges/tiktok-creator-posts/summary"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["session_id"], session_id)
+        self.assertEqual(payload["challenge_slug"], "tiktok-creator-posts")
+        self.assertEqual(payload["total_questions"], 15)
+        self.assertEqual(payload["attempted_questions"], 2)
+        self.assertEqual(payload["correct_questions"], 1)
+        self.assertEqual(payload["remaining_questions"], 14)
+        self.assertEqual(payload["incorrect_questions"], 1)
+        self.assertEqual(payload["pending_questions"], 0)
+        self.assertEqual(payload["skipped_questions"], 13)
+        self.assertEqual(payload["total_attempts"], 2)
+        self.assertEqual(payload["completion_percent"], 7)
+
+    def test_session_challenge_summary_rejects_unknown_challenge(self) -> None:
+        response = self.client.get(
+            "/sessions/endpoint-summary-session/challenges/unknown/summary"
+        )
+
+        self.assertEqual(response.status_code, 404)
+
     def test_session_attempts_rejects_oversized_limits(self) -> None:
         response = self.client.get("/sessions/any-session/attempts?limit=501")
 

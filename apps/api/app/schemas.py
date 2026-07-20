@@ -186,3 +186,18 @@ class AttemptResponse(BaseModel):
     error_message: str | None = None
     created_at: str
     updated_at: str
+
+
+class SessionChallengeSummaryResponse(BaseModel):
+    session_id: str
+    challenge_slug: str
+    challenge_version: str
+    total_questions: int
+    attempted_questions: int
+    correct_questions: int
+    remaining_questions: int
+    incorrect_questions: int
+    pending_questions: int
+    skipped_questions: int
+    total_attempts: int
+    completion_percent: int

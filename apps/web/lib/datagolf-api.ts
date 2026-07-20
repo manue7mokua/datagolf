@@ -102,6 +102,21 @@ export type AttemptResponse = {
   updated_at: string;
 };
 
+export type SessionChallengeSummary = {
+  session_id: string;
+  challenge_slug: string;
+  challenge_version: string;
+  total_questions: number;
+  attempted_questions: number;
+  correct_questions: number;
+  remaining_questions: number;
+  incorrect_questions: number;
+  pending_questions: number;
+  skipped_questions: number;
+  total_attempts: number;
+  completion_percent: number;
+};
+
 const defaultApiBaseUrl = "http://localhost:8000";
 
 export class DatagolfApiError extends Error {
@@ -214,6 +229,18 @@ export async function listSessionAttempts(
 
   return requestJson<AttemptResponse[]>(
     `/sessions/${encodeURIComponent(sessionId)}/attempts?${params.toString()}`,
+  );
+}
+
+export async function getSessionChallengeSummary(
+  sessionId: string,
+  challengeSlug: string,
+) {
+  const encodedSessionId = encodePathSegment(sessionId);
+  const encodedChallengeSlug = encodePathSegment(challengeSlug);
+
+  return requestJson<SessionChallengeSummary>(
+    `/sessions/${encodedSessionId}/challenges/${encodedChallengeSlug}/summary`,
   );
 }
 
