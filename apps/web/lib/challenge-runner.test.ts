@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 
 import {
   applyAttemptToProgress,
+  buildProgressFromAttempts,
   createAnswerDraftFromAttempt,
   findNextIncompleteQuestionIndex,
   getAnswerFormatLabel,
@@ -46,6 +47,11 @@ const progress = {
   Q1: applyAttemptToProgress(undefined, correctAttempt),
   Q2: applyAttemptToProgress(undefined, { ...retryAttempt, is_correct: false }),
 };
+const sessionProgress = buildProgressFromAttempts([
+  correctAttempt,
+  { ...retryAttempt, is_correct: false },
+  thirdAttempt,
+]);
 
 assert.deepEqual(createAnswerDraftFromAttempt(correctAttempt), {
   promptText: "",
@@ -115,6 +121,9 @@ assert.deepEqual(cappedProgress?.attempts.map((attempt) => attempt.id), [
 assert.equal(cappedProgress?.lastAttempt?.id, "cap-6");
 assert.equal(getPreviousAttemptCount(applyAttemptToProgress(undefined, retryAttempt)), 0);
 assert.equal(getPreviousAttemptLabel(0), "Prev 1");
+assert.equal(sessionProgress.Q1.attemptCount, 1);
+assert.equal(sessionProgress.Q2.attemptCount, 2);
+assert.equal(sessionProgress.Q2.lastAttempt?.id, "attempt-3");
 assert.equal(getAttemptResultLabel(correctAttempt), "Correct");
 assert.equal(getAttemptResultLabel({ ...retryAttempt, is_correct: false }), "Retry");
 assert.equal(getAttemptResultLabel({ ...retryAttempt, is_correct: null }), "Pending");
