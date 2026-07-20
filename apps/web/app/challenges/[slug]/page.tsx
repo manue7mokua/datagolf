@@ -305,7 +305,7 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
             <Metric label="Questions" value={progressSummary?.totalQuestions ?? "--"} />
             <Metric label="Attempted" value={progressSummary?.attemptedQuestions ?? "--"} />
             <Metric label="Correct" value={progressSummary?.correctQuestions ?? "--"} />
-            <Metric label="Skipped" value={progressSummary?.skippedQuestions ?? "--"} />
+            <Metric label="Remaining" value={progressSummary?.remainingQuestions ?? "--"} />
           </div>
         </header>
 
