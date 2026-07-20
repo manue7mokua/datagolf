@@ -284,6 +284,13 @@ export function getSummaryAccuracyPercent(summary: ChallengeProgressSummary) {
   return Math.min(Math.max(summary.accuracyPercent, 0), 100);
 }
 
+export function isChallengeComplete(summary: ChallengeProgressSummary) {
+  return (
+    summary.totalQuestions > 0 &&
+    summary.correctQuestions >= summary.totalQuestions
+  );
+}
+
 function getCompletionPercentFromCounts(
   correctQuestions: number,
   totalQuestions: number,

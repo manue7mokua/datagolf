@@ -27,6 +27,7 @@ import {
   getQuestionTypeLabel,
   getSummaryAccuracyPercent,
   isAnswerDraftDirty,
+  isChallengeComplete,
   isQuestionAwaitingResult,
   isQuestionAnswerDraftSubmittable,
   mapSessionChallengeSummary,
@@ -660,6 +661,54 @@ assert.equal(
 assert.equal(
   getCompletionPercent(summarizeChallengeProgress(questions, progress)),
   33,
+);
+assert.equal(
+  isChallengeComplete({
+    totalQuestions: 3,
+    attemptedQuestions: 3,
+    correctQuestions: 3,
+    remainingQuestions: 0,
+    incorrectQuestions: 0,
+    pendingQuestions: 0,
+    skippedQuestions: 0,
+    retryQuestions: 1,
+    totalAttempts: 5,
+    accuracyPercent: 100,
+    completionPercent: 100,
+  }),
+  true,
+);
+assert.equal(
+  isChallengeComplete({
+    totalQuestions: 3,
+    attemptedQuestions: 2,
+    correctQuestions: 2,
+    remainingQuestions: 1,
+    incorrectQuestions: 0,
+    pendingQuestions: 0,
+    skippedQuestions: 1,
+    retryQuestions: 0,
+    totalAttempts: 2,
+    accuracyPercent: 100,
+    completionPercent: 67,
+  }),
+  false,
+);
+assert.equal(
+  isChallengeComplete({
+    totalQuestions: 0,
+    attemptedQuestions: 0,
+    correctQuestions: 0,
+    remainingQuestions: 0,
+    incorrectQuestions: 0,
+    pendingQuestions: 0,
+    skippedQuestions: 0,
+    retryQuestions: 0,
+    totalAttempts: 0,
+    accuracyPercent: 0,
+    completionPercent: 0,
+  }),
+  false,
 );
 assert.equal(
   getCompletionPercent({

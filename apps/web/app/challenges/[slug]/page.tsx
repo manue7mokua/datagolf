@@ -44,6 +44,7 @@ import {
   getQuestionProgressStatusLabel,
   getQuestionTypeLabel,
   isAnswerDraftDirty,
+  isChallengeComplete,
   isQuestionAwaitingResult,
   isQuestionAnswerDraftSubmittable,
   mapSessionChallengeSummary,
@@ -485,7 +486,7 @@ function ChallengeSummaryPanel({
   canGoNextOpen: boolean;
   onNextOpen: () => void;
 }) {
-  const isComplete = summary.correctQuestions === summary.totalQuestions;
+  const isComplete = isChallengeComplete(summary);
   const completionPercent = getCompletionPercent(summary);
 
   return (
