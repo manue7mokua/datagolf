@@ -161,10 +161,8 @@ function formatValidationErrorDetail(detail: unknown) {
 }
 
 export function getDatagolfApiBaseUrl() {
-  return (
-    process.env.NEXT_PUBLIC_DATAGOLF_API_URL?.replace(/\/$/, "") ??
-    defaultApiBaseUrl
-  );
+  const configuredUrl = process.env.NEXT_PUBLIC_DATAGOLF_API_URL?.trim();
+  return configuredUrl ? configuredUrl.replace(/\/+$/, "") : defaultApiBaseUrl;
 }
 
 export async function getChallenge(slug: string) {

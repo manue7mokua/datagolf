@@ -3,8 +3,26 @@ import assert from "node:assert/strict";
 import {
   DatagolfApiError,
   getChallenge,
+  getDatagolfApiBaseUrl,
   getDatagolfApiErrorMessage,
 } from "./datagolf-api";
+
+const originalApiBaseUrl = process.env.NEXT_PUBLIC_DATAGOLF_API_URL;
+
+delete process.env.NEXT_PUBLIC_DATAGOLF_API_URL;
+assert.equal(getDatagolfApiBaseUrl(), "http://localhost:8000");
+
+process.env.NEXT_PUBLIC_DATAGOLF_API_URL = "   ";
+assert.equal(getDatagolfApiBaseUrl(), "http://localhost:8000");
+
+process.env.NEXT_PUBLIC_DATAGOLF_API_URL = " https://api.example.test/// ";
+assert.equal(getDatagolfApiBaseUrl(), "https://api.example.test");
+
+if (originalApiBaseUrl === undefined) {
+  delete process.env.NEXT_PUBLIC_DATAGOLF_API_URL;
+} else {
+  process.env.NEXT_PUBLIC_DATAGOLF_API_URL = originalApiBaseUrl;
+}
 
 assert.equal(
   getDatagolfApiErrorMessage(422, {
