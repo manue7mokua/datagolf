@@ -35,6 +35,12 @@ const correctAttempt = createAttempt("attempt-1", "Q1", {
 const retryAttempt = createAttempt("attempt-2", "Q2", {
   blanks: ["views", "likes"],
 });
+const failedAttempt: AttemptResponse = {
+  ...retryAttempt,
+  id: "attempt-failed",
+  status: "failed",
+  is_correct: null,
+};
 const thirdAttempt = createAttempt("attempt-3", "Q2", {
   blanks: ["shares", "saves"],
 });
@@ -128,15 +134,18 @@ assert.equal(sessionProgress.Q2.lastAttempt?.id, "attempt-3");
 assert.equal(getAttemptResultLabel(correctAttempt), "Correct");
 assert.equal(getAttemptResultLabel({ ...retryAttempt, is_correct: false }), "Retry");
 assert.equal(getAttemptResultLabel({ ...retryAttempt, is_correct: null }), "Pending");
+assert.equal(getAttemptResultLabel(failedAttempt), "Failed");
 assert.equal(getAttemptFeedbackTitle(correctAttempt), "Correct");
 assert.equal(
   getAttemptFeedbackTitle({ ...retryAttempt, is_correct: false }),
   "Needs another pass",
 );
 assert.equal(getAttemptFeedbackTitle({ ...retryAttempt, is_correct: null }), "Pending");
+assert.equal(getAttemptFeedbackTitle(failedAttempt), "Attempt failed");
 assert.equal(getAttemptTone(correctAttempt), "success");
 assert.equal(getAttemptTone({ ...retryAttempt, is_correct: false }), "retry");
 assert.equal(getAttemptTone({ ...retryAttempt, is_correct: null }), "pending");
+assert.equal(getAttemptTone(failedAttempt), "retry");
 assert.equal(getFeedbackLineTone({ label: "A", value: "ok", passed: true }), "success");
 assert.equal(getFeedbackLineTone({ label: "A", value: "no", passed: false }), "retry");
 assert.equal(getFeedbackLineTone({ label: "A", value: "n/a" }), "neutral");

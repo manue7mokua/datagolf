@@ -221,6 +221,10 @@ export function getPreviousAttemptLabel(index: number) {
 }
 
 export function getAttemptResultLabel(attempt: AttemptResponse) {
+  if (attempt.status === "failed") {
+    return "Failed";
+  }
+
   if (attempt.is_correct === true) {
     return "Correct";
   }
@@ -229,6 +233,10 @@ export function getAttemptResultLabel(attempt: AttemptResponse) {
 }
 
 export function getAttemptFeedbackTitle(attempt: AttemptResponse) {
+  if (attempt.status === "failed") {
+    return "Attempt failed";
+  }
+
   if (attempt.is_correct === true) {
     return "Correct";
   }
@@ -237,6 +245,10 @@ export function getAttemptFeedbackTitle(attempt: AttemptResponse) {
 }
 
 export function getAttemptTone(attempt: AttemptResponse) {
+  if (attempt.status === "failed") {
+    return "retry";
+  }
+
   if (attempt.is_correct === true) {
     return "success";
   }
