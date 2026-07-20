@@ -36,6 +36,11 @@ const retryAttempt = createAttempt("attempt-2", "Q2", {
 const thirdAttempt = createAttempt("attempt-3", "Q2", {
   blanks: ["shares", "saves"],
 });
+const cappedProgress = Array.from({ length: 6 }, (_, index) =>
+  createAttempt(`cap-${index + 1}`, "Q3", { selected_option: String(index + 1) }),
+).reduce((currentProgress, attempt) => {
+  return applyAttemptToProgress(currentProgress, attempt);
+}, undefined as ReturnType<typeof applyAttemptToProgress> | undefined);
 
 const progress = {
   Q1: applyAttemptToProgress(undefined, correctAttempt),
@@ -100,6 +105,14 @@ assert.deepEqual(
   ).map((attempt) => attempt.id),
   ["attempt-2"],
 );
+assert.deepEqual(cappedProgress?.attempts.map((attempt) => attempt.id), [
+  "cap-2",
+  "cap-3",
+  "cap-4",
+  "cap-5",
+  "cap-6",
+]);
+assert.equal(cappedProgress?.lastAttempt?.id, "cap-6");
 assert.equal(getPreviousAttemptCount(applyAttemptToProgress(undefined, retryAttempt)), 0);
 assert.equal(getPreviousAttemptLabel(0), "Prev 1");
 assert.equal(getAttemptResultLabel(correctAttempt), "Correct");
