@@ -401,6 +401,7 @@ class AttemptsServiceTests(unittest.TestCase):
         self.assertEqual(summary["skipped_questions"], 1)
         self.assertEqual(summary["retry_questions"], 1)
         self.assertEqual(summary["total_attempts"], 3)
+        self.assertEqual(summary["accuracy_percent"], 50)
         self.assertEqual(summary["completion_percent"], 33)
         self.assertEqual(
             repo.calls,
@@ -439,6 +440,7 @@ class AttemptsServiceTests(unittest.TestCase):
         self.assertEqual(summary["skipped_questions"], 1)
         self.assertEqual(summary["retry_questions"], 0)
         self.assertEqual(summary["total_attempts"], 1)
+        self.assertEqual(summary["accuracy_percent"], 100)
         self.assertEqual(summary["completion_percent"], 50)
 
 

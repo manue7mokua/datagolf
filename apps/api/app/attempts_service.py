@@ -189,6 +189,11 @@ class AttemptsService:
             if total_questions > 0
             else 0
         )
+        accuracy_percent = (
+            round((correct_questions / attempted_questions) * 100)
+            if attempted_questions > 0
+            else 0
+        )
 
         return {
             "session_id": session_id,
@@ -203,6 +208,7 @@ class AttemptsService:
             "skipped_questions": total_questions - attempted_questions,
             "retry_questions": retry_questions,
             "total_attempts": total_current_attempts,
+            "accuracy_percent": min(max(accuracy_percent, 0), 100),
             "completion_percent": min(max(completion_percent, 0), 100),
         }
 

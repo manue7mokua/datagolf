@@ -115,6 +115,7 @@ export type SessionChallengeSummary = {
   skipped_questions: number;
   retry_questions: number;
   total_attempts: number;
+  accuracy_percent: number;
   completion_percent: number;
 };
 

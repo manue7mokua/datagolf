@@ -31,6 +31,7 @@ export type ChallengeProgressSummary = {
   skippedQuestions: number;
   retryQuestions: number;
   totalAttempts: number;
+  accuracyPercent: number;
 };
 
 export type FeedbackLine = {
@@ -239,6 +240,7 @@ export function summarizeChallengeProgress(
     skippedQuestions: questions.length - attemptedQuestions,
     retryQuestions,
     totalAttempts,
+    accuracyPercent: getAccuracyPercent(correctQuestions, attemptedQuestions),
   };
 }
 
@@ -255,7 +257,17 @@ export function mapSessionChallengeSummary(
     skippedQuestions: summary.skipped_questions,
     retryQuestions: summary.retry_questions,
     totalAttempts: summary.total_attempts,
+    accuracyPercent: summary.accuracy_percent,
   };
+}
+
+function getAccuracyPercent(correctQuestions: number, attemptedQuestions: number) {
+  if (attemptedQuestions === 0) {
+    return 0;
+  }
+
+  const percent = Math.round((correctQuestions / attemptedQuestions) * 100);
+  return Math.min(Math.max(percent, 0), 100);
 }
 
 export function getCompletionPercent(summary: ChallengeProgressSummary) {
@@ -287,6 +299,7 @@ export function getChallengeProgressDetailText(
     parts.push(getCountLabel(summary.retryQuestions, "retried", "retried"));
   }
 
+  parts.push(`${summary.accuracyPercent}% accuracy`);
   parts.push(getCountLabel(summary.totalAttempts, "attempt", "attempts"));
 
   return parts.join(" / ");

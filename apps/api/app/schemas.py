@@ -201,4 +201,5 @@ class SessionChallengeSummaryResponse(BaseModel):
     skipped_questions: int
     retry_questions: int
     total_attempts: int
+    accuracy_percent: int
     completion_percent: int

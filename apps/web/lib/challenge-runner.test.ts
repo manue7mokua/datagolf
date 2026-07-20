@@ -533,10 +533,11 @@ assert.deepEqual(summarizeChallengeProgress(questions, progress), {
   skippedQuestions: 0,
   retryQuestions: 0,
   totalAttempts: 3,
+  accuracyPercent: 33,
 });
 assert.equal(
   getChallengeProgressDetailText(summarizeChallengeProgress(questions, progress)),
-  "1 of 3 correct / 2 remaining / 1 incorrect / 0 skipped / 1 pending / 3 attempts",
+  "1 of 3 correct / 2 remaining / 1 incorrect / 0 skipped / 1 pending / 33% accuracy / 3 attempts",
 );
 assert.deepEqual(
   mapSessionChallengeSummary({
@@ -552,6 +553,7 @@ assert.deepEqual(
     skipped_questions: 11,
     retry_questions: 2,
     total_attempts: 6,
+    accuracy_percent: 50,
     completion_percent: 13,
   }),
   {
@@ -564,6 +566,7 @@ assert.deepEqual(
     skippedQuestions: 11,
     retryQuestions: 2,
     totalAttempts: 6,
+    accuracyPercent: 50,
   },
 );
 assert.equal(
@@ -577,8 +580,9 @@ assert.equal(
     skippedQuestions: 11,
     retryQuestions: 2,
     totalAttempts: 6,
+    accuracyPercent: 50,
   }),
-  "2 of 15 correct / 13 remaining / 1 incorrect / 11 skipped / 1 pending / 2 retried / 6 attempts",
+  "2 of 15 correct / 13 remaining / 1 incorrect / 11 skipped / 1 pending / 2 retried / 50% accuracy / 6 attempts",
 );
 assert.equal(
   getChallengeProgressDetailText({
@@ -591,8 +595,9 @@ assert.equal(
     skippedQuestions: 0,
     retryQuestions: 0,
     totalAttempts: 1,
+    accuracyPercent: 100,
   }),
-  "1 of 1 correct / 0 remaining / 0 incorrect / 0 skipped / 1 attempt",
+  "1 of 1 correct / 0 remaining / 0 incorrect / 0 skipped / 100% accuracy / 1 attempt",
 );
 assert.equal(
   getCompletionPercent(summarizeChallengeProgress(questions, progress)),
@@ -609,6 +614,7 @@ assert.equal(
     skippedQuestions: 0,
     retryQuestions: 0,
     totalAttempts: 0,
+    accuracyPercent: 0,
   }),
   0,
 );
@@ -623,6 +629,7 @@ assert.equal(
     skippedQuestions: 0,
     retryQuestions: 1,
     totalAttempts: 5,
+    accuracyPercent: 100,
   }),
   100,
 );
@@ -637,6 +644,7 @@ assert.equal(
     skippedQuestions: 3,
     retryQuestions: 0,
     totalAttempts: 0,
+    accuracyPercent: 0,
   }),
   0,
 );

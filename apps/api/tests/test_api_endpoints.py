@@ -198,6 +198,7 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual(payload["skipped_questions"], 13)
         self.assertEqual(payload["retry_questions"], 0)
         self.assertEqual(payload["total_attempts"], 2)
+        self.assertEqual(payload["accuracy_percent"], 50)
         self.assertEqual(payload["completion_percent"], 7)
 
     def test_session_challenge_summary_counts_retried_question_once(self) -> None:
@@ -227,6 +228,7 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual(payload["skipped_questions"], 14)
         self.assertEqual(payload["retry_questions"], 1)
         self.assertEqual(payload["total_attempts"], 2)
+        self.assertEqual(payload["accuracy_percent"], 100)
         self.assertEqual(payload["completion_percent"], 7)
 
     def test_session_challenge_summary_rejects_unknown_challenge(self) -> None:
