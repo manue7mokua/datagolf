@@ -276,7 +276,7 @@ export function applyAttemptToProgress(
 }
 
 export function getAttemptsNewestFirst(attempts: AttemptResponse[]) {
-  return [...attempts].reverse();
+  return [...attempts].sort(compareAttemptsDescending);
 }
 
 export function getPreviousAttemptsNewestFirst(progress: QuestionProgress) {
@@ -355,6 +355,10 @@ function compareAttemptsAscending(left: AttemptResponse, right: AttemptResponse)
   return createdAtComparison === 0
     ? left.id.localeCompare(right.id)
     : createdAtComparison;
+}
+
+function compareAttemptsDescending(left: AttemptResponse, right: AttemptResponse) {
+  return compareAttemptsAscending(right, left);
 }
 
 export function getQuestionProgressStatus(
