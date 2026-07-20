@@ -90,6 +90,37 @@ class AttemptsRepositoryTests(unittest.TestCase):
         self.assertEqual(filtered_attempts[0]["user_input_payload"], {"selected_option": "B"})
         self.assertTrue(filtered_attempts[0]["is_correct"])
 
+    def test_list_attempts_for_session_orders_same_timestamp_by_id(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            repo = AttemptsRepository(Path(tempdir) / "attempts.sqlite3")
+            repo.initialize()
+
+            repo.create_attempt(
+                _attempt_record(
+                    attempt_id="attempt-b",
+                    session_id="session-a",
+                    challenge_slug="challenge-a",
+                    question_id="Q2",
+                    created_at="2026-01-01T00:00:01+00:00",
+                )
+            )
+            repo.create_attempt(
+                _attempt_record(
+                    attempt_id="attempt-a",
+                    session_id="session-a",
+                    challenge_slug="challenge-a",
+                    question_id="Q1",
+                    created_at="2026-01-01T00:00:01+00:00",
+                )
+            )
+
+            attempts = repo.list_attempts_for_session("session-a")
+
+        self.assertEqual(
+            [attempt["id"] for attempt in attempts],
+            ["attempt-a", "attempt-b"],
+        )
+
 
 def _attempt_record(
     *,

@@ -158,7 +158,7 @@ class AttemptsRepository:
             query += " AND challenge_slug = ?"
             params.append(challenge_slug)
 
-        query += " ORDER BY created_at ASC LIMIT ?"
+        query += " ORDER BY created_at ASC, id ASC LIMIT ?"
         params.append(limit)
 
         with self._connection() as connection:
