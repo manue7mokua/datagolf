@@ -27,6 +27,7 @@ import {
   getAnswerFormatLabel,
   getAttemptsNewestFirst,
   getAttemptFeedbackLines,
+  getCompletionPercent,
   getQuestionProgressStatus,
   getQuestionProgressStatusLabel,
   isAnswerDraftDirty,
@@ -431,10 +432,7 @@ function ChallengeSummaryPanel({
   onNextOpen: () => void;
 }) {
   const isComplete = summary.correctQuestions === summary.totalQuestions;
-  const completionPercent =
-    summary.totalQuestions === 0
-      ? 0
-      : Math.round((summary.correctQuestions / summary.totalQuestions) * 100);
+  const completionPercent = getCompletionPercent(summary);
 
   return (
     <section className="mx-auto mb-5 grid max-w-4xl gap-3 border border-white/12 bg-[#111111] p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">

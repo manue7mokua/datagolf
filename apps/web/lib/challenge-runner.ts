@@ -169,6 +169,14 @@ export function summarizeChallengeProgress(
   };
 }
 
+export function getCompletionPercent(summary: ChallengeProgressSummary) {
+  if (summary.totalQuestions === 0) {
+    return 0;
+  }
+
+  return Math.round((summary.correctQuestions / summary.totalQuestions) * 100);
+}
+
 export function findNextIncompleteQuestionIndex(
   questions: PublicQuestion[],
   progressByQuestion: Record<string, QuestionProgress>,

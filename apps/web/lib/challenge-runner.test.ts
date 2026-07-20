@@ -6,6 +6,7 @@ import {
   findNextIncompleteQuestionIndex,
   getAnswerFormatLabel,
   getAttemptsNewestFirst,
+  getCompletionPercent,
   getQuestionProgressStatusLabel,
   isAnswerDraftDirty,
   summarizeChallengeProgress,
@@ -87,6 +88,22 @@ assert.deepEqual(summarizeChallengeProgress(questions, progress), {
   skippedQuestions: 1,
   totalAttempts: 2,
 });
+assert.equal(
+  getCompletionPercent(summarizeChallengeProgress(questions, progress)),
+  33,
+);
+assert.equal(
+  getCompletionPercent({
+    totalQuestions: 0,
+    attemptedQuestions: 0,
+    correctQuestions: 0,
+    remainingQuestions: 0,
+    incorrectQuestions: 0,
+    skippedQuestions: 0,
+    totalAttempts: 0,
+  }),
+  0,
+);
 
 function createQuestion(id: string, order: number): PublicQuestion {
   return {
