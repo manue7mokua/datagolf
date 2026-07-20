@@ -97,7 +97,7 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
         ]);
         const [datasetPreview, sessionAttempts] = await Promise.all([
           getDatasetPreview(challenge.dataset.slug, 8),
-          listSessionAttempts(sessionId, challenge.challenge_slug),
+          listSessionAttempts(sessionId, challenge.challenge_slug, 100),
         ]);
 
         if (mounted) {

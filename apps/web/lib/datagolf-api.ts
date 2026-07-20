@@ -157,12 +157,15 @@ export async function getDatasetPreview(slug: string, limit = 20) {
 export async function listSessionAttempts(
   sessionId: string,
   challengeSlug?: string,
+  limit = 100,
 ) {
-  const query = challengeSlug
-    ? `?challenge_slug=${encodeURIComponent(challengeSlug)}`
-    : "";
+  const params = new URLSearchParams({ limit: String(limit) });
+  if (challengeSlug) {
+    params.set("challenge_slug", challengeSlug);
+  }
+
   return requestJson<AttemptResponse[]>(
-    `/sessions/${encodeURIComponent(sessionId)}/attempts${query}`,
+    `/sessions/${encodeURIComponent(sessionId)}/attempts?${params.toString()}`,
   );
 }
 
