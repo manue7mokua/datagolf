@@ -45,7 +45,7 @@ pnpm test
 This runs:
 
 - `pnpm test:api`: Python unit tests for challenge assets, evaluator behavior, repositories, and services.
-- `pnpm test:web:runner`: a focused TypeScript check for the interactive challenge runner and its support modules.
+- `pnpm test:web:runner`: a focused TypeScript check for the interactive challenge runner plus direct helper assertions for runner progress and draft restoration.
 
 FastAPI endpoint tests are included in the API suite. They run when the active Python environment has `apps/api/requirements.txt` installed; otherwise they are skipped with an explicit dependency message.
 
