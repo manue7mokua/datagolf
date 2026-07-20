@@ -1,18 +1,25 @@
 const sessionStorageKey = "datagolf.anonymous_session_id";
+let fallbackSessionId: string | null = null;
 
 export function getAnonymousSessionId() {
   if (typeof window === "undefined") {
     return null;
   }
 
-  const existing = window.localStorage.getItem(sessionStorageKey);
-  if (existing) {
-    return existing;
-  }
+  try {
+    const existing = window.localStorage.getItem(sessionStorageKey);
+    if (existing) {
+      return existing;
+    }
 
-  const sessionId = createSessionId();
-  window.localStorage.setItem(sessionStorageKey, sessionId);
-  return sessionId;
+    const sessionId = createSessionId();
+    window.localStorage.setItem(sessionStorageKey, sessionId);
+    fallbackSessionId = sessionId;
+    return sessionId;
+  } catch {
+    fallbackSessionId = fallbackSessionId ?? createSessionId();
+    return fallbackSessionId;
+  }
 }
 
 export function resetAnonymousSessionId() {
@@ -21,7 +28,14 @@ export function resetAnonymousSessionId() {
   }
 
   const sessionId = createSessionId();
-  window.localStorage.setItem(sessionStorageKey, sessionId);
+  fallbackSessionId = sessionId;
+
+  try {
+    window.localStorage.setItem(sessionStorageKey, sessionId);
+  } catch {
+    return sessionId;
+  }
+
   return sessionId;
 }
 
