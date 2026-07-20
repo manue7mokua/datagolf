@@ -412,6 +412,33 @@ class AttemptsServiceTests(unittest.TestCase):
             ],
         )
 
+    def test_summarize_session_challenge_ignores_removed_questions(self) -> None:
+        repo = FakeAttemptsRepository(
+            attempts=[
+                create_attempt_record("attempt-1", "Q1", is_correct=True),
+                create_attempt_record("attempt-removed", "Q99", is_correct=True),
+            ]
+        )
+        service = AttemptsService(
+            challenge_registry=FakeChallengeRegistry(question_count=2),
+            dataset_loader=None,
+            llm_service=None,
+            evaluator=None,
+            attempts_repo=repo,
+        )
+
+        summary = service.summarize_session_challenge(
+            "session-a",
+            "challenge-a",
+        )
+
+        self.assertEqual(summary["attempted_questions"], 1)
+        self.assertEqual(summary["correct_questions"], 1)
+        self.assertEqual(summary["remaining_questions"], 1)
+        self.assertEqual(summary["skipped_questions"], 1)
+        self.assertEqual(summary["total_attempts"], 1)
+        self.assertEqual(summary["completion_percent"], 50)
+
 
 class FakeAttemptsRepository:
     def __init__(self, attempts: list[dict] | None = None) -> None:
@@ -448,7 +475,14 @@ class FakeChallenge:
     def __init__(self, question_count: int) -> None:
         self.challenge_slug = "challenge-a"
         self.challenge_version = "v1"
-        self.questions = [object() for _ in range(question_count)]
+        self.questions = [
+            FakeQuestion(question_id=f"Q{index + 1}") for index in range(question_count)
+        ]
+
+
+class FakeQuestion:
+    def __init__(self, question_id: str) -> None:
+        self.id = question_id
 
 
 def create_service(attempts_repo=None) -> AttemptsService:

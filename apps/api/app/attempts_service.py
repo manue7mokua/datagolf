@@ -138,8 +138,14 @@ class AttemptsService:
             limit=None,
         )
         progress_by_question: dict[str, dict[str, object]] = {}
+        current_question_ids = {question.id for question in challenge.questions}
+        total_current_attempts = 0
 
         for attempt in attempts:
+            if attempt["question_id"] not in current_question_ids:
+                continue
+
+            total_current_attempts += 1
             question_progress = progress_by_question.setdefault(
                 attempt["question_id"],
                 {
@@ -190,7 +196,7 @@ class AttemptsService:
             "incorrect_questions": incorrect_questions,
             "pending_questions": pending_questions,
             "skipped_questions": total_questions - attempted_questions,
-            "total_attempts": len(attempts),
+            "total_attempts": total_current_attempts,
             "completion_percent": min(max(completion_percent, 0), 100),
         }
 
