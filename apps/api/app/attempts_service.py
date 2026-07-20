@@ -131,17 +131,21 @@ class AttemptsService:
 
     def _validate_request(self, question: QuestionSpec, request: AttemptCreateRequest):
         if question.type == "guided_prompt":
-            if not request.prompt_text or not request.prompt_text.strip():
+            prompt_text = request.prompt_text.strip() if request.prompt_text else ""
+            if not prompt_text:
                 raise ValueError("prompt_text is required for guided prompt attempts")
             return {
-                "prompt_text": request.prompt_text,
-                "prompt_token_estimate": estimate_token_count(request.prompt_text),
+                "prompt_text": prompt_text,
+                "prompt_token_estimate": estimate_token_count(prompt_text),
             }
 
         if question.type == "multiple_choice":
-            if not request.selected_option:
+            selected_option = (
+                request.selected_option.strip() if request.selected_option else ""
+            )
+            if not selected_option:
                 raise ValueError("selected_option is required for multiple choice attempts")
-            return {"selected_option": request.selected_option}
+            return {"selected_option": selected_option}
 
         if question.type == "fill_blank":
             blanks = request.blanks or []
@@ -151,9 +155,10 @@ class AttemptsService:
             return {"blanks": trimmed_blanks}
 
         if question.type == "micro_code":
-            if not request.code_text or not request.code_text.strip():
+            code_text = request.code_text.strip() if request.code_text else ""
+            if not code_text:
                 raise ValueError("code_text is required for micro-code attempts")
-            return {"code_text": request.code_text}
+            return {"code_text": code_text}
 
         raise ValueError(f"Unsupported question type: {question.type}")
 

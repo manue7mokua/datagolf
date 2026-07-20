@@ -14,14 +14,67 @@ from app.schemas import AttemptCreateRequest, QuestionDisplay, QuestionSpec
 
 
 class AttemptsServiceTests(unittest.TestCase):
-    def test_validate_fill_blank_trims_values(self) -> None:
-        service = AttemptsService(
-            challenge_registry=None,
-            dataset_loader=None,
-            llm_service=None,
-            evaluator=None,
-            attempts_repo=FakeAttemptsRepository(),
+    def test_validate_guided_prompt_trims_text(self) -> None:
+        service = create_service()
+
+        payload = service._validate_request(
+            create_question(
+                question_type="guided_prompt",
+                evaluation={
+                    "kind": "guided_prompt",
+                    "operation": "select",
+                    "expected_columns": ["post_id"],
+                    "expected_rows": [],
+                },
+            ),
+            AttemptCreateRequest(
+                session_id="session-a",
+                prompt_text=" show top posts ",
+            ),
         )
+
+        self.assertEqual(payload["prompt_text"], "show top posts")
+
+    def test_validate_multiple_choice_trims_option(self) -> None:
+        service = create_service()
+
+        payload = service._validate_request(
+            create_question(
+                question_type="multiple_choice",
+                evaluation={
+                    "kind": "multiple_choice",
+                    "correct_option": "B",
+                },
+            ),
+            AttemptCreateRequest(
+                session_id="session-a",
+                selected_option=" B ",
+            ),
+        )
+
+        self.assertEqual(payload, {"selected_option": "B"})
+
+    def test_validate_micro_code_trims_code(self) -> None:
+        service = create_service()
+
+        payload = service._validate_request(
+            create_question(
+                question_type="micro_code",
+                evaluation={
+                    "kind": "micro_code",
+                    "accepted_patterns": ["select"],
+                },
+            ),
+            AttemptCreateRequest(
+                session_id="session-a",
+                code_text=" select(post_id) ",
+            ),
+        )
+
+        self.assertEqual(payload, {"code_text": "select(post_id)"})
+
+    def test_validate_fill_blank_trims_values(self) -> None:
+        service = create_service()
 
         payload = service._validate_request(
             create_fill_blank_question(),
@@ -34,13 +87,7 @@ class AttemptsServiceTests(unittest.TestCase):
         self.assertEqual(payload, {"blanks": ["views", "likes"]})
 
     def test_validate_fill_blank_rejects_empty_values(self) -> None:
-        service = AttemptsService(
-            challenge_registry=None,
-            dataset_loader=None,
-            llm_service=None,
-            evaluator=None,
-            attempts_repo=FakeAttemptsRepository(),
-        )
+        service = create_service()
 
         with self.assertRaisesRegex(
             ValueError,
@@ -104,17 +151,34 @@ class FakeAttemptsRepository:
         return [{"id": "attempt-a"}]
 
 
+def create_service(attempts_repo=None) -> AttemptsService:
+    return AttemptsService(
+        challenge_registry=None,
+        dataset_loader=None,
+        llm_service=None,
+        evaluator=None,
+        attempts_repo=attempts_repo or FakeAttemptsRepository(),
+    )
+
+
 def create_fill_blank_question() -> QuestionSpec:
-    return QuestionSpec(
-        id="Q-fill",
-        order=1,
-        type="fill_blank",
-        title="Fill blanks",
-        display=QuestionDisplay(task_text="Fill each blank."),
+    return create_question(
+        question_type="fill_blank",
         evaluation={
             "kind": "fill_blank",
             "accepted_answers": [["views"], ["likes"]],
         },
+    )
+
+
+def create_question(question_type: str, evaluation: dict) -> QuestionSpec:
+    return QuestionSpec(
+        id=f"Q-{question_type}",
+        order=1,
+        type=question_type,
+        title="Question",
+        display=QuestionDisplay(task_text="Fill each blank."),
+        evaluation=evaluation,
     )
 
 
