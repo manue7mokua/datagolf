@@ -147,8 +147,16 @@ export function getAnswerDraftGuidance(
   question: PublicQuestion,
   draft: RunnerAnswerDraft,
 ) {
-  if (question.type !== "fill_blank") {
-    return null;
+  if (question.type === "guided_prompt") {
+    return draft.promptText.trim().length > 0 ? null : "Enter a prompt";
+  }
+
+  if (question.type === "multiple_choice") {
+    return draft.selectedOption.trim().length > 0 ? null : "Choose an option";
+  }
+
+  if (question.type === "micro_code") {
+    return draft.codeText.trim().length > 0 ? null : "Enter code";
   }
 
   const missingCount = normalizeFillBlankDrafts(

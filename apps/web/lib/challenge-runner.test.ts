@@ -52,6 +52,14 @@ const fillBlankQuestion: PublicQuestion = {
     answer_format: "blanks",
   },
 };
+const guidedPromptQuestion: PublicQuestion = {
+  ...createQuestion("Q5", 5),
+  type: "guided_prompt",
+};
+const microCodeQuestion: PublicQuestion = {
+  ...createQuestion("Q6", 6),
+  type: "micro_code",
+};
 
 const correctAttempt = createAttempt("attempt-1", "Q1", {
   selected_option: "B",
@@ -229,7 +237,27 @@ assert.equal(
   }),
   null,
 );
-assert.equal(getAnswerDraftGuidance(questions[0], createEmptyAnswerDraft()), null);
+assert.equal(
+  getAnswerDraftGuidance(questions[0], createEmptyAnswerDraft()),
+  "Choose an option",
+);
+assert.equal(
+  getAnswerDraftGuidance(questions[0], {
+    promptText: "",
+    selectedOption: "B",
+    blanks: [],
+    codeText: "",
+  }),
+  null,
+);
+assert.equal(
+  getAnswerDraftGuidance(guidedPromptQuestion, createEmptyAnswerDraft()),
+  "Enter a prompt",
+);
+assert.equal(
+  getAnswerDraftGuidance(microCodeQuestion, createEmptyAnswerDraft()),
+  "Enter code",
+);
 assert.equal(
   getSubmitAnswerLabel({
     question: questions[0],
@@ -243,6 +271,15 @@ assert.equal(
     isSubmitting: false,
   }),
   "Check Answer",
+);
+assert.equal(
+  getSubmitAnswerLabel({
+    question: questions[0],
+    draft: createEmptyAnswerDraft(),
+    isAwaitingResult: false,
+    isSubmitting: false,
+  }),
+  "Choose an option",
 );
 assert.equal(
   getSubmitAnswerLabel({
