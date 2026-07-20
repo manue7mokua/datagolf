@@ -133,6 +133,19 @@ export function applyAttemptToProgress(
   };
 }
 
+export function buildProgressFromAttempts(attempts: AttemptResponse[]) {
+  return attempts.reduce<Record<string, QuestionProgress>>(
+    (progressByQuestion, attempt) => ({
+      ...progressByQuestion,
+      [attempt.question_id]: applyAttemptToProgress(
+        progressByQuestion[attempt.question_id],
+        attempt,
+      ),
+    }),
+    {},
+  );
+}
+
 export function getQuestionProgressStatus(
   progress: QuestionProgress | undefined,
 ): QuestionProgressStatus {

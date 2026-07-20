@@ -10,11 +10,13 @@ import {
   getChallenge,
   getChallengeQuestions,
   getDatasetPreview,
+  listSessionAttempts,
   type PublicQuestion,
 } from "../../../lib/datagolf-api";
 import { getAnonymousSessionId } from "../../../lib/anonymous-session";
 import {
   applyAttemptToProgress,
+  buildProgressFromAttempts,
   buildAttemptPayload,
   createEmptyAnswerDraft,
   getAttemptFeedbackLines,
@@ -93,7 +95,10 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
           getChallenge(challengeSlug),
           getChallengeQuestions(challengeSlug),
         ]);
-        const datasetPreview = await getDatasetPreview(challenge.dataset.slug, 8);
+        const [datasetPreview, sessionAttempts] = await Promise.all([
+          getDatasetPreview(challenge.dataset.slug, 8),
+          listSessionAttempts(sessionId, challenge.challenge_slug),
+        ]);
 
         if (mounted) {
           setLoadState({
@@ -103,6 +108,7 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
             questions,
             sessionId,
           });
+          setProgressByQuestion(buildProgressFromAttempts(sessionAttempts));
           setActiveQuestionIndex(0);
           setSubmitError(null);
         }
