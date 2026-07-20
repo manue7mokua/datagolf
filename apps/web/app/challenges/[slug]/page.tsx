@@ -15,6 +15,7 @@ import {
   applyAttemptToProgress,
   buildAttemptPayload,
   createEmptyAnswerDraft,
+  getAttemptFeedbackLines,
   isAnswerDraftSubmittable,
   type QuestionProgress,
   type RunnerAnswerDraft,
@@ -396,6 +397,8 @@ function AttemptFeedback({ progress }: { progress: QuestionProgress }) {
     return null;
   }
 
+  const feedbackLines = getAttemptFeedbackLines(attempt);
+
   return (
     <section className="mt-4 border border-white/12 bg-black/30">
       <div
@@ -406,6 +409,33 @@ function AttemptFeedback({ progress }: { progress: QuestionProgress }) {
       >
         {attempt.is_correct ? "Correct" : "Needs another pass"}
       </div>
+
+      {feedbackLines.length > 0 ? (
+        <div className="grid gap-2 border-b border-white/12 p-3">
+          {feedbackLines.map((line, index) => (
+            <div
+              key={`${line.label}-${index}`}
+              className="grid gap-1 border border-white/10 px-3 py-2 sm:grid-cols-[9rem_minmax(0,1fr)]"
+            >
+              <div
+                className={cn(
+                  "text-[11px] uppercase tracking-[0.16em]",
+                  line.passed === false
+                    ? "text-[#ffbd2e]"
+                    : line.passed === true
+                      ? "text-[#9be58a]"
+                      : "text-[#8f8b80]",
+                )}
+              >
+                {line.label}
+              </div>
+              <div className="min-w-0 break-words font-mono text-[12px] leading-5 text-[#c9c4b8]">
+                {line.value}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       {attempt.generated_code ? (
         <pre className="max-h-72 overflow-auto border-b border-white/12 p-3 font-mono text-[12px] leading-6 text-[#c9c4b8]">

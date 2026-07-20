@@ -28,6 +28,12 @@ export type ChallengeProgressSummary = {
   totalAttempts: number;
 };
 
+export type FeedbackLine = {
+  label: string;
+  value: string;
+  passed?: boolean;
+};
+
 export function createEmptyAnswerDraft(): RunnerAnswerDraft {
   return {
     promptText: "",
@@ -123,4 +129,111 @@ export function applyAttemptToProgress(
     correctCount: (progress?.correctCount ?? 0) + (attempt.is_correct ? 1 : 0),
     lastAttempt: attempt,
   };
+}
+
+export function getAttemptFeedbackLines(attempt: AttemptResponse): FeedbackLine[] {
+  const payload = attempt.evaluation_payload;
+  if (!payload) {
+    return [];
+  }
+
+  if (attempt.question_type === "multiple_choice") {
+    return [
+      {
+        label: "Selected",
+        value: formatPayloadValue(payload.received_option),
+        passed: attempt.is_correct ?? undefined,
+      },
+      {
+        label: "Expected",
+        value: formatPayloadValue(payload.expected_option),
+      },
+    ];
+  }
+
+  if (attempt.question_type === "fill_blank") {
+    const blankResults = getPayloadArray(payload.per_blank_results);
+    return blankResults.map((result, index) => {
+      const resultRecord = getPayloadRecord(result);
+      return {
+        label: `Blank ${index + 1}`,
+        value: `${formatPayloadValue(resultRecord.received)} -> ${formatPayloadValue(
+          resultRecord.accepted,
+        )}`,
+        passed:
+          typeof resultRecord.passed === "boolean"
+            ? resultRecord.passed
+            : undefined,
+      };
+    });
+  }
+
+  if (attempt.question_type === "guided_prompt") {
+    const codeChecks = getPayloadArray(payload.required_code_checks);
+    return [
+      {
+        label: "Dataset result",
+        value: payload.reference_matches_dataset ? "Matched" : "Did not match",
+        passed:
+          typeof payload.reference_matches_dataset === "boolean"
+            ? payload.reference_matches_dataset
+            : undefined,
+      },
+      ...codeChecks.map((check) => {
+        const checkRecord = getPayloadRecord(check);
+        return {
+          label: formatPayloadValue(checkRecord.name),
+          value: formatPayloadValue(checkRecord.description),
+          passed:
+            typeof checkRecord.passed === "boolean"
+              ? checkRecord.passed
+              : undefined,
+        };
+      }),
+    ];
+  }
+
+  if (attempt.question_type === "micro_code") {
+    return [
+      {
+        label: "Submitted",
+        value: formatPayloadValue(payload.normalized_submission),
+        passed: attempt.is_correct ?? undefined,
+      },
+      {
+        label: "Accepted",
+        value: formatPayloadValue(payload.accepted_patterns),
+      },
+    ];
+  }
+
+  return [];
+}
+
+function getPayloadArray(value: unknown): unknown[] {
+  return Array.isArray(value) ? value : [];
+}
+
+function getPayloadRecord(value: unknown): Record<string, unknown> {
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    return value as Record<string, unknown>;
+  }
+
+  return {};
+}
+
+function formatPayloadValue(value: unknown): string {
+  if (value === null || value === undefined) {
+    return "None";
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(formatPayloadValue).join(", ");
+  }
+
+  if (typeof value === "object") {
+    return JSON.stringify(value);
+  }
+
+  return String(value);
 }
