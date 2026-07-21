@@ -254,8 +254,10 @@ export async function listSessionAttempts(
     params.set("challenge_slug", challengeSlug);
   }
 
+  const encodedSessionId = encodePathSegment(sessionId);
+
   return requestJson<AttemptResponse[]>(
-    `/sessions/${encodeURIComponent(sessionId)}/attempts?${params.toString()}`,
+    `/sessions/${encodedSessionId}/attempts?${params.toString()}`,
   );
 }
 
