@@ -23,6 +23,7 @@ import {
   getDatasetPreviewWindowLabel,
   getFeedbackLineTone,
   getFillBlankCount,
+  getHiddenDatasetPreviewColumnCount,
   getInitialQuestionIndex,
   getNextOpenQuestionActionLabel,
   getPreviousAttemptCount,
@@ -230,6 +231,21 @@ assert.deepEqual(
 );
 assert.deepEqual(getDatasetPreviewColumns([createColumn("col_1")], -1), []);
 assert.deepEqual(getDatasetPreviewColumns([createColumn("col_1")], 0), []);
+assert.equal(
+  getHiddenDatasetPreviewColumnCount(
+    Array.from({ length: 5 }, (_, index) => createColumn(`col_${index + 1}`)),
+    3,
+  ),
+  2,
+);
+assert.equal(
+  getHiddenDatasetPreviewColumnCount(
+    Array.from({ length: 3 }, (_, index) => createColumn(`col_${index + 1}`)),
+    3,
+  ),
+  0,
+);
+assert.equal(getHiddenDatasetPreviewColumnCount([createColumn("col_1")], -1), 1);
 assert.equal(
   getDatasetPreviewWindowLabel({
     dataset: {

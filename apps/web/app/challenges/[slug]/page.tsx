@@ -41,6 +41,7 @@ import {
   getDatasetPreviewWindowLabel,
   getFeedbackLineTone,
   getFillBlankCount,
+  getHiddenDatasetPreviewColumnCount,
   getInitialQuestionIndex,
   getNextOpenQuestionActionLabel,
   getPreviousAttemptCount,
@@ -569,10 +570,18 @@ function StatusPanel({ title, body }: { title: string; body: string }) {
 }
 
 function DatasetPreviewPanel({ preview }: { preview: DatasetPreview }) {
-  const visibleColumns = getDatasetPreviewColumns(preview.dataset.columns, 6);
+  const columnChipLimit = 6;
+  const visibleColumns = getDatasetPreviewColumns(
+    preview.dataset.columns,
+    columnChipLimit,
+  );
   const tableColumns = getDatasetPreviewColumns(preview.dataset.columns, 4);
   const visibleRows = getDatasetPreviewRows(preview.rows);
   const previewWindowLabel = getDatasetPreviewWindowLabel(preview);
+  const hiddenColumnCount = getHiddenDatasetPreviewColumnCount(
+    preview.dataset.columns,
+    columnChipLimit,
+  );
 
   return (
     <section className="border-b border-white/12 px-4 py-4">
@@ -596,6 +605,11 @@ function DatasetPreviewPanel({ preview }: { preview: DatasetPreview }) {
             {column.name}
           </span>
         ))}
+        {hiddenColumnCount > 0 ? (
+          <span className="border border-white/12 px-2 py-1 font-mono text-[10px] text-[#8f8b80]">
+            +{hiddenColumnCount} more
+          </span>
+        ) : null}
       </div>
 
       <div className="mt-4 max-h-48 overflow-auto border border-white/12">

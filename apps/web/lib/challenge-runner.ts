@@ -263,6 +263,13 @@ export function getDatasetPreviewColumns(columns: ColumnSpec[], limit: number) {
   return columns.slice(0, normalizePreviewLimit(limit));
 }
 
+export function getHiddenDatasetPreviewColumnCount(
+  columns: ColumnSpec[],
+  limit: number,
+) {
+  return Math.max(columns.length - normalizePreviewLimit(limit), 0);
+}
+
 export function getDatasetPreviewWindowLabel(
   preview: DatasetPreview,
   rowLimit = 5,
