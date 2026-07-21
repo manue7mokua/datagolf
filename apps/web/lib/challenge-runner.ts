@@ -424,6 +424,13 @@ export function findNextIncompleteQuestionIndex(
   return nextIndex >= 0 ? nextIndex : null;
 }
 
+export function getInitialQuestionIndex(
+  questions: PublicQuestion[],
+  progressByQuestion: Record<string, QuestionProgress>,
+) {
+  return findNextIncompleteQuestionIndex(questions, progressByQuestion) ?? 0;
+}
+
 export function applyAttemptToProgress(
   progress: QuestionProgress | undefined,
   attempt: AttemptResponse,

@@ -21,6 +21,7 @@ import {
   getDatasetPreviewWindowLabel,
   getFeedbackLineTone,
   getFillBlankCount,
+  getInitialQuestionIndex,
   getNextOpenQuestionActionLabel,
   getPreviousAttemptCount,
   getPreviousAttemptLabel,
@@ -170,6 +171,9 @@ assert.deepEqual(createAnswerDraftFromAttempt(retryAttempt), {
 assert.equal(findNextIncompleteQuestionIndex(questions, progress), 1);
 assert.equal(findNextIncompleteQuestionIndex(questions, pendingThenOpenProgress), 2);
 assert.equal(findNextIncompleteQuestionIndex(questions, pendingOnlyProgress), null);
+assert.equal(getInitialQuestionIndex(questions, progress), 1);
+assert.equal(getInitialQuestionIndex(questions, pendingOnlyProgress), 0);
+assert.equal(getInitialQuestionIndex([], {}), 0);
 assert.equal(getAnswerFormatLabel("single_choice", "multiple_choice"), "Single choice");
 assert.equal(getAnswerFormatLabel("blanks", "fill_blank"), "Fill each blank");
 assert.equal(getAnswerFormatLabel("prompt", "guided_prompt"), "Plain-language prompt");

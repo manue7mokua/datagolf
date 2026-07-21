@@ -39,6 +39,7 @@ import {
   getDatasetPreviewWindowLabel,
   getFeedbackLineTone,
   getFillBlankCount,
+  getInitialQuestionIndex,
   getNextOpenQuestionActionLabel,
   getPreviousAttemptCount,
   getPreviousAttemptLabel,
@@ -149,7 +150,7 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
           });
           setProgressByQuestion(progress);
           setProgressSummaryOverride(mapSessionChallengeSummary(sessionSummary));
-          setActiveQuestionIndex(0);
+          setActiveQuestionIndex(getInitialQuestionIndex(questions, progress));
           setSubmitError(null);
         }
       } catch (error) {
