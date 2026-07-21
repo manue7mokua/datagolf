@@ -38,6 +38,14 @@ assert.equal(
 );
 assert.equal(
   getDatagolfApiErrorMessage(500, { error: "Internal error" }),
+  "Internal error",
+);
+assert.equal(
+  getDatagolfApiErrorMessage(503, { message: " Service unavailable " }),
+  "Service unavailable",
+);
+assert.equal(
+  getDatagolfApiErrorMessage(500, { error: " " }),
   "Datagolf API request failed with 500",
 );
 assert.equal(

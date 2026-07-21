@@ -142,6 +142,11 @@ export function getDatagolfApiErrorMessage(status: number, payload: unknown) {
     return detail.trim();
   }
 
+  const fallbackMessage = getPayloadMessage(payload);
+  if (fallbackMessage) {
+    return fallbackMessage;
+  }
+
   if (Array.isArray(detail)) {
     const messages = detail
       .map(formatValidationErrorDetail)
@@ -153,6 +158,23 @@ export function getDatagolfApiErrorMessage(status: number, payload: unknown) {
   }
 
   return `Datagolf API request failed with ${status}`;
+}
+
+function getPayloadMessage(payload: unknown) {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return "";
+  }
+
+  const record = payload as { error?: unknown; message?: unknown };
+  if (typeof record.message === "string" && record.message.trim()) {
+    return record.message.trim();
+  }
+
+  if (typeof record.error === "string" && record.error.trim()) {
+    return record.error.trim();
+  }
+
+  return "";
 }
 
 function formatValidationErrorDetail(detail: unknown) {
