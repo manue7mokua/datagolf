@@ -803,6 +803,29 @@ assert.deepEqual(
 assert.deepEqual(
   getAttemptFeedbackLines({
     ...retryAttempt,
+    question_type: "micro_code",
+    evaluation_payload: {
+      normalized_submission: Number.NaN,
+      accepted_patterns: [Number.POSITIVE_INFINITY],
+      accepted_regex: [],
+    },
+    is_correct: false,
+  }),
+  [
+    {
+      label: "Submitted",
+      value: "None",
+      passed: false,
+    },
+    {
+      label: "Accepted",
+      value: "None",
+    },
+  ],
+);
+assert.deepEqual(
+  getAttemptFeedbackLines({
+    ...retryAttempt,
     question_type: "guided_prompt",
     evaluation_payload: {
       required_code_checks: [

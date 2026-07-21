@@ -848,6 +848,10 @@ function formatPayloadValue(value: unknown): string {
     return JSON.stringify(value);
   }
 
+  if (typeof value === "number" && !Number.isFinite(value)) {
+    return "None";
+  }
+
   const formattedValue = String(value).trim();
   return formattedValue || "None";
 }
