@@ -42,7 +42,9 @@ import {
   getFeedbackLineTone,
   getFillBlankCount,
   getHiddenDatasetPreviewColumnCount,
+  getHiddenDatasetPreviewColumnLabel,
   getHiddenDatasetPreviewRowCount,
+  getHiddenDatasetPreviewRowLabel,
   getInitialQuestionIndex,
   getNextOpenQuestionActionLabel,
   getPreviousAttemptCount,
@@ -609,7 +611,7 @@ function DatasetPreviewPanel({ preview }: { preview: DatasetPreview }) {
         ))}
         {hiddenColumnCount > 0 ? (
           <span className="border border-white/12 px-2 py-1 font-mono text-[10px] text-[#8f8b80]">
-            +{hiddenColumnCount} more
+            {getHiddenDatasetPreviewColumnLabel(hiddenColumnCount)}
           </span>
         ) : null}
       </div>
@@ -646,7 +648,7 @@ function DatasetPreviewPanel({ preview }: { preview: DatasetPreview }) {
       </div>
       {hiddenRowCount > 0 ? (
         <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[#8f8b80]">
-          +{hiddenRowCount} more rows in preview
+          {getHiddenDatasetPreviewRowLabel(hiddenRowCount)}
         </div>
       ) : null}
     </section>

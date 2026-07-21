@@ -270,11 +270,19 @@ export function getHiddenDatasetPreviewColumnCount(
   return Math.max(columns.length - normalizePreviewLimit(limit), 0);
 }
 
+export function getHiddenDatasetPreviewColumnLabel(count: number) {
+  return `+${count} more ${count === 1 ? "column" : "columns"}`;
+}
+
 export function getHiddenDatasetPreviewRowCount(
   rows: Record<string, unknown>[],
   limit = 5,
 ) {
   return Math.max(rows.length - normalizePreviewLimit(limit), 0);
+}
+
+export function getHiddenDatasetPreviewRowLabel(count: number) {
+  return `+${count} more ${count === 1 ? "row" : "rows"} in preview`;
 }
 
 export function getDatasetPreviewWindowLabel(
