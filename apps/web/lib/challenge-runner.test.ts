@@ -199,6 +199,7 @@ assert.deepEqual(
   [{ id: 1 }, { id: 2 }],
 );
 assert.deepEqual(getDatasetPreviewRows([{ id: 1 }], -1), []);
+assert.deepEqual(getDatasetPreviewRows([{ id: 1 }], 0), []);
 assert.deepEqual(
   getDatasetPreviewColumns(
     Array.from({ length: 5 }, (_, index) => createColumn(`col_${index + 1}`)),
@@ -214,6 +215,7 @@ assert.deepEqual(
   ["col_1", "col_2", "col_3"],
 );
 assert.deepEqual(getDatasetPreviewColumns([createColumn("col_1")], -1), []);
+assert.deepEqual(getDatasetPreviewColumns([createColumn("col_1")], 0), []);
 assert.equal(getQuestionProgressStatus(undefined), "unattempted");
 assert.equal(
   getQuestionProgressStatus(applyAttemptToProgress(undefined, pendingAttempt)),

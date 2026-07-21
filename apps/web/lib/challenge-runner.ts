@@ -230,11 +230,15 @@ export function getDatasetPreviewRows(
   rows: Record<string, unknown>[],
   limit = 5,
 ) {
-  return rows.slice(0, Math.max(Math.floor(limit), 0));
+  return rows.slice(0, normalizePreviewLimit(limit));
 }
 
 export function getDatasetPreviewColumns(columns: ColumnSpec[], limit: number) {
-  return columns.slice(0, Math.max(Math.floor(limit), 0));
+  return columns.slice(0, normalizePreviewLimit(limit));
+}
+
+function normalizePreviewLimit(limit: number) {
+  return Math.max(Math.floor(limit), 0);
 }
 
 export function summarizeChallengeProgress(
