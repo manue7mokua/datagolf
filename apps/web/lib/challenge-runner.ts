@@ -478,10 +478,18 @@ function getCountLabel(count: number, singularLabel: string, pluralLabel: string
 }
 
 function getDisplayCount(count: number) {
+  if (!Number.isFinite(count)) {
+    return 0;
+  }
+
   return Math.max(count, 0);
 }
 
 function getDisplayPercent(percent: number) {
+  if (!Number.isFinite(percent)) {
+    return 0;
+  }
+
   return Math.min(Math.max(percent, 0), 100);
 }
 
