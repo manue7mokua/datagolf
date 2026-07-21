@@ -45,6 +45,18 @@ assert.equal(
   "Service unavailable",
 );
 assert.equal(
+  getDatagolfApiErrorMessage(502, {
+    detail: { message: " Upstream service timed out " },
+  }),
+  "Upstream service timed out",
+);
+assert.equal(
+  getDatagolfApiErrorMessage(500, {
+    detail: { error: "Model response unavailable" },
+  }),
+  "Model response unavailable",
+);
+assert.equal(
   getDatagolfApiErrorMessage(500, { error: " " }),
   "Datagolf API request failed with 500",
 );

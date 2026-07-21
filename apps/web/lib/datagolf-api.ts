@@ -142,6 +142,11 @@ export function getDatagolfApiErrorMessage(status: number, payload: unknown) {
     return detail.trim();
   }
 
+  const detailMessage = getPayloadMessage(detail);
+  if (detailMessage) {
+    return detailMessage;
+  }
+
   const fallbackMessage = getPayloadMessage(payload);
   if (fallbackMessage) {
     return fallbackMessage;
