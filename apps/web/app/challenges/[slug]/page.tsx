@@ -34,6 +34,7 @@ import {
   getAttemptTone,
   getChallengeProgressDetailText,
   getCompletionPercent,
+  getDatasetPreviewRows,
   getFeedbackLineTone,
   getFillBlankCount,
   getNextOpenQuestionActionLabel,
@@ -565,6 +566,7 @@ function StatusPanel({ title, body }: { title: string; body: string }) {
 function DatasetPreviewPanel({ preview }: { preview: DatasetPreview }) {
   const visibleColumns = preview.dataset.columns.slice(0, 6);
   const tableColumns = preview.dataset.columns.slice(0, 4);
+  const visibleRows = getDatasetPreviewRows(preview.rows);
 
   return (
     <section className="border-b border-white/12 px-4 py-4">
@@ -602,7 +604,7 @@ function DatasetPreviewPanel({ preview }: { preview: DatasetPreview }) {
             </tr>
           </thead>
           <tbody>
-            {preview.rows.slice(0, 5).map((row, rowIndex) => (
+            {visibleRows.map((row, rowIndex) => (
               <tr key={rowIndex} className="text-[#c9c4b8]">
                 {tableColumns.map((column) => (
                   <td

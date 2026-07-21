@@ -225,6 +225,13 @@ export function getAnswerFormatLabel(
   return getQuestionTypeLabel(questionType);
 }
 
+export function getDatasetPreviewRows(
+  rows: Record<string, unknown>[],
+  limit = 5,
+) {
+  return rows.slice(0, Math.max(limit, 0));
+}
+
 export function summarizeChallengeProgress(
   questions: PublicQuestion[],
   progressByQuestion: Record<string, QuestionProgress>,

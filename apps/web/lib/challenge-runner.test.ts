@@ -16,6 +16,7 @@ import {
   getAttemptsNewestFirst,
   getChallengeProgressDetailText,
   getCompletionPercent,
+  getDatasetPreviewRows,
   getFeedbackLineTone,
   getFillBlankCount,
   getNextOpenQuestionActionLabel,
@@ -176,6 +177,20 @@ assert.equal(getQuestionProgressStatusLabel("unattempted"), "Open");
 assert.equal(getQuestionProgressStatusLabel("incorrect"), "Retry");
 assert.equal(getQuestionProgressStatusLabel("pending"), "Pending");
 assert.equal(getQuestionProgressStatusLabel("correct"), "Done");
+assert.deepEqual(
+  getDatasetPreviewRows(
+    Array.from({ length: 7 }, (_, index) => ({ id: index + 1 })),
+  ),
+  [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }],
+);
+assert.deepEqual(
+  getDatasetPreviewRows(
+    Array.from({ length: 7 }, (_, index) => ({ id: index + 1 })),
+    2,
+  ),
+  [{ id: 1 }, { id: 2 }],
+);
+assert.deepEqual(getDatasetPreviewRows([{ id: 1 }], -1), []);
 assert.equal(getQuestionProgressStatus(undefined), "unattempted");
 assert.equal(
   getQuestionProgressStatus(applyAttemptToProgress(undefined, pendingAttempt)),
