@@ -16,6 +16,7 @@ import {
   getAttemptsNewestFirst,
   getChallengeProgressDetailText,
   getCompletionPercent,
+  getDatasetPreviewColumns,
   getDatasetPreviewRows,
   getFeedbackLineTone,
   getFillBlankCount,
@@ -38,7 +39,7 @@ import {
   normalizeFillBlankDrafts,
   summarizeChallengeProgress,
 } from "./challenge-runner";
-import type { AttemptResponse, PublicQuestion } from "./datagolf-api";
+import type { AttemptResponse, ColumnSpec, PublicQuestion } from "./datagolf-api";
 
 const questions: PublicQuestion[] = [
   createQuestion("Q1", 1),
@@ -198,6 +199,21 @@ assert.deepEqual(
   [{ id: 1 }, { id: 2 }],
 );
 assert.deepEqual(getDatasetPreviewRows([{ id: 1 }], -1), []);
+assert.deepEqual(
+  getDatasetPreviewColumns(
+    Array.from({ length: 5 }, (_, index) => createColumn(`col_${index + 1}`)),
+    3,
+  ).map((column) => column.name),
+  ["col_1", "col_2", "col_3"],
+);
+assert.deepEqual(
+  getDatasetPreviewColumns(
+    Array.from({ length: 5 }, (_, index) => createColumn(`col_${index + 1}`)),
+    3.9,
+  ).map((column) => column.name),
+  ["col_1", "col_2", "col_3"],
+);
+assert.deepEqual(getDatasetPreviewColumns([createColumn("col_1")], -1), []);
 assert.equal(getQuestionProgressStatus(undefined), "unattempted");
 assert.equal(
   getQuestionProgressStatus(applyAttemptToProgress(undefined, pendingAttempt)),
@@ -940,6 +956,14 @@ function createQuestion(id: string, order: number): PublicQuestion {
       code_snippet: null,
       answer_format: null,
     },
+  };
+}
+
+function createColumn(name: string): ColumnSpec {
+  return {
+    name,
+    type: "string",
+    description: `Column ${name}`,
   };
 }
 

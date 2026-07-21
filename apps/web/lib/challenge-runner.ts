@@ -1,6 +1,7 @@
 import type {
   AttemptCreateRequest,
   AttemptResponse,
+  ColumnSpec,
   PublicQuestion,
   QuestionType,
   SessionChallengeSummary,
@@ -230,6 +231,10 @@ export function getDatasetPreviewRows(
   limit = 5,
 ) {
   return rows.slice(0, Math.max(Math.floor(limit), 0));
+}
+
+export function getDatasetPreviewColumns(columns: ColumnSpec[], limit: number) {
+  return columns.slice(0, Math.max(Math.floor(limit), 0));
 }
 
 export function summarizeChallengeProgress(

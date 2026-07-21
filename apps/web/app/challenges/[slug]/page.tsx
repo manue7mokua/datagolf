@@ -34,6 +34,7 @@ import {
   getAttemptTone,
   getChallengeProgressDetailText,
   getCompletionPercent,
+  getDatasetPreviewColumns,
   getDatasetPreviewRows,
   getFeedbackLineTone,
   getFillBlankCount,
@@ -564,8 +565,8 @@ function StatusPanel({ title, body }: { title: string; body: string }) {
 }
 
 function DatasetPreviewPanel({ preview }: { preview: DatasetPreview }) {
-  const visibleColumns = preview.dataset.columns.slice(0, 6);
-  const tableColumns = preview.dataset.columns.slice(0, 4);
+  const visibleColumns = getDatasetPreviewColumns(preview.dataset.columns, 6);
+  const tableColumns = getDatasetPreviewColumns(preview.dataset.columns, 4);
   const visibleRows = getDatasetPreviewRows(preview.rows);
 
   return (
