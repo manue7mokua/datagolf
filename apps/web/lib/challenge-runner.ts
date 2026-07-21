@@ -2,6 +2,7 @@ import type {
   AttemptCreateRequest,
   AttemptResponse,
   ColumnSpec,
+  DatasetPreview,
   PublicQuestion,
   QuestionType,
   SessionChallengeSummary,
@@ -235,6 +236,26 @@ export function getDatasetPreviewRows(
 
 export function getDatasetPreviewColumns(columns: ColumnSpec[], limit: number) {
   return columns.slice(0, normalizePreviewLimit(limit));
+}
+
+export function getDatasetPreviewWindowLabel(
+  preview: DatasetPreview,
+  rowLimit = 5,
+  columnLimit = 4,
+) {
+  const visibleRowCount = getDatasetPreviewRows(preview.rows, rowLimit).length;
+  const visibleColumnCount = getDatasetPreviewColumns(
+    preview.dataset.columns,
+    columnLimit,
+  ).length;
+  const totalRows = Math.max(preview.dataset.row_count, preview.rows.length, 0);
+  const totalColumns = Math.max(
+    preview.dataset.column_count,
+    preview.dataset.columns.length,
+    0,
+  );
+
+  return `Showing ${visibleRowCount} of ${totalRows} rows / ${visibleColumnCount} of ${totalColumns} columns`;
 }
 
 function normalizePreviewLimit(limit: number) {

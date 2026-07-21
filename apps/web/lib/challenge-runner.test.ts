@@ -18,6 +18,7 @@ import {
   getCompletionPercent,
   getDatasetPreviewColumns,
   getDatasetPreviewRows,
+  getDatasetPreviewWindowLabel,
   getFeedbackLineTone,
   getFillBlankCount,
   getNextOpenQuestionActionLabel,
@@ -216,6 +217,50 @@ assert.deepEqual(
 );
 assert.deepEqual(getDatasetPreviewColumns([createColumn("col_1")], -1), []);
 assert.deepEqual(getDatasetPreviewColumns([createColumn("col_1")], 0), []);
+assert.equal(
+  getDatasetPreviewWindowLabel({
+    dataset: {
+      slug: "tiktok-posts",
+      version: "v1",
+      path: "datasets/tiktok-posts.csv",
+      row_count: 500,
+      column_count: 25,
+      creators_count: 20,
+      date_range: {
+        start: "2026-01-01",
+        end: "2026-01-31",
+      },
+      columns: Array.from({ length: 8 }, (_, index) =>
+        createColumn(`col_${index + 1}`),
+      ),
+    },
+    rows: Array.from({ length: 8 }, (_, index) => ({ id: index + 1 })),
+  }),
+  "Showing 5 of 500 rows / 4 of 25 columns",
+);
+assert.equal(
+  getDatasetPreviewWindowLabel(
+    {
+      dataset: {
+        slug: "tiny-dataset",
+        version: "v1",
+        path: "datasets/tiny.csv",
+        row_count: 1,
+        column_count: 1,
+        creators_count: 1,
+        date_range: {
+          start: "2026-01-01",
+          end: "2026-01-01",
+        },
+        columns: [createColumn("col_1"), createColumn("col_2")],
+      },
+      rows: [{ id: 1 }, { id: 2 }],
+    },
+    1,
+    1,
+  ),
+  "Showing 1 of 2 rows / 1 of 2 columns",
+);
 assert.equal(getQuestionProgressStatus(undefined), "unattempted");
 assert.equal(
   getQuestionProgressStatus(applyAttemptToProgress(undefined, pendingAttempt)),

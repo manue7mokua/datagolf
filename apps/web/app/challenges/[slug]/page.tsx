@@ -36,6 +36,7 @@ import {
   getCompletionPercent,
   getDatasetPreviewColumns,
   getDatasetPreviewRows,
+  getDatasetPreviewWindowLabel,
   getFeedbackLineTone,
   getFillBlankCount,
   getNextOpenQuestionActionLabel,
@@ -568,6 +569,7 @@ function DatasetPreviewPanel({ preview }: { preview: DatasetPreview }) {
   const visibleColumns = getDatasetPreviewColumns(preview.dataset.columns, 6);
   const tableColumns = getDatasetPreviewColumns(preview.dataset.columns, 4);
   const visibleRows = getDatasetPreviewRows(preview.rows);
+  const previewWindowLabel = getDatasetPreviewWindowLabel(preview);
 
   return (
     <section className="border-b border-white/12 px-4 py-4">
@@ -577,6 +579,9 @@ function DatasetPreviewPanel({ preview }: { preview: DatasetPreview }) {
       <div className="mt-2 text-[13px] text-[#f2f1ea]">
         {preview.dataset.slug} / {preview.dataset.row_count} rows /{" "}
         {preview.dataset.column_count} columns
+      </div>
+      <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[#8f8b80]">
+        {previewWindowLabel}
       </div>
 
       <div className="mt-3 flex flex-wrap gap-1.5">
