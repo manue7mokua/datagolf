@@ -27,6 +27,7 @@ import {
   createEmptyAnswerDraft,
   findNextIncompleteQuestionIndex,
   formatAttemptTimestamp,
+  formatPreviewCell,
   getAnswerDraftGuidance,
   getAnswerFormatLabel,
   getAttemptFeedbackTitle,
@@ -1041,16 +1042,4 @@ function AnswerInput({
       placeholder="Find the top posts by engagement rate..."
     />
   );
-}
-
-function formatPreviewCell(value: unknown) {
-  if (value === null || value === undefined) {
-    return "";
-  }
-
-  if (typeof value === "number") {
-    return Number.isInteger(value) ? String(value) : value.toFixed(2);
-  }
-
-  return String(value);
 }

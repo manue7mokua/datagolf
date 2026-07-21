@@ -8,6 +8,7 @@ import {
   createEmptyAnswerDraft,
   findNextIncompleteQuestionIndex,
   formatAttemptTimestamp,
+  formatPreviewCell,
   getAnswerDraftGuidance,
   getAnswerFormatLabel,
   getAttemptFeedbackTitle,
@@ -273,6 +274,11 @@ assert.equal(
   ),
   "Showing 1 of 2 rows / 1 of 2 columns",
 );
+assert.equal(formatPreviewCell(null), "");
+assert.equal(formatPreviewCell(undefined), "");
+assert.equal(formatPreviewCell(12), "12");
+assert.equal(formatPreviewCell(12.345), "12.35");
+assert.equal(formatPreviewCell("creator_1"), "creator_1");
 assert.equal(getQuestionProgressStatus(undefined), "unattempted");
 assert.equal(
   getQuestionProgressStatus(applyAttemptToProgress(undefined, pendingAttempt)),

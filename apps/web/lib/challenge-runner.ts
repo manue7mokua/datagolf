@@ -283,6 +283,18 @@ export function getDatasetPreviewWindowLabel(
   return `Showing ${visibleRowCount} of ${totalRows} rows / ${visibleColumnCount} of ${totalColumns} columns`;
 }
 
+export function formatPreviewCell(value: unknown) {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  if (typeof value === "number") {
+    return Number.isInteger(value) ? String(value) : value.toFixed(2);
+  }
+
+  return String(value);
+}
+
 function normalizePreviewLimit(limit: number) {
   return Math.max(Math.floor(limit), 0);
 }
