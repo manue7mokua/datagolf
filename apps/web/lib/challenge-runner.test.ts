@@ -65,6 +65,13 @@ const microCodeQuestion: PublicQuestion = {
   ...createQuestion("Q6", 6),
   type: "micro_code",
 };
+const emptyChoiceQuestion: PublicQuestion = {
+  ...createQuestion("Q7", 7),
+  display: {
+    ...createQuestion("Q7", 7).display,
+    choices: [],
+  },
+};
 
 const correctAttempt = createAttempt("attempt-1", "Q1", {
   selected_option: "B",
@@ -350,6 +357,10 @@ assert.equal(
   "Choose a listed option",
 );
 assert.equal(
+  getAnswerDraftGuidance(emptyChoiceQuestion, createEmptyAnswerDraft()),
+  "No options available",
+);
+assert.equal(
   getAnswerDraftGuidance(guidedPromptQuestion, createEmptyAnswerDraft()),
   "Enter a prompt",
 );
@@ -443,6 +454,15 @@ assert.equal(
   isQuestionAnswerDraftSubmittable(questions[0], {
     promptText: "",
     selectedOption: "Z",
+    blanks: [],
+    codeText: "",
+  }),
+  false,
+);
+assert.equal(
+  isQuestionAnswerDraftSubmittable(emptyChoiceQuestion, {
+    promptText: "",
+    selectedOption: "A",
     blanks: [],
     codeText: "",
   }),

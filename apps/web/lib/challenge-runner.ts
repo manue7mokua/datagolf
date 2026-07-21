@@ -158,6 +158,10 @@ export function getAnswerDraftGuidance(
   }
 
   if (question.type === "multiple_choice") {
+    if (question.display.choices.length === 0) {
+      return "No options available";
+    }
+
     if (draft.selectedOption.trim().length === 0) {
       return "Choose an option";
     }
