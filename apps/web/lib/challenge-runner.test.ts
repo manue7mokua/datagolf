@@ -671,7 +671,13 @@ assert.deepEqual(
     ...failedAttempt,
     error_message: " ",
   }),
-  [],
+  [
+    {
+      label: "Error",
+      value: "Attempt failed before evaluation completed",
+      passed: false,
+    },
+  ],
 );
 assert.deepEqual(
   getAttemptFeedbackLines({

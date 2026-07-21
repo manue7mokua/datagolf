@@ -694,11 +694,12 @@ export function normalizeFillBlankDrafts(blanks: string[], blankCount: number) {
 }
 
 export function getAttemptFeedbackLines(attempt: AttemptResponse): FeedbackLine[] {
-  if (attempt.status === "failed" && attempt.error_message?.trim()) {
+  if (attempt.status === "failed") {
+    const errorMessage = attempt.error_message?.trim();
     return [
       {
         label: "Error",
-        value: attempt.error_message.trim(),
+        value: errorMessage || "Attempt failed before evaluation completed",
         passed: false,
       },
     ];
