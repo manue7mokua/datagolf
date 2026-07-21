@@ -312,6 +312,9 @@ assert.equal(
 );
 assert.equal(formatPreviewCell(null), "");
 assert.equal(formatPreviewCell(undefined), "");
+assert.equal(formatPreviewCell(Number.NaN), "");
+assert.equal(formatPreviewCell(Number.POSITIVE_INFINITY), "");
+assert.equal(formatPreviewCell(Number.NEGATIVE_INFINITY), "");
 assert.equal(formatPreviewCell(12), "12");
 assert.equal(formatPreviewCell(12.345), "12.35");
 assert.equal(formatPreviewCell("creator_1"), "creator_1");
