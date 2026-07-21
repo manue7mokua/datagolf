@@ -86,7 +86,13 @@ async function runApiRequestTests() {
     await createAttempt("question 1/intro", { session_id: "session-1" });
     await getAttempt("attempt 1/first");
     await getDatasetPreview("tiktok posts/v1", 12);
+    await getDatasetPreview("tiktok posts/v1", -2);
+    await getDatasetPreview("tiktok posts/v1", 101.7);
+    await getDatasetPreview("tiktok posts/v1", Number.NaN);
     await listSessionAttempts("session 1/user", "creator posts/v1", 25);
+    await listSessionAttempts("session 1/user", undefined, 0);
+    await listSessionAttempts("session 1/user", undefined, 501.9);
+    await listSessionAttempts("session 1/user", undefined, Number.POSITIVE_INFINITY);
     await getSessionChallengeSummary("session 1/user", "creator posts/v1");
 
     assert.deepEqual(requestedUrls, [
@@ -95,7 +101,13 @@ async function runApiRequestTests() {
       "http://localhost:8000/questions/question%201%2Fintro/attempts",
       "http://localhost:8000/attempts/attempt%201%2Ffirst",
       "http://localhost:8000/datasets/tiktok%20posts%2Fv1/preview?limit=12",
+      "http://localhost:8000/datasets/tiktok%20posts%2Fv1/preview?limit=1",
+      "http://localhost:8000/datasets/tiktok%20posts%2Fv1/preview?limit=100",
+      "http://localhost:8000/datasets/tiktok%20posts%2Fv1/preview?limit=20",
       "http://localhost:8000/sessions/session%201%2Fuser/attempts?limit=25&challenge_slug=creator+posts%2Fv1",
+      "http://localhost:8000/sessions/session%201%2Fuser/attempts?limit=1",
+      "http://localhost:8000/sessions/session%201%2Fuser/attempts?limit=500",
+      "http://localhost:8000/sessions/session%201%2Fuser/attempts?limit=100",
       "http://localhost:8000/sessions/session%201%2Fuser/challenges/creator%20posts%2Fv1/summary",
     ]);
   } finally {

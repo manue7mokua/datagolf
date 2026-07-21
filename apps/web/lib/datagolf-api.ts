@@ -214,8 +214,10 @@ export async function getAttempt(attemptId: string) {
 }
 
 export async function getDatasetPreview(slug: string, limit = 20) {
+  const normalizedLimit = normalizeApiLimit(limit, 1, 100, 20);
+
   return requestJson<DatasetPreview>(
-    `/datasets/${encodePathSegment(slug)}/preview?limit=${encodeURIComponent(limit)}`,
+    `/datasets/${encodePathSegment(slug)}/preview?limit=${encodeURIComponent(normalizedLimit)}`,
   );
 }
 
@@ -224,7 +226,8 @@ export async function listSessionAttempts(
   challengeSlug?: string,
   limit = 100,
 ) {
-  const params = new URLSearchParams({ limit: String(limit) });
+  const normalizedLimit = normalizeApiLimit(limit, 1, 500, 100);
+  const params = new URLSearchParams({ limit: String(normalizedLimit) });
   if (challengeSlug) {
     params.set("challenge_slug", challengeSlug);
   }
@@ -278,4 +281,17 @@ async function requestJson<T>(
 
 function encodePathSegment(segment: string) {
   return encodeURIComponent(segment);
+}
+
+function normalizeApiLimit(
+  limit: number,
+  minimum: number,
+  maximum: number,
+  fallback: number,
+) {
+  if (!Number.isFinite(limit)) {
+    return fallback;
+  }
+
+  return Math.min(Math.max(Math.floor(limit), minimum), maximum);
 }
