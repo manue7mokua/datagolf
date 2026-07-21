@@ -532,7 +532,7 @@ assert.deepEqual(
   },
 );
 assert.deepEqual(
-  buildAttemptPayload(questions[0], "session-1", {
+  buildAttemptPayload(questions[0], " session-1 ", {
     promptText: "",
     selectedOption: " B ",
     blanks: [],

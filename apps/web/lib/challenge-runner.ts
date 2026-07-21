@@ -76,7 +76,7 @@ export function buildAttemptPayload(
   sessionId: string,
   draft: RunnerAnswerDraft,
 ): AttemptCreateRequest {
-  const basePayload = { session_id: sessionId };
+  const basePayload = { session_id: sessionId.trim() };
 
   if (question.type === "guided_prompt") {
     return { ...basePayload, prompt_text: draft.promptText.trim() };
