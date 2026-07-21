@@ -319,7 +319,7 @@ export function formatPreviewCell(value: unknown) {
   }
 
   if (typeof value === "object") {
-    return JSON.stringify(value);
+    return formatStructuredValue(value);
   }
 
   return String(value);
@@ -845,7 +845,7 @@ function formatPayloadValue(value: unknown): string {
   }
 
   if (typeof value === "object") {
-    return JSON.stringify(value);
+    return formatStructuredValue(value);
   }
 
   if (typeof value === "number" && !Number.isFinite(value)) {
@@ -854,4 +854,12 @@ function formatPayloadValue(value: unknown): string {
 
   const formattedValue = String(value).trim();
   return formattedValue || "None";
+}
+
+function formatStructuredValue(value: object): string {
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return "[unavailable]";
+  }
 }

@@ -125,6 +125,8 @@ const pendingOnlyProgress = {
     question_id: "Q3",
   }),
 };
+const circularFeedbackValue: Record<string, unknown> = {};
+circularFeedbackValue.self = circularFeedbackValue;
 const sessionProgress = buildProgressFromAttempts([
   correctAttempt,
   { ...retryAttempt, is_correct: false },
@@ -820,6 +822,25 @@ assert.deepEqual(
     {
       label: "Accepted",
       value: "None",
+    },
+  ],
+);
+assert.deepEqual(
+  getAttemptFeedbackLines({
+    ...retryAttempt,
+    question_type: "micro_code",
+    evaluation_payload: {
+      normalized_submission: circularFeedbackValue,
+      accepted_patterns: [],
+      accepted_regex: [],
+    },
+    is_correct: false,
+  }),
+  [
+    {
+      label: "Submitted",
+      value: "[unavailable]",
+      passed: false,
     },
   ],
 );
