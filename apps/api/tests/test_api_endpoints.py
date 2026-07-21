@@ -184,6 +184,18 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual([attempt["question_id"] for attempt in attempts], ["Q8", "Q11"])
         self.assertTrue(all(attempt["is_correct"] for attempt in attempts))
 
+        padded_filter_response = self.client.get(
+            f"/sessions/{session_id}/attempts?challenge_slug=+tiktok-creator-posts+&limit=10"
+        )
+        blank_filter_response = self.client.get(
+            f"/sessions/{session_id}/attempts?challenge_slug=+++&limit=10"
+        )
+
+        self.assertEqual(padded_filter_response.status_code, 200)
+        self.assertEqual(blank_filter_response.status_code, 200)
+        self.assertEqual(len(padded_filter_response.json()), 2)
+        self.assertEqual(len(blank_filter_response.json()), 2)
+
     def test_session_challenge_summary_returns_progress_counts(self) -> None:
         session_id = "endpoint-summary-session"
         incorrect_response = self.client.post(

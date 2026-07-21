@@ -367,8 +367,13 @@ class AttemptsServiceTests(unittest.TestCase):
 
         attempts = service.list_attempts_for_session(
             "session-a",
-            challenge_slug="challenge-a",
+            challenge_slug=" challenge-a ",
             limit=25,
+        )
+        service.list_attempts_for_session(
+            "session-b",
+            challenge_slug="   ",
+            limit=10,
         )
 
         self.assertEqual(attempts, [{"id": "attempt-a"}])
@@ -379,7 +384,12 @@ class AttemptsServiceTests(unittest.TestCase):
                     "session_id": "session-a",
                     "challenge_slug": "challenge-a",
                     "limit": 25,
-                }
+                },
+                {
+                    "session_id": "session-b",
+                    "challenge_slug": None,
+                    "limit": 10,
+                },
             ],
         )
 

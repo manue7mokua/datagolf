@@ -124,9 +124,10 @@ class AttemptsService:
         challenge_slug: str | None = None,
         limit: int = 100,
     ):
+        normalized_challenge_slug = challenge_slug.strip() if challenge_slug else None
         return self.attempts_repo.list_attempts_for_session(
             session_id,
-            challenge_slug=challenge_slug,
+            challenge_slug=normalized_challenge_slug or None,
             limit=limit,
         )
 
