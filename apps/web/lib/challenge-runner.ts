@@ -539,7 +539,7 @@ export function getPreviousAttemptsNewestFirst(progress: QuestionProgress) {
 }
 
 export function getPreviousAttemptCount(progress: QuestionProgress) {
-  return Math.max(progress.attempts.length - 1, 0);
+  return Math.max(progress.attemptCount - 1, 0);
 }
 
 export function getPreviousAttemptsTitle(attemptCount: number) {

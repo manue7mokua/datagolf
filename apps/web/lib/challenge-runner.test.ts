@@ -618,6 +618,8 @@ assert.deepEqual(cappedProgress?.attempts.map((attempt) => attempt.id), [
   "cap-6",
 ]);
 assert.equal(cappedProgress?.lastAttempt?.id, "cap-6");
+assert.equal(cappedProgress?.attemptCount, 6);
+assert.equal(cappedProgress ? getPreviousAttemptCount(cappedProgress) : null, 5);
 assert.equal(getPreviousAttemptCount(applyAttemptToProgress(undefined, retryAttempt)), 0);
 assert.equal(getPreviousAttemptsTitle(1), "Previous attempt (1)");
 assert.equal(getPreviousAttemptsTitle(2), "Previous attempts (2)");
