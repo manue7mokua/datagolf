@@ -493,6 +493,25 @@ export function getPreviousAttemptLabel(index: number) {
   return `Prev ${index + 1}`;
 }
 
+export function formatAttemptTimestamp(
+  value: string,
+  locale?: string,
+  timeZone?: string,
+) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return date.toLocaleString(locale, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone,
+  });
+}
+
 export function getAttemptResultLabel(attempt: AttemptResponse) {
   if (attempt.status === "failed") {
     return "Failed";
