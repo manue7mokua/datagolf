@@ -255,8 +255,9 @@ export async function listSessionAttempts(
 ) {
   const normalizedLimit = normalizeApiLimit(limit, 1, 500, 100);
   const params = new URLSearchParams({ limit: String(normalizedLimit) });
-  if (challengeSlug) {
-    params.set("challenge_slug", challengeSlug);
+  const normalizedChallengeSlug = challengeSlug?.trim();
+  if (normalizedChallengeSlug) {
+    params.set("challenge_slug", normalizedChallengeSlug);
   }
 
   const encodedSessionId = encodePathSegment(sessionId);

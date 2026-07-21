@@ -114,6 +114,8 @@ async function runApiRequestTests() {
     await listSessionAttempts("session 1/user", undefined, 501.9);
     await listSessionAttempts("session 1/user", undefined, Number.POSITIVE_INFINITY);
     await listSessionAttempts("session 2/user", undefined, 10);
+    await listSessionAttempts("session 3/user", "   ", 10);
+    await listSessionAttempts("session 4/user", " creator posts/v1 ", 10);
     await getSessionChallengeSummary("session 1/user", "creator posts/v1");
 
     assert.deepEqual(requestedUrls, [
@@ -130,6 +132,8 @@ async function runApiRequestTests() {
       "http://localhost:8000/sessions/session%201%2Fuser/attempts?limit=500",
       "http://localhost:8000/sessions/session%201%2Fuser/attempts?limit=100",
       "http://localhost:8000/sessions/session%202%2Fuser/attempts?limit=10",
+      "http://localhost:8000/sessions/session%203%2Fuser/attempts?limit=10",
+      "http://localhost:8000/sessions/session%204%2Fuser/attempts?limit=10&challenge_slug=creator+posts%2Fv1",
       "http://localhost:8000/sessions/session%201%2Fuser/challenges/creator%20posts%2Fv1/summary",
     ]);
   } finally {
