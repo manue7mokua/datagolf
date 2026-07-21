@@ -42,6 +42,7 @@ import {
   getFeedbackLineTone,
   getFillBlankCount,
   getHiddenDatasetPreviewColumnCount,
+  getHiddenDatasetPreviewRowCount,
   getInitialQuestionIndex,
   getNextOpenQuestionActionLabel,
   getPreviousAttemptCount,
@@ -578,6 +579,7 @@ function DatasetPreviewPanel({ preview }: { preview: DatasetPreview }) {
   const tableColumns = getDatasetPreviewColumns(preview.dataset.columns, 4);
   const visibleRows = getDatasetPreviewRows(preview.rows);
   const previewWindowLabel = getDatasetPreviewWindowLabel(preview);
+  const hiddenRowCount = getHiddenDatasetPreviewRowCount(preview.rows);
   const hiddenColumnCount = getHiddenDatasetPreviewColumnCount(
     preview.dataset.columns,
     columnChipLimit,
@@ -642,6 +644,11 @@ function DatasetPreviewPanel({ preview }: { preview: DatasetPreview }) {
           </tbody>
         </table>
       </div>
+      {hiddenRowCount > 0 ? (
+        <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[#8f8b80]">
+          +{hiddenRowCount} more rows in preview
+        </div>
+      ) : null}
     </section>
   );
 }

@@ -24,6 +24,7 @@ import {
   getFeedbackLineTone,
   getFillBlankCount,
   getHiddenDatasetPreviewColumnCount,
+  getHiddenDatasetPreviewRowCount,
   getInitialQuestionIndex,
   getNextOpenQuestionActionLabel,
   getPreviousAttemptCount,
@@ -215,6 +216,19 @@ assert.deepEqual(
 );
 assert.deepEqual(getDatasetPreviewRows([{ id: 1 }], -1), []);
 assert.deepEqual(getDatasetPreviewRows([{ id: 1 }], 0), []);
+assert.equal(
+  getHiddenDatasetPreviewRowCount(
+    Array.from({ length: 7 }, (_, index) => ({ id: index + 1 })),
+  ),
+  2,
+);
+assert.equal(
+  getHiddenDatasetPreviewRowCount(
+    Array.from({ length: 5 }, (_, index) => ({ id: index + 1 })),
+  ),
+  0,
+);
+assert.equal(getHiddenDatasetPreviewRowCount([{ id: 1 }], -1), 1);
 assert.deepEqual(
   getDatasetPreviewColumns(
     Array.from({ length: 5 }, (_, index) => createColumn(`col_${index + 1}`)),

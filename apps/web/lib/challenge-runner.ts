@@ -270,6 +270,13 @@ export function getHiddenDatasetPreviewColumnCount(
   return Math.max(columns.length - normalizePreviewLimit(limit), 0);
 }
 
+export function getHiddenDatasetPreviewRowCount(
+  rows: Record<string, unknown>[],
+  limit = 5,
+) {
+  return Math.max(rows.length - normalizePreviewLimit(limit), 0);
+}
+
 export function getDatasetPreviewWindowLabel(
   preview: DatasetPreview,
   rowLimit = 5,
