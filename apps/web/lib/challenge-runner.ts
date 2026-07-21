@@ -414,6 +414,12 @@ export function getPreviousAttemptCount(progress: QuestionProgress) {
   return Math.max(progress.attempts.length - 1, 0);
 }
 
+export function getPreviousAttemptsTitle(attemptCount: number) {
+  return attemptCount === 1
+    ? "Previous attempt (1)"
+    : `Previous attempts (${attemptCount})`;
+}
+
 export function getPreviousAttemptLabel(index: number) {
   return `Prev ${index + 1}`;
 }

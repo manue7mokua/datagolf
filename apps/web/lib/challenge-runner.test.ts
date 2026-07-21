@@ -21,6 +21,7 @@ import {
   getNextOpenQuestionActionLabel,
   getPreviousAttemptCount,
   getPreviousAttemptLabel,
+  getPreviousAttemptsTitle,
   getPreviousAttemptsNewestFirst,
   getQuestionPositionLabel,
   getQuestionProgressStatus,
@@ -434,6 +435,8 @@ assert.deepEqual(cappedProgress?.attempts.map((attempt) => attempt.id), [
 ]);
 assert.equal(cappedProgress?.lastAttempt?.id, "cap-6");
 assert.equal(getPreviousAttemptCount(applyAttemptToProgress(undefined, retryAttempt)), 0);
+assert.equal(getPreviousAttemptsTitle(1), "Previous attempt (1)");
+assert.equal(getPreviousAttemptsTitle(2), "Previous attempts (2)");
 assert.equal(getPreviousAttemptLabel(0), "Prev 1");
 assert.equal(sessionProgress.Q1.attemptCount, 1);
 assert.equal(sessionProgress.Q2.attemptCount, 2);

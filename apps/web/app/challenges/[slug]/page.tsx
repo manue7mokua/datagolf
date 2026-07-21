@@ -39,6 +39,7 @@ import {
   getNextOpenQuestionActionLabel,
   getPreviousAttemptCount,
   getPreviousAttemptLabel,
+  getPreviousAttemptsTitle,
   getPreviousAttemptsNewestFirst,
   getQuestionPositionLabel,
   getQuestionProgressStatus,
@@ -827,7 +828,7 @@ function AttemptHistory({ progress }: { progress: QuestionProgress }) {
   return (
     <section className="mt-4 border border-white/12 bg-black/20">
       <div className="border-b border-white/12 px-3 py-3 text-[11px] uppercase tracking-[0.18em] text-[#8f8b80]">
-        Previous attempts ({attemptCount})
+        {getPreviousAttemptsTitle(attemptCount)}
       </div>
       <ol className="divide-y divide-white/10">
         {attempts.map((attempt, index) => {
