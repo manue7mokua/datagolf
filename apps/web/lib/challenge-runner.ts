@@ -229,7 +229,7 @@ export function getDatasetPreviewRows(
   rows: Record<string, unknown>[],
   limit = 5,
 ) {
-  return rows.slice(0, Math.max(limit, 0));
+  return rows.slice(0, Math.max(Math.floor(limit), 0));
 }
 
 export function summarizeChallengeProgress(

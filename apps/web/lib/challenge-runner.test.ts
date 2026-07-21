@@ -190,6 +190,13 @@ assert.deepEqual(
   ),
   [{ id: 1 }, { id: 2 }],
 );
+assert.deepEqual(
+  getDatasetPreviewRows(
+    Array.from({ length: 7 }, (_, index) => ({ id: index + 1 })),
+    2.8,
+  ),
+  [{ id: 1 }, { id: 2 }],
+);
 assert.deepEqual(getDatasetPreviewRows([{ id: 1 }], -1), []);
 assert.equal(getQuestionProgressStatus(undefined), "unattempted");
 assert.equal(
