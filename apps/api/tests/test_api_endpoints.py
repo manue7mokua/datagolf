@@ -110,6 +110,23 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual(fetched["id"], created["id"])
         self.assertEqual(fetched["evaluation_payload"]["expected_option"], "B")
 
+    def test_attempt_creation_trims_session_id(self) -> None:
+        response = self.client.post(
+            "/questions/Q8/attempts",
+            json={"session_id": " endpoint-test-session ", "selected_option": "B"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["session_id"], "endpoint-test-session")
+
+    def test_attempt_creation_rejects_blank_session_id(self) -> None:
+        response = self.client.post(
+            "/questions/Q8/attempts",
+            json={"session_id": "   ", "selected_option": "B"},
+        )
+
+        self.assertEqual(response.status_code, 422)
+
     def test_multiple_choice_attempt_rejects_unknown_option(self) -> None:
         response = self.client.post(
             "/questions/Q8/attempts",

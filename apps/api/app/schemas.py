@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Annotated, Any, Literal, Union
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 QuestionType = Literal["guided_prompt", "multiple_choice", "fill_blank", "micro_code"]
@@ -164,6 +164,14 @@ class AttemptCreateRequest(BaseModel):
     selected_option: str | None = None
     blanks: list[str] | None = None
     code_text: str | None = None
+
+    @field_validator("session_id")
+    @classmethod
+    def normalize_session_id(cls, value: str) -> str:
+        session_id = value.strip()
+        if not session_id:
+            raise ValueError("session_id is required")
+        return session_id
 
 
 class AttemptResponse(BaseModel):

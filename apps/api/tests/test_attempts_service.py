@@ -4,6 +4,8 @@ from pathlib import Path
 import sys
 import unittest
 
+from pydantic import ValidationError
+
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 API_ROOT = REPO_ROOT / "apps" / "api"
@@ -14,6 +16,15 @@ from app.schemas import AttemptCreateRequest, QuestionDisplay, QuestionSpec
 
 
 class AttemptsServiceTests(unittest.TestCase):
+    def test_attempt_request_trims_session_id(self) -> None:
+        request = AttemptCreateRequest(session_id=" session-a ", selected_option="B")
+
+        self.assertEqual(request.session_id, "session-a")
+
+    def test_attempt_request_requires_session_id(self) -> None:
+        with self.assertRaisesRegex(ValidationError, "session_id is required"):
+            AttemptCreateRequest(session_id="   ", selected_option="B")
+
     def test_validate_guided_prompt_trims_text(self) -> None:
         service = create_service()
 
