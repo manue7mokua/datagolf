@@ -838,12 +838,16 @@ function formatPayloadValue(value: unknown): string {
   }
 
   if (Array.isArray(value)) {
-    return value.map(formatPayloadValue).join(", ");
+    const formattedValues = value
+      .map(formatPayloadValue)
+      .filter((item) => item.length > 0);
+    return formattedValues.length > 0 ? formattedValues.join(", ") : "None";
   }
 
   if (typeof value === "object") {
     return JSON.stringify(value);
   }
 
-  return String(value);
+  const formattedValue = String(value).trim();
+  return formattedValue || "None";
 }

@@ -717,6 +717,30 @@ assert.deepEqual(
 assert.deepEqual(
   getAttemptFeedbackLines({
     ...retryAttempt,
+    question_type: "fill_blank",
+    evaluation_payload: {
+      per_blank_results: [
+        {
+          blank_index: 0,
+          accepted: [],
+          received: " ",
+          passed: false,
+        },
+      ],
+    },
+    is_correct: false,
+  }),
+  [
+    {
+      label: "Blank 1",
+      value: "None -> None",
+      passed: false,
+    },
+  ],
+);
+assert.deepEqual(
+  getAttemptFeedbackLines({
+    ...retryAttempt,
     question_type: "micro_code",
     evaluation_payload: {
       normalized_submission: "engagement_rate=(likes+comments+shares)/views",
