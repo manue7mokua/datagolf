@@ -383,17 +383,17 @@ export function mapSessionChallengeSummary(
   summary: SessionChallengeSummary,
 ): ChallengeProgressSummary {
   return {
-    totalQuestions: summary.total_questions,
-    attemptedQuestions: summary.attempted_questions,
-    correctQuestions: summary.correct_questions,
-    remainingQuestions: summary.remaining_questions,
-    incorrectQuestions: summary.incorrect_questions,
-    pendingQuestions: summary.pending_questions,
-    skippedQuestions: summary.skipped_questions,
-    retryQuestions: summary.retry_questions,
-    totalAttempts: summary.total_attempts,
-    accuracyPercent: summary.accuracy_percent,
-    completionPercent: summary.completion_percent,
+    totalQuestions: getDisplayCount(summary.total_questions),
+    attemptedQuestions: getDisplayCount(summary.attempted_questions),
+    correctQuestions: getDisplayCount(summary.correct_questions),
+    remainingQuestions: getDisplayCount(summary.remaining_questions),
+    incorrectQuestions: getDisplayCount(summary.incorrect_questions),
+    pendingQuestions: getDisplayCount(summary.pending_questions),
+    skippedQuestions: getDisplayCount(summary.skipped_questions),
+    retryQuestions: getDisplayCount(summary.retry_questions),
+    totalAttempts: getDisplayCount(summary.total_attempts),
+    accuracyPercent: getDisplayPercent(summary.accuracy_percent),
+    completionPercent: getDisplayPercent(summary.completion_percent),
   };
 }
 
@@ -407,11 +407,11 @@ function getAccuracyPercent(correctQuestions: number, attemptedQuestions: number
 }
 
 export function getCompletionPercent(summary: ChallengeProgressSummary) {
-  return Math.min(Math.max(summary.completionPercent, 0), 100);
+  return getDisplayPercent(summary.completionPercent);
 }
 
 export function getSummaryAccuracyPercent(summary: ChallengeProgressSummary) {
-  return Math.min(Math.max(summary.accuracyPercent, 0), 100);
+  return getDisplayPercent(summary.accuracyPercent);
 }
 
 export function isChallengeComplete(summary: ChallengeProgressSummary) {
@@ -479,6 +479,10 @@ function getCountLabel(count: number, singularLabel: string, pluralLabel: string
 
 function getDisplayCount(count: number) {
   return Math.max(count, 0);
+}
+
+function getDisplayPercent(percent: number) {
+  return Math.min(Math.max(percent, 0), 100);
 }
 
 export function findNextIncompleteQuestionIndex(

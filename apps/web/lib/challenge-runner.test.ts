@@ -850,6 +850,37 @@ assert.deepEqual(
     completionPercent: 13,
   },
 );
+assert.deepEqual(
+  mapSessionChallengeSummary({
+    session_id: "session-1",
+    challenge_slug: "tiktok-creator-posts",
+    challenge_version: "v1",
+    total_questions: -15,
+    attempted_questions: -4,
+    correct_questions: -2,
+    remaining_questions: -13,
+    incorrect_questions: -1,
+    pending_questions: -1,
+    skipped_questions: -11,
+    retry_questions: -2,
+    total_attempts: -6,
+    accuracy_percent: 150,
+    completion_percent: -13,
+  }),
+  {
+    totalQuestions: 0,
+    attemptedQuestions: 0,
+    correctQuestions: 0,
+    remainingQuestions: 0,
+    incorrectQuestions: 0,
+    pendingQuestions: 0,
+    skippedQuestions: 0,
+    retryQuestions: 0,
+    totalAttempts: 0,
+    accuracyPercent: 100,
+    completionPercent: 0,
+  },
+);
 assert.equal(
   getCompletionPercent(
     mapSessionChallengeSummary({
