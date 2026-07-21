@@ -341,6 +341,15 @@ assert.equal(
   null,
 );
 assert.equal(
+  getAnswerDraftGuidance(questions[0], {
+    promptText: "",
+    selectedOption: "Z",
+    blanks: [],
+    codeText: "",
+  }),
+  "Choose a listed option",
+);
+assert.equal(
   getAnswerDraftGuidance(guidedPromptQuestion, createEmptyAnswerDraft()),
   "Enter a prompt",
 );
@@ -420,6 +429,24 @@ assert.equal(
     codeText: "",
   }),
   true,
+);
+assert.equal(
+  isQuestionAnswerDraftSubmittable(questions[0], {
+    promptText: "",
+    selectedOption: "B",
+    blanks: [],
+    codeText: "",
+  }),
+  true,
+);
+assert.equal(
+  isQuestionAnswerDraftSubmittable(questions[0], {
+    promptText: "",
+    selectedOption: "Z",
+    blanks: [],
+    codeText: "",
+  }),
+  false,
 );
 assert.deepEqual(
   buildAttemptPayload(fillBlankQuestion, "session-1", {
@@ -1003,7 +1030,10 @@ function createQuestion(id: string, order: number): PublicQuestion {
       setup_text: null,
       task_text: "Choose an answer.",
       hint_chips: [],
-      choices: [],
+      choices: [
+        { id: "A", text: "First answer" },
+        { id: "B", text: "Second answer" },
+      ],
       code_snippet: null,
       answer_format: null,
     },

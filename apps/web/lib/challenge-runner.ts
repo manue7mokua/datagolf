@@ -129,6 +129,10 @@ export function isQuestionAnswerDraftSubmittable(
     ).every((blank) => blank.trim().length > 0);
   }
 
+  if (question.type === "multiple_choice") {
+    return isMultipleChoiceSelectionValid(question, draft.selectedOption);
+  }
+
   return isAnswerDraftSubmittable(question.type, draft);
 }
 
@@ -154,7 +158,13 @@ export function getAnswerDraftGuidance(
   }
 
   if (question.type === "multiple_choice") {
-    return draft.selectedOption.trim().length > 0 ? null : "Choose an option";
+    if (draft.selectedOption.trim().length === 0) {
+      return "Choose an option";
+    }
+
+    return isMultipleChoiceSelectionValid(question, draft.selectedOption)
+      ? null
+      : "Choose a listed option";
   }
 
   if (question.type === "micro_code") {
@@ -225,6 +235,17 @@ export function getAnswerFormatLabel(
   }
 
   return getQuestionTypeLabel(questionType);
+}
+
+function isMultipleChoiceSelectionValid(
+  question: PublicQuestion,
+  selectedOption: string,
+) {
+  const normalizedSelection = selectedOption.trim();
+
+  return question.display.choices.some(
+    (choice) => choice.id === normalizedSelection,
+  );
 }
 
 export function getDatasetPreviewRows(
