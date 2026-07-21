@@ -482,7 +482,7 @@ function getDisplayCount(count: number) {
     return 0;
   }
 
-  return Math.max(count, 0);
+  return Math.max(Math.floor(count), 0);
 }
 
 function getDisplayPercent(percent: number) {
