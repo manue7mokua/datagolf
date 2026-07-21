@@ -325,6 +325,7 @@ assert.equal(
   formatPreviewCell({ post_type: "reel", saves: 42 }),
   "{\"post_type\":\"reel\",\"saves\":42}",
 );
+assert.equal(formatPreviewCell(circularFeedbackValue), "[unavailable]");
 assert.equal(getQuestionProgressStatus(undefined), "unattempted");
 assert.equal(
   getQuestionProgressStatus(applyAttemptToProgress(undefined, pendingAttempt)),
