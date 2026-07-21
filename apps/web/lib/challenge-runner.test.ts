@@ -936,6 +936,22 @@ assert.equal(
   "0 of 3 correct / 3 remaining / 0 incorrect / 3 skipped / 0% accuracy / 0 attempts",
 );
 assert.equal(
+  getChallengeProgressDetailText({
+    totalQuestions: -1,
+    attemptedQuestions: 0,
+    correctQuestions: -2,
+    remainingQuestions: -3,
+    incorrectQuestions: -4,
+    pendingQuestions: 0,
+    skippedQuestions: -5,
+    retryQuestions: 0,
+    totalAttempts: -6,
+    accuracyPercent: -20,
+    completionPercent: 0,
+  }),
+  "0 of 0 correct / 0 remaining / 0 incorrect / 0 skipped / 0% accuracy / 0 attempts",
+);
+assert.equal(
   getCompletionPercent(summarizeChallengeProgress(questions, progress)),
   33,
 );

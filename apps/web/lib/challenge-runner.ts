@@ -448,7 +448,9 @@ export function getChallengeProgressDetailText(
   summary: ChallengeProgressSummary,
 ) {
   const parts = [
-    `${summary.correctQuestions} of ${summary.totalQuestions} correct`,
+    `${getDisplayCount(summary.correctQuestions)} of ${getDisplayCount(
+      summary.totalQuestions,
+    )} correct`,
     getCountLabel(summary.remainingQuestions, "remaining", "remaining"),
     getCountLabel(summary.incorrectQuestions, "incorrect", "incorrect"),
     getCountLabel(summary.skippedQuestions, "skipped", "skipped"),
@@ -469,7 +471,14 @@ export function getChallengeProgressDetailText(
 }
 
 function getCountLabel(count: number, singularLabel: string, pluralLabel: string) {
-  return `${count} ${count === 1 ? singularLabel : pluralLabel}`;
+  const displayCount = getDisplayCount(count);
+  return `${displayCount} ${
+    displayCount === 1 ? singularLabel : pluralLabel
+  }`;
+}
+
+function getDisplayCount(count: number) {
+  return Math.max(count, 0);
 }
 
 export function findNextIncompleteQuestionIndex(
