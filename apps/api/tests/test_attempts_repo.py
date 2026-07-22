@@ -74,6 +74,11 @@ class AttemptsRepositoryTests(unittest.TestCase):
                 challenge_slug="challenge-a",
             )
             limited_attempts = repo.list_attempts_for_session("session-a", limit=2)
+            zero_limit_attempts = repo.list_attempts_for_session("session-a", limit=0)
+            negative_limit_attempts = repo.list_attempts_for_session(
+                "session-a",
+                limit=-1,
+            )
 
         self.assertEqual(
             [attempt["id"] for attempt in all_session_attempts],
@@ -87,6 +92,8 @@ class AttemptsRepositoryTests(unittest.TestCase):
             [attempt["id"] for attempt in limited_attempts],
             ["attempt-1", "attempt-2"],
         )
+        self.assertEqual(zero_limit_attempts, [])
+        self.assertEqual(negative_limit_attempts, [])
         self.assertEqual(filtered_attempts[0]["user_input_payload"], {"selected_option": "B"})
         self.assertTrue(filtered_attempts[0]["is_correct"])
 

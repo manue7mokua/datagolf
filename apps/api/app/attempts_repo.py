@@ -151,6 +151,9 @@ class AttemptsRepository:
         challenge_slug: str | None = None,
         limit: int | None = 100,
     ) -> list[dict[str, Any]]:
+        if limit is not None and limit <= 0:
+            return []
+
         query = "SELECT * FROM attempts WHERE session_id = ?"
         params: list[Any] = [session_id]
 
