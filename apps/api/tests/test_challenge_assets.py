@@ -177,14 +177,25 @@ class ChallengeAssetTests(unittest.TestCase):
             )
 
     def test_dataset_slug_resolves_to_challenge(self) -> None:
-        challenge = self.registry.get_dataset_challenge("tiktok-posts")
+        challenge = self.registry.get_dataset_challenge(" tiktok-posts ")
 
         self.assertEqual(challenge.challenge_slug, "tiktok-creator-posts")
         self.assertEqual(challenge.dataset.slug, "tiktok-posts")
 
+    def test_challenge_slug_resolves_with_padding(self) -> None:
+        challenge = self.registry.get_challenge(" tiktok-creator-posts ")
+
+        self.assertEqual(challenge.challenge_slug, "tiktok-creator-posts")
+
+    def test_question_id_resolves_with_padding(self) -> None:
+        challenge, question = self.registry.get_question(" Q8 ")
+
+        self.assertEqual(challenge.challenge_slug, "tiktok-creator-posts")
+        self.assertEqual(question.id, "Q8")
+
     def test_unknown_dataset_slug_raises_key_error(self) -> None:
         with self.assertRaises(KeyError):
-            self.registry.get_dataset_challenge("missing-dataset")
+            self.registry.get_dataset_challenge(" missing-dataset ")
 
 
 if __name__ == "__main__":
