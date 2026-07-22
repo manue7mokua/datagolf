@@ -167,7 +167,7 @@ class AttemptsRepositoryTests(unittest.TestCase):
                         session_id=" session-a ",
                         challenge_slug=" challenge-a ",
                         question_id=" Q1 ",
-                        created_at="2026-01-01T00:00:01+00:00",
+                        created_at=" 2026-01-01T00:00:01+00:00 ",
                     ),
                     "question_type": " multiple_choice ",
                     "status": " completed ",
@@ -191,6 +191,8 @@ class AttemptsRepositoryTests(unittest.TestCase):
         self.assertEqual(fetched["status"], "completed")
         self.assertEqual(fetched["challenge_slug"], "challenge-a")
         self.assertEqual(fetched["dataset_slug"], "dataset-a")
+        self.assertEqual(fetched["created_at"], "2026-01-01T00:00:01+00:00")
+        self.assertEqual(fetched["updated_at"], "2026-01-01T00:00:01+00:00")
 
     def test_update_attempt_trims_lookup_id_and_metadata(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:
@@ -214,13 +216,14 @@ class AttemptsRepositoryTests(unittest.TestCase):
                 evaluation_payload={"passed": False},
                 is_correct=False,
                 error_message=None,
-                updated_at="2026-01-01T00:00:02+00:00",
+                updated_at=" 2026-01-01T00:00:02+00:00 ",
             )
 
         self.assertIsNotNone(updated)
         self.assertEqual(updated["status"], "completed")
         self.assertEqual(updated["model"], "model-a")
         self.assertFalse(updated["is_correct"])
+        self.assertEqual(updated["updated_at"], "2026-01-01T00:00:02+00:00")
 
 
 def _attempt_record(

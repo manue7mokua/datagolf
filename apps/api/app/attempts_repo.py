@@ -110,6 +110,7 @@ class AttemptsRepository:
         attempt_id = attempt_id.strip()
         status = status.strip()
         model = model.strip()
+        updated_at = updated_at.strip()
         with self._connection() as connection:
             connection.execute(
                 """
@@ -195,6 +196,8 @@ class AttemptsRepository:
             "prompt_version",
             "model",
             "evaluator_version",
+            "created_at",
+            "updated_at",
         ):
             value = normalized.get(key)
             if isinstance(value, str):
