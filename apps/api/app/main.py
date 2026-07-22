@@ -46,6 +46,10 @@ class AppContainer:
 container = AppContainer()
 
 
+def normalize_path_param(value: str) -> str:
+    return value.strip()
+
+
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     container.attempts_repo.initialize()
@@ -93,6 +97,7 @@ def get_dataset_preview(slug: str, limit: int = 20) -> DatasetPreviewResponse:
     if limit < 1 or limit > 100:
         raise HTTPException(status_code=422, detail="limit must be between 1 and 100")
 
+    slug = normalize_path_param(slug)
     try:
         challenge = container.challenge_registry.get_dataset_challenge(slug)
     except KeyError as exc:
@@ -111,6 +116,7 @@ def get_dataset_preview(slug: str, limit: int = 20) -> DatasetPreviewResponse:
 
 @app.get("/challenges/{slug}", response_model=ChallengeDetailResponse)
 def get_challenge(slug: str) -> ChallengeDetailResponse:
+    slug = normalize_path_param(slug)
     try:
         challenge = container.challenge_registry.get_challenge(slug)
     except KeyError as exc:
@@ -130,6 +136,7 @@ def get_challenge(slug: str) -> ChallengeDetailResponse:
 
 @app.get("/challenges/{slug}/questions", response_model=list[PublicQuestionResponse])
 def get_challenge_questions(slug: str) -> list[PublicQuestionResponse]:
+    slug = normalize_path_param(slug)
     try:
         challenge = container.challenge_registry.get_challenge(slug)
     except KeyError as exc:
@@ -149,6 +156,7 @@ def get_challenge_questions(slug: str) -> list[PublicQuestionResponse]:
 
 @app.post("/questions/{question_id}/attempts", response_model=AttemptResponse)
 def create_attempt(question_id: str, payload: AttemptCreateRequest) -> AttemptResponse:
+    question_id = normalize_path_param(question_id)
     try:
         attempt = container.attempts_service.run_attempt(question_id, payload)
     except KeyError as exc:
@@ -163,6 +171,7 @@ def create_attempt(question_id: str, payload: AttemptCreateRequest) -> AttemptRe
 
 @app.get("/attempts/{attempt_id}", response_model=AttemptResponse)
 def get_attempt(attempt_id: str) -> AttemptResponse:
+    attempt_id = normalize_path_param(attempt_id)
     attempt = container.attempts_service.get_attempt(attempt_id)
     if attempt is None:
         raise HTTPException(status_code=404, detail=f"Unknown attempt id: {attempt_id}")

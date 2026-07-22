@@ -60,7 +60,7 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertNotIn("questions", first_challenge)
 
     def test_challenge_detail_returns_dataset_summary(self) -> None:
-        response = self.client.get("/challenges/tiktok-creator-posts")
+        response = self.client.get("/challenges/%20tiktok-creator-posts%20")
 
         self.assertEqual(response.status_code, 200)
         payload = response.json()
@@ -69,7 +69,7 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual(payload["dataset"]["row_count"], 500)
 
     def test_challenge_questions_are_public_safe(self) -> None:
-        response = self.client.get("/challenges/tiktok-creator-posts/questions")
+        response = self.client.get("/challenges/%20tiktok-creator-posts%20/questions")
 
         self.assertEqual(response.status_code, 200)
         questions = response.json()
@@ -100,7 +100,7 @@ class ApiEndpointTests(unittest.TestCase):
 
     def test_multiple_choice_attempt_can_be_created_and_retrieved(self) -> None:
         create_response = self.client.post(
-            "/questions/Q8/attempts",
+            "/questions/%20Q8%20/attempts",
             json={"session_id": "endpoint-test-session", "selected_option": "B"},
         )
 
@@ -110,7 +110,7 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual(created["status"], "completed")
         self.assertTrue(created["is_correct"])
 
-        get_response = self.client.get(f"/attempts/{created['id']}")
+        get_response = self.client.get(f"/attempts/%20{created['id']}%20")
 
         self.assertEqual(get_response.status_code, 200)
         fetched = get_response.json()
