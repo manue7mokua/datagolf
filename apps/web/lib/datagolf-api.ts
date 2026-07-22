@@ -233,7 +233,7 @@ export async function createAttempt(
     `/questions/${encodeTrimmedPathSegment(questionId)}/attempts`,
     {
       method: "POST",
-      body: JSON.stringify(payload),
+      body: JSON.stringify(normalizeAttemptCreateRequest(payload)),
     },
   );
 }
@@ -319,6 +319,30 @@ function encodePathSegment(segment: string) {
 
 function encodeTrimmedPathSegment(segment: string) {
   return encodePathSegment(segment.trim());
+}
+
+function normalizeAttemptCreateRequest(payload: AttemptCreateRequest) {
+  const normalized: AttemptCreateRequest = {
+    session_id: payload.session_id.trim(),
+  };
+
+  if (payload.prompt_text !== undefined) {
+    normalized.prompt_text = payload.prompt_text.trim();
+  }
+
+  if (payload.selected_option !== undefined) {
+    normalized.selected_option = payload.selected_option.trim();
+  }
+
+  if (payload.blanks !== undefined) {
+    normalized.blanks = payload.blanks.map((blank) => blank.trim());
+  }
+
+  if (payload.code_text !== undefined) {
+    normalized.code_text = payload.code_text.trim();
+  }
+
+  return normalized;
 }
 
 function normalizeApiLimit(

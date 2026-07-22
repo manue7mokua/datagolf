@@ -95,15 +95,25 @@ runApiRequestTests().catch((error) => {
 
 async function runApiRequestTests() {
   const requestedUrls: string[] = [];
-  globalThis.fetch = async (input) => {
+  const attemptBodies: unknown[] = [];
+  globalThis.fetch = async (input, init) => {
     requestedUrls.push(String(input));
+    if (String(input).includes("/attempts") && init?.method === "POST") {
+      attemptBodies.push(JSON.parse(String(init.body)));
+    }
     return Response.json({});
   };
 
   try {
     await getChallenge(" creator posts/v1 ");
     await getChallengeQuestions(" creator posts/v1 ");
-    await createAttempt(" question 1/intro ", { session_id: "session-1" });
+    await createAttempt(" question 1/intro ", {
+      session_id: " session-1 ",
+      selected_option: " B ",
+      blanks: [" views ", " likes "],
+      prompt_text: " show top posts ",
+      code_text: " select(post_id) ",
+    });
     await getAttempt(" attempt 1/first ");
     await getDatasetPreview(" tiktok posts/v1 ", 12);
     await getDatasetPreview("tiktok posts/v1", -2);
@@ -137,6 +147,15 @@ async function runApiRequestTests() {
       "http://localhost:8000/sessions/session%204%2Fuser/attempts?limit=10&challenge_slug=creator+posts%2Fv1",
       "http://localhost:8000/sessions/session%201%2Fuser/challenges/creator%20posts%2Fv1/summary",
       "http://localhost:8000/sessions/session%205%2Fuser/challenges/creator%20posts%2Fv1/summary",
+    ]);
+    assert.deepEqual(attemptBodies, [
+      {
+        session_id: "session-1",
+        selected_option: "B",
+        blanks: ["views", "likes"],
+        prompt_text: "show top posts",
+        code_text: "select(post_id)",
+      },
     ]);
   } finally {
     globalThis.fetch = originalFetch;
