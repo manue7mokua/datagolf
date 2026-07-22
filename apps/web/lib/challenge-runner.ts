@@ -322,7 +322,7 @@ export function formatPreviewCell(value: unknown) {
     return formatStructuredValue(value);
   }
 
-  return String(value);
+  return String(value).trim();
 }
 
 function normalizePreviewLimit(limit: number) {

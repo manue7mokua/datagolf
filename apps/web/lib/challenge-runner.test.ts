@@ -320,6 +320,8 @@ assert.equal(formatPreviewCell(Number.NEGATIVE_INFINITY), "");
 assert.equal(formatPreviewCell(12), "12");
 assert.equal(formatPreviewCell(12.345), "12.35");
 assert.equal(formatPreviewCell("creator_1"), "creator_1");
+assert.equal(formatPreviewCell(" creator_1 "), "creator_1");
+assert.equal(formatPreviewCell("   "), "");
 assert.equal(formatPreviewCell(["reels", "tutorial"]), "[\"reels\",\"tutorial\"]");
 assert.equal(
   formatPreviewCell({ post_type: "reel", saves: 42 }),

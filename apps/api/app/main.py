@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
+from typing import Optional
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -171,7 +172,7 @@ def get_attempt(attempt_id: str) -> AttemptResponse:
 @app.get("/sessions/{session_id}/attempts", response_model=list[AttemptResponse])
 def list_session_attempts(
     session_id: str,
-    challenge_slug: str | None = None,
+    challenge_slug: Optional[str] = None,
     limit: int = 100,
 ) -> list[AttemptResponse]:
     if limit < 1 or limit > 500:

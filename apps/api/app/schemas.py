@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Annotated, Any, Literal, Union
+from typing import Annotated, Any, Literal, Optional, Union
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -32,25 +32,25 @@ class ChoiceSpec(BaseModel):
 
 
 class QuestionDisplay(BaseModel):
-    setup_text: str | None = None
+    setup_text: Optional[str] = None
     task_text: str
     hint_chips: list[str] = Field(default_factory=list)
     choices: list[ChoiceSpec] = Field(default_factory=list)
-    code_snippet: str | None = None
-    answer_format: str | None = None
+    code_snippet: Optional[str] = None
+    answer_format: Optional[str] = None
 
 
 class RequiredCodeCheck(BaseModel):
     name: str
     mode: Literal["contains_all", "contains_any", "regex_all", "regex_any"]
     patterns: list[str]
-    description: str | None = None
+    description: Optional[str] = None
 
 
 class GuidedPromptEvaluation(BaseModel):
     kind: Literal["guided_prompt"]
     operation: str
-    result_limit: int | None = None
+    result_limit: Optional[int] = None
     round_decimals: int = 6
     expected_columns: list[str]
     expected_rows: list[dict[str, Any]]
@@ -160,10 +160,10 @@ class ChallengeDetailResponse(BaseModel):
 
 class AttemptCreateRequest(BaseModel):
     session_id: str
-    prompt_text: str | None = None
-    selected_option: str | None = None
-    blanks: list[str] | None = None
-    code_text: str | None = None
+    prompt_text: Optional[str] = None
+    selected_option: Optional[str] = None
+    blanks: Optional[list[str]] = None
+    code_text: Optional[str] = None
 
     @field_validator("session_id")
     @classmethod
@@ -188,10 +188,10 @@ class AttemptResponse(BaseModel):
     model: str
     evaluator_version: str
     user_input_payload: dict[str, Any]
-    generated_code: str | None = None
-    evaluation_payload: dict[str, Any] | None = None
-    is_correct: bool | None = None
-    error_message: str | None = None
+    generated_code: Optional[str] = None
+    evaluation_payload: Optional[dict[str, Any]] = None
+    is_correct: Optional[bool] = None
+    error_message: Optional[str] = None
     created_at: str
     updated_at: str
 
