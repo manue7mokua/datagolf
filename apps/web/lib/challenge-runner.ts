@@ -702,7 +702,7 @@ export function getQuestionProgressStatusLabel(
 }
 
 export function getQuestionPositionLabel(question: PublicQuestion, totalQuestions: number) {
-  return `Q${question.order} / ${totalQuestions}`;
+  return `Q${getDisplayCount(question.order)} / ${getDisplayCount(totalQuestions)}`;
 }
 
 export function getQuestionTypeLabel(questionType: string) {

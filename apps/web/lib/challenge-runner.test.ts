@@ -380,6 +380,17 @@ assert.equal(
   false,
 );
 assert.equal(getQuestionPositionLabel(questions[1], questions.length), "Q2 / 3");
+assert.equal(
+  getQuestionPositionLabel({ ...questions[1], order: 2.9 }, 3.8),
+  "Q2 / 3",
+);
+assert.equal(
+  getQuestionPositionLabel(
+    { ...questions[1], order: Number.POSITIVE_INFINITY },
+    -3,
+  ),
+  "Q0 / 0",
+);
 assert.equal(getQuestionTypeLabel("guided_prompt"), "guided prompt");
 assert.equal(getQuestionTypeLabel("multi_part_question"), "multi part question");
 assert.equal(getFillBlankCount(fillBlankQuestion.display.code_snippet), 2);
