@@ -117,6 +117,7 @@ async function runApiRequestTests() {
     await listSessionAttempts("session 3/user", "   ", 10);
     await listSessionAttempts("session 4/user", " creator posts/v1 ", 10);
     await getSessionChallengeSummary("session 1/user", "creator posts/v1");
+    await getSessionChallengeSummary(" session 5/user ", " creator posts/v1 ");
 
     assert.deepEqual(requestedUrls, [
       "http://localhost:8000/challenges/creator%20posts%2Fv1",
@@ -135,6 +136,7 @@ async function runApiRequestTests() {
       "http://localhost:8000/sessions/session%203%2Fuser/attempts?limit=10",
       "http://localhost:8000/sessions/session%204%2Fuser/attempts?limit=10&challenge_slug=creator+posts%2Fv1",
       "http://localhost:8000/sessions/session%201%2Fuser/challenges/creator%20posts%2Fv1/summary",
+      "http://localhost:8000/sessions/session%205%2Fuser/challenges/creator%20posts%2Fv1/summary",
     ]);
   } finally {
     globalThis.fetch = originalFetch;

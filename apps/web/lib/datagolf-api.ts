@@ -260,7 +260,7 @@ export async function listSessionAttempts(
     params.set("challenge_slug", normalizedChallengeSlug);
   }
 
-  const encodedSessionId = encodePathSegment(sessionId);
+  const encodedSessionId = encodeTrimmedPathSegment(sessionId);
 
   return requestJson<AttemptResponse[]>(
     `/sessions/${encodedSessionId}/attempts?${params.toString()}`,
@@ -271,8 +271,8 @@ export async function getSessionChallengeSummary(
   sessionId: string,
   challengeSlug: string,
 ) {
-  const encodedSessionId = encodePathSegment(sessionId);
-  const encodedChallengeSlug = encodePathSegment(challengeSlug);
+  const encodedSessionId = encodeTrimmedPathSegment(sessionId);
+  const encodedChallengeSlug = encodeTrimmedPathSegment(challengeSlug);
 
   return requestJson<SessionChallengeSummary>(
     `/sessions/${encodedSessionId}/challenges/${encodedChallengeSlug}/summary`,
@@ -311,6 +311,10 @@ async function requestJson<T>(
 
 function encodePathSegment(segment: string) {
   return encodeURIComponent(segment);
+}
+
+function encodeTrimmedPathSegment(segment: string) {
+  return encodePathSegment(segment.trim());
 }
 
 function normalizeApiLimit(
