@@ -190,11 +190,16 @@ class ApiEndpointTests(unittest.TestCase):
         blank_filter_response = self.client.get(
             f"/sessions/{session_id}/attempts?challenge_slug=+++&limit=10"
         )
+        padded_session_response = self.client.get(
+            f"/sessions/+{session_id}+/attempts?challenge_slug=tiktok-creator-posts&limit=10"
+        )
 
         self.assertEqual(padded_filter_response.status_code, 200)
         self.assertEqual(blank_filter_response.status_code, 200)
+        self.assertEqual(padded_session_response.status_code, 200)
         self.assertEqual(len(padded_filter_response.json()), 2)
         self.assertEqual(len(blank_filter_response.json()), 2)
+        self.assertEqual(len(padded_session_response.json()), 2)
 
     def test_session_challenge_summary_returns_progress_counts(self) -> None:
         session_id = "endpoint-summary-session"
@@ -229,6 +234,16 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual(payload["total_attempts"], 2)
         self.assertEqual(payload["accuracy_percent"], 50)
         self.assertEqual(payload["completion_percent"], 7)
+
+        padded_response = self.client.get(
+            f"/sessions/+{session_id}+/challenges/+tiktok-creator-posts+/summary"
+        )
+
+        self.assertEqual(padded_response.status_code, 200)
+        padded_payload = padded_response.json()
+        self.assertEqual(padded_payload["session_id"], session_id)
+        self.assertEqual(padded_payload["challenge_slug"], "tiktok-creator-posts")
+        self.assertEqual(padded_payload["total_attempts"], 2)
 
     def test_session_challenge_summary_counts_retried_question_once(self) -> None:
         session_id = "endpoint-summary-retry-session"
