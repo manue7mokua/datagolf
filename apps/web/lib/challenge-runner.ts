@@ -653,7 +653,12 @@ export function buildProgressFromAttempts(attempts: AttemptResponse[]) {
 }
 
 function compareAttemptsAscending(left: AttemptResponse, right: AttemptResponse) {
-  const createdAtComparison = left.created_at.localeCompare(right.created_at);
+  const leftCreatedAt = Date.parse(left.created_at);
+  const rightCreatedAt = Date.parse(right.created_at);
+  const createdAtComparison =
+    Number.isNaN(leftCreatedAt) || Number.isNaN(rightCreatedAt)
+      ? left.created_at.trim().localeCompare(right.created_at.trim())
+      : leftCreatedAt - rightCreatedAt;
   return createdAtComparison === 0
     ? left.id.localeCompare(right.id)
     : createdAtComparison;
