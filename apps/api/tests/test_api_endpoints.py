@@ -91,6 +91,13 @@ class ApiEndpointTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 422)
 
+    def test_dataset_preview_rejects_nonpositive_limits(self) -> None:
+        zero_response = self.client.get("/datasets/tiktok-posts/preview?limit=0")
+        negative_response = self.client.get("/datasets/tiktok-posts/preview?limit=-1")
+
+        self.assertEqual(zero_response.status_code, 422)
+        self.assertEqual(negative_response.status_code, 422)
+
     def test_multiple_choice_attempt_can_be_created_and_retrieved(self) -> None:
         create_response = self.client.post(
             "/questions/Q8/attempts",
@@ -191,7 +198,7 @@ class ApiEndpointTests(unittest.TestCase):
             f"/sessions/{session_id}/attempts?challenge_slug=+++&limit=10"
         )
         padded_session_response = self.client.get(
-            f"/sessions/+{session_id}+/attempts?challenge_slug=tiktok-creator-posts&limit=10"
+            f"/sessions/%20{session_id}%20/attempts?challenge_slug=tiktok-creator-posts&limit=10"
         )
 
         self.assertEqual(padded_filter_response.status_code, 200)
@@ -236,7 +243,7 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual(payload["completion_percent"], 7)
 
         padded_response = self.client.get(
-            f"/sessions/+{session_id}+/challenges/+tiktok-creator-posts+/summary"
+            f"/sessions/%20{session_id}%20/challenges/%20tiktok-creator-posts%20/summary"
         )
 
         self.assertEqual(padded_response.status_code, 200)
@@ -286,6 +293,13 @@ class ApiEndpointTests(unittest.TestCase):
         response = self.client.get("/sessions/any-session/attempts?limit=501")
 
         self.assertEqual(response.status_code, 422)
+
+    def test_session_attempts_rejects_nonpositive_limits(self) -> None:
+        zero_response = self.client.get("/sessions/any-session/attempts?limit=0")
+        negative_response = self.client.get("/sessions/any-session/attempts?limit=-1")
+
+        self.assertEqual(zero_response.status_code, 422)
+        self.assertEqual(negative_response.status_code, 422)
 
 
 if __name__ == "__main__":
