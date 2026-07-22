@@ -101,11 +101,11 @@ async function runApiRequestTests() {
   };
 
   try {
-    await getChallenge("creator posts/v1");
-    await getChallengeQuestions("creator posts/v1");
-    await createAttempt("question 1/intro", { session_id: "session-1" });
-    await getAttempt("attempt 1/first");
-    await getDatasetPreview("tiktok posts/v1", 12);
+    await getChallenge(" creator posts/v1 ");
+    await getChallengeQuestions(" creator posts/v1 ");
+    await createAttempt(" question 1/intro ", { session_id: "session-1" });
+    await getAttempt(" attempt 1/first ");
+    await getDatasetPreview(" tiktok posts/v1 ", 12);
     await getDatasetPreview("tiktok posts/v1", -2);
     await getDatasetPreview("tiktok posts/v1", 101.7);
     await getDatasetPreview("tiktok posts/v1", Number.NaN);
