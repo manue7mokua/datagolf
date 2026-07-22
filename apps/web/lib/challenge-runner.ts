@@ -710,7 +710,7 @@ export function getQuestionTypeLabel(questionType: string) {
 }
 
 export function getFillBlankCount(codeSnippet: string | null) {
-  return Math.max(codeSnippet?.match(/______+/g)?.length ?? 0, 1);
+  return Math.max(codeSnippet?.match(/___+/g)?.length ?? 0, 1);
 }
 
 export function normalizeFillBlankDrafts(blanks: string[], blankCount: number) {

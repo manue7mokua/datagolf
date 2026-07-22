@@ -383,6 +383,7 @@ assert.equal(getQuestionPositionLabel(questions[1], questions.length), "Q2 / 3")
 assert.equal(getQuestionTypeLabel("guided_prompt"), "guided prompt");
 assert.equal(getQuestionTypeLabel("multi_part_question"), "multi part question");
 assert.equal(getFillBlankCount(fillBlankQuestion.display.code_snippet), 2);
+assert.equal(getFillBlankCount("select ___ from posts where ____ > _____"), 3);
 assert.equal(getFillBlankCount(null), 1);
 assert.deepEqual(normalizeFillBlankDrafts([" views "], 2), [" views ", ""]);
 assert.equal(
