@@ -666,7 +666,11 @@ assert.equal(
   formatAttemptTimestamp("2026-01-01T14:05:00.000Z", "en-US", "UTC"),
   "Jan 1, 2:05 PM",
 );
-assert.equal(formatAttemptTimestamp("not-a-date", "en-US"), "not-a-date");
+assert.equal(
+  formatAttemptTimestamp(" 2026-01-01T14:05:00.000Z ", "en-US", "UTC"),
+  "Jan 1, 2:05 PM",
+);
+assert.equal(formatAttemptTimestamp(" not-a-date ", "en-US"), "not-a-date");
 assert.equal(sessionProgress.Q1.attemptCount, 1);
 assert.equal(sessionProgress.Q2.attemptCount, 2);
 assert.equal(sessionProgress.Q2.lastAttempt?.id, "attempt-3");

@@ -579,9 +579,10 @@ export function formatAttemptTimestamp(
   locale?: string,
   timeZone?: string,
 ) {
-  const date = new Date(value);
+  const normalizedValue = value.trim();
+  const date = new Date(normalizedValue);
   if (Number.isNaN(date.getTime())) {
-    return value;
+    return normalizedValue;
   }
 
   return date.toLocaleString(locale, {
