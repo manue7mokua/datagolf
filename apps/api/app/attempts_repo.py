@@ -134,6 +134,7 @@ class AttemptsRepository:
         return self.get_attempt(attempt_id)
 
     def get_attempt(self, attempt_id: str) -> dict[str, Any] | None:
+        attempt_id = attempt_id.strip()
         with self._connection() as connection:
             cursor = connection.execute(
                 "SELECT * FROM attempts WHERE id = ?",
@@ -154,10 +155,12 @@ class AttemptsRepository:
         if limit is not None and limit <= 0:
             return []
 
+        session_id = session_id.strip()
+        challenge_slug = challenge_slug.strip() if challenge_slug is not None else None
         query = "SELECT * FROM attempts WHERE session_id = ?"
         params: list[Any] = [session_id]
 
-        if challenge_slug is not None:
+        if challenge_slug:
             query += " AND challenge_slug = ?"
             params.append(challenge_slug)
 

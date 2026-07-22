@@ -68,10 +68,14 @@ class AttemptsRepositoryTests(unittest.TestCase):
                 )
             )
 
-            all_session_attempts = repo.list_attempts_for_session("session-a")
+            all_session_attempts = repo.list_attempts_for_session(" session-a ")
             filtered_attempts = repo.list_attempts_for_session(
                 "session-a",
-                challenge_slug="challenge-a",
+                challenge_slug=" challenge-a ",
+            )
+            blank_filtered_attempts = repo.list_attempts_for_session(
+                "session-a",
+                challenge_slug="   ",
             )
             limited_attempts = repo.list_attempts_for_session("session-a", limit=2)
             zero_limit_attempts = repo.list_attempts_for_session("session-a", limit=0)
@@ -87,6 +91,10 @@ class AttemptsRepositoryTests(unittest.TestCase):
         self.assertEqual(
             [attempt["id"] for attempt in filtered_attempts],
             ["attempt-1", "attempt-2"],
+        )
+        self.assertEqual(
+            [attempt["id"] for attempt in blank_filtered_attempts],
+            ["attempt-1", "attempt-2", "attempt-3"],
         )
         self.assertEqual(
             [attempt["id"] for attempt in limited_attempts],
@@ -127,6 +135,25 @@ class AttemptsRepositoryTests(unittest.TestCase):
             [attempt["id"] for attempt in attempts],
             ["attempt-a", "attempt-b"],
         )
+
+    def test_get_attempt_trims_lookup_id(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            repo = AttemptsRepository(Path(tempdir) / "attempts.sqlite3")
+            repo.initialize()
+            repo.create_attempt(
+                _attempt_record(
+                    attempt_id="attempt-a",
+                    session_id="session-a",
+                    challenge_slug="challenge-a",
+                    question_id="Q1",
+                    created_at="2026-01-01T00:00:01+00:00",
+                )
+            )
+
+            attempt = repo.get_attempt(" attempt-a ")
+
+        self.assertIsNotNone(attempt)
+        self.assertEqual(attempt["id"], "attempt-a")
 
 
 def _attempt_record(
