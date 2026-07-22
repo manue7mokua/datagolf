@@ -397,7 +397,7 @@ assert.equal(
 assert.equal(
   getAnswerDraftGuidance(questions[0], {
     promptText: "",
-    selectedOption: "B",
+    selectedOption: " b ",
     blanks: [],
     codeText: "",
   }),
@@ -500,7 +500,7 @@ assert.equal(
 assert.equal(
   isQuestionAnswerDraftSubmittable(questions[0], {
     promptText: "",
-    selectedOption: "B",
+    selectedOption: " b ",
     blanks: [],
     codeText: "",
   }),
@@ -539,7 +539,7 @@ assert.deepEqual(
 assert.deepEqual(
   buildAttemptPayload(questions[0], " session-1 ", {
     promptText: "",
-    selectedOption: " B ",
+    selectedOption: " b ",
     blanks: [],
     codeText: "",
   }),

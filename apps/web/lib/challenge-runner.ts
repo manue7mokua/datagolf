@@ -83,7 +83,13 @@ export function buildAttemptPayload(
   }
 
   if (question.type === "multiple_choice") {
-    return { ...basePayload, selected_option: draft.selectedOption.trim() };
+    return {
+      ...basePayload,
+      selected_option: getCanonicalMultipleChoiceSelection(
+        question,
+        draft.selectedOption,
+      ) ?? draft.selectedOption.trim(),
+    };
   }
 
   if (question.type === "fill_blank") {
@@ -245,11 +251,23 @@ function isMultipleChoiceSelectionValid(
   question: PublicQuestion,
   selectedOption: string,
 ) {
-  const normalizedSelection = selectedOption.trim();
+  return getCanonicalMultipleChoiceSelection(question, selectedOption) !== null;
+}
 
-  return question.display.choices.some(
-    (choice) => choice.id === normalizedSelection,
+function getCanonicalMultipleChoiceSelection(
+  question: PublicQuestion,
+  selectedOption: string,
+) {
+  const normalizedSelection = selectedOption.trim().toLowerCase();
+  if (!normalizedSelection) {
+    return null;
+  }
+
+  const matchingChoice = question.display.choices.find(
+    (choice) => choice.id.trim().toLowerCase() === normalizedSelection,
   );
+
+  return matchingChoice?.id.trim() ?? null;
 }
 
 export function getDatasetPreviewRows(
