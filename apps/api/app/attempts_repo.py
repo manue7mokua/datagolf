@@ -55,6 +55,7 @@ class AttemptsRepository:
             connection.commit()
 
     def create_attempt(self, record: dict[str, Any]) -> dict[str, Any]:
+        record = self._normalize_attempt_record(record)
         with self._connection() as connection:
             connection.execute(
                 """
@@ -106,6 +107,9 @@ class AttemptsRepository:
         error_message: str | None,
         updated_at: str,
     ) -> dict[str, Any] | None:
+        attempt_id = attempt_id.strip()
+        status = status.strip()
+        model = model.strip()
         with self._connection() as connection:
             connection.execute(
                 """
@@ -175,6 +179,28 @@ class AttemptsRepository:
             rows = cursor.fetchall()
 
         return [self._deserialize_row(row) for row in rows]
+
+    def _normalize_attempt_record(self, record: dict[str, Any]) -> dict[str, Any]:
+        normalized = dict(record)
+        for key in (
+            "id",
+            "session_id",
+            "question_id",
+            "question_type",
+            "status",
+            "challenge_slug",
+            "challenge_version",
+            "dataset_slug",
+            "dataset_version",
+            "prompt_version",
+            "model",
+            "evaluator_version",
+        ):
+            value = normalized.get(key)
+            if isinstance(value, str):
+                normalized[key] = value.strip()
+
+        return normalized
 
     def _connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(self.database_path)

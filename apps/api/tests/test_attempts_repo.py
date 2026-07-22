@@ -155,6 +155,73 @@ class AttemptsRepositoryTests(unittest.TestCase):
         self.assertIsNotNone(attempt)
         self.assertEqual(attempt["id"], "attempt-a")
 
+    def test_create_attempt_trims_metadata_fields(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            repo = AttemptsRepository(Path(tempdir) / "attempts.sqlite3")
+            repo.initialize()
+
+            created = repo.create_attempt(
+                {
+                    **_attempt_record(
+                        attempt_id=" attempt-a ",
+                        session_id=" session-a ",
+                        challenge_slug=" challenge-a ",
+                        question_id=" Q1 ",
+                        created_at="2026-01-01T00:00:01+00:00",
+                    ),
+                    "question_type": " multiple_choice ",
+                    "status": " completed ",
+                    "challenge_version": " v1 ",
+                    "dataset_slug": " dataset-a ",
+                    "dataset_version": " v1 ",
+                    "prompt_version": " prompt_v1 ",
+                    "model": " not_applicable ",
+                    "evaluator_version": " evaluator_v1 ",
+                }
+            )
+            fetched = repo.get_attempt("attempt-a")
+
+        self.assertEqual(created["id"], "attempt-a")
+        self.assertEqual(created["session_id"], "session-a")
+        self.assertIsNotNone(fetched)
+        self.assertEqual(fetched["id"], "attempt-a")
+        self.assertEqual(fetched["session_id"], "session-a")
+        self.assertEqual(fetched["question_id"], "Q1")
+        self.assertEqual(fetched["question_type"], "multiple_choice")
+        self.assertEqual(fetched["status"], "completed")
+        self.assertEqual(fetched["challenge_slug"], "challenge-a")
+        self.assertEqual(fetched["dataset_slug"], "dataset-a")
+
+    def test_update_attempt_trims_lookup_id_and_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            repo = AttemptsRepository(Path(tempdir) / "attempts.sqlite3")
+            repo.initialize()
+            repo.create_attempt(
+                _attempt_record(
+                    attempt_id="attempt-a",
+                    session_id="session-a",
+                    challenge_slug="challenge-a",
+                    question_id="Q1",
+                    created_at="2026-01-01T00:00:01+00:00",
+                )
+            )
+
+            updated = repo.update_attempt(
+                " attempt-a ",
+                status=" completed ",
+                model=" model-a ",
+                generated_code=None,
+                evaluation_payload={"passed": False},
+                is_correct=False,
+                error_message=None,
+                updated_at="2026-01-01T00:00:02+00:00",
+            )
+
+        self.assertIsNotNone(updated)
+        self.assertEqual(updated["status"], "completed")
+        self.assertEqual(updated["model"], "model-a")
+        self.assertFalse(updated["is_correct"])
+
 
 def _attempt_record(
     *,
