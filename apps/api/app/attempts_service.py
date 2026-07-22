@@ -124,18 +124,21 @@ class AttemptsService:
         challenge_slug: str | None = None,
         limit: int = 100,
     ):
+        normalized_session_id = session_id.strip()
         normalized_challenge_slug = challenge_slug.strip() if challenge_slug else None
         return self.attempts_repo.list_attempts_for_session(
-            session_id,
+            normalized_session_id,
             challenge_slug=normalized_challenge_slug or None,
             limit=limit,
         )
 
     def summarize_session_challenge(self, session_id: str, challenge_slug: str):
-        challenge = self.challenge_registry.get_challenge(challenge_slug)
+        normalized_session_id = session_id.strip()
+        normalized_challenge_slug = challenge_slug.strip()
+        challenge = self.challenge_registry.get_challenge(normalized_challenge_slug)
         attempts = self.attempts_repo.list_attempts_for_session(
-            session_id,
-            challenge_slug=challenge_slug,
+            normalized_session_id,
+            challenge_slug=normalized_challenge_slug,
             limit=None,
         )
         progress_by_question: dict[str, dict[str, object]] = {}
@@ -197,7 +200,7 @@ class AttemptsService:
         )
 
         return {
-            "session_id": session_id,
+            "session_id": normalized_session_id,
             "challenge_slug": challenge.challenge_slug,
             "challenge_version": challenge.challenge_version,
             "total_questions": total_questions,

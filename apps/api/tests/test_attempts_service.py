@@ -366,7 +366,7 @@ class AttemptsServiceTests(unittest.TestCase):
         )
 
         attempts = service.list_attempts_for_session(
-            "session-a",
+            " session-a ",
             challenge_slug=" challenge-a ",
             limit=25,
         )
@@ -410,10 +410,12 @@ class AttemptsServiceTests(unittest.TestCase):
         )
 
         summary = service.summarize_session_challenge(
-            "session-a",
-            "challenge-a",
+            " session-a ",
+            " challenge-a ",
         )
 
+        self.assertEqual(summary["session_id"], "session-a")
+        self.assertEqual(summary["challenge_slug"], "challenge-a")
         self.assertEqual(summary["attempted_questions"], 2)
         self.assertEqual(summary["correct_questions"], 1)
         self.assertEqual(summary["remaining_questions"], 2)
