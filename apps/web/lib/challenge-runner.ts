@@ -847,12 +847,12 @@ function getPayloadRecord(value: unknown): Record<string, unknown> {
 }
 
 function getPayloadString(value: unknown): string {
-  return typeof value === "string" ? value : "";
+  return typeof value === "string" ? value.trim() : "";
 }
 
 function getPayloadStringArray(value: unknown): string[] {
   return Array.isArray(value)
-    ? value.map((item) => (typeof item === "string" ? item : ""))
+    ? value.map((item) => (typeof item === "string" ? item.trim() : ""))
     : [];
 }
 

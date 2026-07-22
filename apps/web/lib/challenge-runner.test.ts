@@ -182,6 +182,23 @@ assert.deepEqual(createAnswerDraftFromAttempt(retryAttempt), {
   blanks: ["views", "likes"],
   codeText: "",
 });
+assert.deepEqual(
+  createAnswerDraftFromAttempt({
+    ...correctAttempt,
+    user_input_payload: {
+      prompt_text: " show top posts ",
+      selected_option: " B ",
+      blanks: [" views ", " likes ", 42],
+      code_text: " select(post_id) ",
+    },
+  }),
+  {
+    promptText: "show top posts",
+    selectedOption: "B",
+    blanks: ["views", "likes", ""],
+    codeText: "select(post_id)",
+  },
+);
 
 assert.equal(findNextIncompleteQuestionIndex(questions, progress), 1);
 assert.equal(findNextIncompleteQuestionIndex(questions, pendingThenOpenProgress), 2);
