@@ -52,11 +52,20 @@ FastAPI endpoint tests are included in the API suite. They run when the active P
 Run the current workflow-level E2E gate directly with:
 
 ```bash
+pnpm setup:e2e
+pnpm test:e2e
+```
+
+`pnpm setup:e2e` creates or updates `.tmp/e2e-api-venv` with `apps/api/requirements.txt`. The E2E scripts automatically use that environment when it exists. You can also set `DATAGOLF_E2E_PYTHON=/path/to/python` to use a different Python.
+
+Run the API workflow gate by itself with:
+
+```bash
 pnpm test:e2e:api
 ```
 
 This exercises the core challenge runner path through the API: catalog, challenge detail, questions, attempt creation, retry, attempt fetch, session history, and progress summary. It also validates dataset preview when the active Python environment has pandas installed.
-The script requires a Python interpreter with FastAPI installed. Set `DATAGOLF_E2E_PYTHON=/path/to/python` if your default `python3` does not have the API requirements.
+The script requires a Python interpreter with `apps/api/requirements.txt` installed.
 
 Run the browser-level runner gate with:
 
@@ -64,7 +73,7 @@ Run the browser-level runner gate with:
 pnpm test:e2e:web
 ```
 
-This starts an isolated FastAPI server and Next.js dev server, then uses Playwright CLI to drive the full challenge runner UI for Q1-Q15. It verifies dataset loading, guided prompt submission, choice/blank/code answers, feedback, progress, and reload persistence. The selected Python must have the API requirements installed, including FastAPI and pandas. Set `DATAGOLF_E2E_PYTHON=/path/to/python` if needed, and set `DATAGOLF_PLAYWRIGHT_CLI=/path/to/playwright-cli` if the bundled Codex Playwright wrapper is unavailable.
+This starts an isolated FastAPI server and Next.js dev server, then uses Playwright CLI to drive the full challenge runner UI for Q1-Q15. It verifies dataset loading, guided prompt submission, choice/blank/code answers, feedback, progress, and reload persistence. The selected Python must have `apps/api/requirements.txt` installed. Set `DATAGOLF_PLAYWRIGHT_CLI=/path/to/playwright-cli` if the bundled Codex Playwright wrapper is unavailable.
 
 ## API
 
