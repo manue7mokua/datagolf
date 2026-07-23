@@ -46,6 +46,7 @@ Thumbs.db
 components.json
 skills-lock.json
 .agents/
+.playwright-cli/
 
 # python
 __pycache__/

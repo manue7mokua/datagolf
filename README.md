@@ -58,6 +58,14 @@ pnpm test:e2e:api
 This exercises the core challenge runner path through the API: catalog, challenge detail, questions, attempt creation, retry, attempt fetch, session history, and progress summary. It also validates dataset preview when the active Python environment has pandas installed.
 The script requires a Python interpreter with FastAPI installed. Set `DATAGOLF_E2E_PYTHON=/path/to/python` if your default `python3` does not have the API requirements.
 
+Run the browser-level runner gate with:
+
+```bash
+pnpm test:e2e:web
+```
+
+This starts an isolated FastAPI server and Next.js dev server, then uses Playwright CLI to drive the challenge runner UI for Q8-Q15. It verifies dataset loading, real answer submission, feedback, progress, and reload persistence. The selected Python must have the API requirements installed, including FastAPI and pandas. Set `DATAGOLF_E2E_PYTHON=/path/to/python` if needed, and set `DATAGOLF_PLAYWRIGHT_CLI=/path/to/playwright-cli` if the bundled Codex Playwright wrapper is unavailable.
+
 ## API
 
 Create a Python environment, install the API requirements, and run FastAPI from the repo root:
