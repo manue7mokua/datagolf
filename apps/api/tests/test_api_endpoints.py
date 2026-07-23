@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.util
 import os
 from pathlib import Path
 import sys
@@ -76,6 +77,78 @@ class ApiEndpointTests(unittest.TestCase):
         self.assertEqual(len(questions), 15)
         self.assertEqual(questions[0]["id"], "Q1")
         self.assertNotIn("evaluation", questions[0])
+
+    def test_e2e_challenge_runner_happy_path(self) -> None:
+        session_id = "endpoint-e2e-session"
+
+        catalog_response = self.client.get("/challenges")
+        self.assertEqual(catalog_response.status_code, 200)
+        challenge_slug = catalog_response.json()[0]["challenge_slug"]
+        dataset_slug = catalog_response.json()[0]["dataset_slug"]
+
+        detail_response = self.client.get(f"/challenges/{challenge_slug}")
+        questions_response = self.client.get(f"/challenges/{challenge_slug}/questions")
+        preview_response = (
+            self.client.get(f"/datasets/{dataset_slug}/preview?limit=2")
+            if importlib.util.find_spec("pandas") is not None
+            else None
+        )
+
+        self.assertEqual(detail_response.status_code, 200)
+        self.assertEqual(questions_response.status_code, 200)
+        self.assertEqual(detail_response.json()["question_count"], 15)
+        self.assertEqual(len(questions_response.json()), 15)
+        self.assertEqual(detail_response.json()["dataset"]["slug"], dataset_slug)
+        if preview_response is not None:
+            self.assertEqual(preview_response.status_code, 200)
+            self.assertEqual(len(preview_response.json()["rows"]), 2)
+
+        first_attempt_response = self.client.post(
+            "/questions/Q8/attempts",
+            json={"session_id": session_id, "selected_option": "A"},
+        )
+        retry_attempt_response = self.client.post(
+            "/questions/Q8/attempts",
+            json={"session_id": session_id, "selected_option": " b "},
+        )
+
+        self.assertEqual(first_attempt_response.status_code, 200)
+        self.assertEqual(retry_attempt_response.status_code, 200)
+        first_attempt = first_attempt_response.json()
+        retry_attempt = retry_attempt_response.json()
+        self.assertFalse(first_attempt["is_correct"])
+        self.assertTrue(retry_attempt["is_correct"])
+        self.assertEqual(retry_attempt["user_input_payload"]["selected_option"], "B")
+
+        fetched_retry_response = self.client.get(f"/attempts/{retry_attempt['id']}")
+        history_response = self.client.get(
+            f"/sessions/{session_id}/attempts?challenge_slug={challenge_slug}&limit=10"
+        )
+        summary_response = self.client.get(
+            f"/sessions/{session_id}/challenges/{challenge_slug}/summary"
+        )
+
+        self.assertEqual(fetched_retry_response.status_code, 200)
+        self.assertEqual(history_response.status_code, 200)
+        self.assertEqual(summary_response.status_code, 200)
+        self.assertEqual(fetched_retry_response.json()["id"], retry_attempt["id"])
+        self.assertEqual(
+            [attempt["id"] for attempt in history_response.json()],
+            [first_attempt["id"], retry_attempt["id"]],
+        )
+        self.assertEqual(
+            [attempt["is_correct"] for attempt in history_response.json()],
+            [False, True],
+        )
+
+        summary = summary_response.json()
+        self.assertEqual(summary["attempted_questions"], 1)
+        self.assertEqual(summary["correct_questions"], 1)
+        self.assertEqual(summary["remaining_questions"], 14)
+        self.assertEqual(summary["retry_questions"], 1)
+        self.assertEqual(summary["total_attempts"], 2)
+        self.assertEqual(summary["accuracy_percent"], 100)
+        self.assertEqual(summary["completion_percent"], 7)
 
     def test_dataset_preview_returns_limited_rows(self) -> None:
         response = self.client.get("/datasets/tiktok-posts/preview?limit=3")
