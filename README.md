@@ -64,7 +64,7 @@ Run the browser-level runner gate with:
 pnpm test:e2e:web
 ```
 
-This starts an isolated FastAPI server and Next.js dev server, then uses Playwright CLI to drive the challenge runner UI for Q8-Q15. It verifies dataset loading, real answer submission, feedback, progress, and reload persistence. The selected Python must have the API requirements installed, including FastAPI and pandas. Set `DATAGOLF_E2E_PYTHON=/path/to/python` if needed, and set `DATAGOLF_PLAYWRIGHT_CLI=/path/to/playwright-cli` if the bundled Codex Playwright wrapper is unavailable.
+This starts an isolated FastAPI server and Next.js dev server, then uses Playwright CLI to drive the full challenge runner UI for Q1-Q15. It verifies dataset loading, guided prompt submission, choice/blank/code answers, feedback, progress, and reload persistence. The selected Python must have the API requirements installed, including FastAPI and pandas. Set `DATAGOLF_E2E_PYTHON=/path/to/python` if needed, and set `DATAGOLF_PLAYWRIGHT_CLI=/path/to/playwright-cli` if the bundled Codex Playwright wrapper is unavailable.
 
 ## API
 
