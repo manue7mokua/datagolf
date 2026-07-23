@@ -350,7 +350,10 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
   }, [loadState, progressByQuestion]);
 
   return (
-    <main className="min-h-dvh bg-[#0A0A0A] px-4 py-4 text-[#f2f1ea] sm:px-6 lg:px-8">
+    <main
+      data-testid="challenge-runner-page"
+      className="min-h-dvh bg-[#0A0A0A] px-4 py-4 text-[#f2f1ea] sm:px-6 lg:px-8"
+    >
       <div className="mx-auto flex min-h-[calc(100dvh-2rem)] w-full max-w-[1500px] flex-col border border-white/12 bg-black/30">
         <header className="flex flex-col gap-4 border-b border-white/12 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
           <div>
@@ -390,11 +393,15 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
                 <div className="text-[11px] uppercase tracking-[0.22em] text-[#8f8b80]">
                   Session
                 </div>
-                <div className="mt-2 truncate font-mono text-[12px] text-[#c9c4b8]">
+                <div
+                  data-testid="runner-session-id"
+                  className="mt-2 truncate font-mono text-[12px] text-[#c9c4b8]"
+                >
                   {loadState.sessionId}
                 </div>
                 <button
                   type="button"
+                  data-testid="runner-new-session-button"
                   onClick={resetRunnerSession}
                   className="mt-3 h-8 border border-white/12 px-3 text-[10px] uppercase tracking-[0.18em] text-[#8f8b80] transition-colors hover:border-[#ffbd2e] hover:text-[#f2f1ea]"
                 >
@@ -414,6 +421,7 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
                     <li key={question.id}>
                       <button
                         type="button"
+                        data-testid={`runner-question-nav-${question.id}`}
                         onClick={() => selectQuestion(index)}
                         className={cn(
                           "flex w-full items-center gap-3 px-3 py-3 text-left transition-colors",
@@ -453,7 +461,10 @@ export default function ChallengeRunnerPage({ params }: ChallengeRunnerPageProps
               </ol>
             </aside>
 
-            <section className="min-h-0 overflow-y-auto px-4 py-5 sm:px-6">
+            <section
+              data-testid="runner-workspace"
+              className="min-h-0 overflow-y-auto px-4 py-5 sm:px-6"
+            >
               {progressSummary ? (
                 <ChallengeSummaryPanel
                   summary={progressSummary}
@@ -507,7 +518,10 @@ function ChallengeSummaryPanel({
   );
 
   return (
-    <section className="mx-auto mb-5 grid max-w-4xl gap-3 border border-white/12 bg-[#111111] p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+    <section
+      data-testid="runner-progress-summary"
+      className="mx-auto mb-5 grid max-w-4xl gap-3 border border-white/12 bg-[#111111] p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
+    >
       <div>
         <div className="text-[11px] uppercase tracking-[0.22em] text-[#8f8b80]">
           Progress
@@ -533,6 +547,7 @@ function ChallengeSummaryPanel({
         {!isComplete ? (
           <button
             type="button"
+            data-testid="runner-next-open-button"
             disabled={!canGoNextOpen}
             onClick={onNextOpen}
             className={cn(
@@ -588,7 +603,10 @@ function DatasetPreviewPanel({ preview }: { preview: DatasetPreview }) {
   );
 
   return (
-    <section className="border-b border-white/12 px-4 py-4">
+    <section
+      data-testid="runner-dataset-preview"
+      className="border-b border-white/12 px-4 py-4"
+    >
       <div className="text-[11px] uppercase tracking-[0.22em] text-[#8f8b80]">
         Dataset
       </div>
@@ -704,7 +722,7 @@ function QuestionShell({
   const questionTypeLabel = getQuestionTypeLabel(question.type);
 
   return (
-    <article className="mx-auto max-w-4xl">
+    <article className="mx-auto max-w-4xl" data-testid="runner-question-shell">
       <div className="flex flex-wrap items-center gap-2">
         <span className="border border-white/12 px-2 py-1 font-mono text-[11px] uppercase tracking-[0.16em] text-[#8f8b80]">
           {positionLabel}
@@ -771,6 +789,7 @@ function QuestionShell({
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <button
               type="button"
+              data-testid="runner-clear-button"
               disabled={!canClearDraft}
               onClick={onClearDraft}
               className={cn(
@@ -784,6 +803,7 @@ function QuestionShell({
             </button>
             <button
               type="button"
+              data-testid="runner-use-last-button"
               disabled={!canRestoreDraft}
               onClick={onRestoreDraft}
               className={cn(
@@ -797,6 +817,7 @@ function QuestionShell({
             </button>
             <button
               type="button"
+              data-testid="runner-previous-button"
               disabled={!canGoPrevious}
               onClick={onPrevious}
               className={cn(
@@ -810,6 +831,7 @@ function QuestionShell({
             </button>
             <button
               type="button"
+              data-testid="runner-next-button"
               disabled={!canGoNext}
               onClick={onNext}
               className={cn(
@@ -823,6 +845,7 @@ function QuestionShell({
             </button>
             <button
               type="button"
+              data-testid="runner-submit-button"
               disabled={!canSubmit || isSubmitting}
               onClick={onSubmit}
               className={cn(
@@ -838,7 +861,10 @@ function QuestionShell({
         </div>
 
         {submitError ? (
-          <div className="mt-4 border border-[#ff6b6b]/40 bg-[#ff6b6b]/10 px-3 py-3 text-[13px] leading-6 text-[#ffd1d1]">
+          <div
+            data-testid="runner-submit-error"
+            className="mt-4 border border-[#ff6b6b]/40 bg-[#ff6b6b]/10 px-3 py-3 text-[13px] leading-6 text-[#ffd1d1]"
+          >
             {submitError}
           </div>
         ) : null}
@@ -860,7 +886,10 @@ function AttemptHistory({ progress }: { progress: QuestionProgress }) {
   const attemptCount = getPreviousAttemptCount(progress);
 
   return (
-    <section className="mt-4 border border-white/12 bg-black/20">
+    <section
+      data-testid="runner-attempt-history"
+      className="mt-4 border border-white/12 bg-black/20"
+    >
       <div className="border-b border-white/12 px-3 py-3 text-[11px] uppercase tracking-[0.18em] text-[#8f8b80]">
         {getPreviousAttemptsTitle(attemptCount)}
       </div>
@@ -911,7 +940,10 @@ function AttemptFeedback({ progress }: { progress: QuestionProgress }) {
   const attemptTone = getAttemptTone(attempt);
 
   return (
-    <section className="mt-4 border border-white/12 bg-black/30">
+    <section
+      data-testid="runner-attempt-feedback"
+      className="mt-4 border border-white/12 bg-black/30"
+    >
       <div
         className={cn(
           "border-b border-white/12 px-3 py-3 text-[12px] uppercase tracking-[0.18em]",
@@ -987,6 +1019,7 @@ function AnswerInput({
           <button
             key={choice.id}
             type="button"
+            data-testid={`runner-choice-${choice.id}`}
             onClick={() =>
               onDraftChange({ ...draft, selectedOption: choice.id })
             }
@@ -1026,6 +1059,7 @@ function AnswerInput({
                 Blank {index + 1}
               </span>
               <input
+                data-testid={`runner-blank-input-${index + 1}`}
                 value={blank}
                 onChange={(event) => {
                   const nextBlanks = [...blanks];
@@ -1044,6 +1078,7 @@ function AnswerInput({
   if (question.type === "micro_code") {
     return (
       <textarea
+        data-testid="runner-code-input"
         value={draft.codeText}
         onChange={(event) =>
           onDraftChange({ ...draft, codeText: event.target.value })
@@ -1057,6 +1092,7 @@ function AnswerInput({
 
   return (
     <textarea
+      data-testid="runner-prompt-input"
       value={draft.promptText}
       onChange={(event) =>
         onDraftChange({ ...draft, promptText: event.target.value })
