@@ -4,9 +4,19 @@ import { UserIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 import { DatasetPreview, type DatasetColumn } from "@/components/dataset-preview"
+import {
+  type ChallengeListItem,
+  listChallenges,
+  listSessionChallengeSummaries,
+  type SessionChallengeSummary,
+} from "@/lib/datagolf-api"
+import {
+  getAnonymousSessionId,
+  resetAnonymousSessionId,
+} from "@/lib/anonymous-session"
 import {
   Sidebar,
   SidebarContent,
@@ -353,13 +363,7 @@ type ChallengeCatalogItem = {
   active: boolean
 }
 
-const challengeCatalog: ChallengeCatalogItem[] = [
-  {
-    label: "TikTok Creators",
-    href: "/challenges/tiktok-creator-posts",
-    available: true,
-    active: true,
-  },
+const upcomingChallenges: ChallengeCatalogItem[] = [
   { label: "Spotify Songs", available: false, active: false },
   { label: "NBA Player Stats", available: false, active: false },
   { label: "Netflix Titles", available: false, active: false },
@@ -367,9 +371,25 @@ const challengeCatalog: ChallengeCatalogItem[] = [
   { label: "YouTube Comments", available: false, active: false },
 ]
 
+type CatalogStatus = "not_started" | "in_progress" | "complete"
+
+type CatalogChallenge = {
+  challenge: ChallengeListItem
+  summary: SessionChallengeSummary
+}
+
+type CatalogState =
+  | { status: "loading" }
+  | { status: "ready"; sessionId: string; challenges: CatalogChallenge[] }
+  | { status: "error"; message: string }
+
 export default function ChallengesPage() {
   const [isLightTheme, setIsLightTheme] = useState(false)
   const [isChallengesOpen, setIsChallengesOpen] = useState(true)
+  const [catalogState, setCatalogState] = useState<CatalogState>({
+    status: "loading",
+  })
+  const [catalogReloadKey, setCatalogReloadKey] = useState(0)
 
   const railBorderClass = isLightTheme ? "border-black/10" : "border-white/10"
   const sidebarClass = isLightTheme
@@ -383,6 +403,73 @@ export default function ChallengesPage() {
   const summaryCardClass = isLightTheme
     ? "border-black/10 bg-[#f7f2e8] shadow-2xl shadow-[#d8cfbf]/20"
     : "border-white/12 bg-black/40 shadow-2xl shadow-black/40"
+  const dashboardChallenge = useMemo(() => {
+    return catalogState.status === "ready" ? catalogState.challenges[0] : null
+  }, [catalogState])
+  const dashboardStatus = dashboardChallenge
+    ? getCatalogStatus(dashboardChallenge.summary)
+    : null
+
+  useEffect(() => {
+    let mounted = true
+
+    async function loadCatalog() {
+      setCatalogState({ status: "loading" })
+
+      try {
+        const sessionId = getAnonymousSessionId()
+        if (!sessionId) {
+          throw new Error("Could not create an anonymous session.")
+        }
+
+        const challenges = await listChallenges()
+        const summaries = await listSessionChallengeSummaries(sessionId, challenges)
+        if (!mounted) {
+          return
+        }
+
+        setCatalogState({
+          status: "ready",
+          sessionId,
+          challenges: challenges.map((challenge, index) => ({
+            challenge,
+            summary: summaries[index],
+          })),
+        })
+      } catch (error) {
+        if (!mounted) {
+          return
+        }
+
+        setCatalogState({
+          status: "error",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Could not load challenge progress.",
+        })
+      }
+    }
+
+    loadCatalog()
+
+    return () => {
+      mounted = false
+    }
+  }, [catalogReloadKey])
+
+  function startNewSession() {
+    const sessionId = resetAnonymousSessionId()
+    if (!sessionId) {
+      setCatalogState({
+        status: "error",
+        message: "Could not reset this session.",
+      })
+      return
+    }
+
+    setCatalogReloadKey((current) => current + 1)
+  }
 
   return (
     <main
@@ -499,7 +586,60 @@ export default function ChallengesPage() {
               {isChallengesOpen ? (
                 <div className="hide-scrollbar max-h-full overflow-y-auto px-4 pb-6">
                   <ol className="space-y-3 pt-2">
-                    {challengeCatalog.map((challenge, index) => (
+                    {catalogState.status === "loading" ? (
+                      <li className={cn("px-1 py-2 text-[12px]", mutedTextClass)}>
+                        Loading challenges
+                      </li>
+                    ) : null}
+
+                    {catalogState.status === "error" ? (
+                      <li className={cn("px-1 py-2 text-[12px]", mutedTextClass)}>
+                        {catalogState.message}
+                      </li>
+                    ) : null}
+
+                    {catalogState.status === "ready"
+                      ? catalogState.challenges.map((catalogItem, index) => {
+                          const challenge = catalogItem.challenge
+                          const status = getCatalogStatus(catalogItem.summary)
+
+                          return (
+                            <li
+                              key={challenge.challenge_slug}
+                              className="flex items-baseline gap-3"
+                            >
+                              <span
+                                className={cn(
+                                  "w-[2ch] shrink-0 text-right text-[11px] leading-8 tabular-nums",
+                                  mutedTextClass
+                                )}
+                              >
+                                {index + 1}.
+                              </span>
+                              <Link
+                                href={`/challenges/${challenge.challenge_slug}`}
+                                className={cn(
+                                  "min-w-0 flex-1 truncate text-[14px] leading-8 tracking-[0.04em]",
+                                  rowTextClass
+                                )}
+                              >
+                                {challenge.title}
+                              </Link>
+                              <span
+                                data-testid={`catalog-sidebar-status-${challenge.challenge_slug}`}
+                                className={cn(
+                                  "shrink-0 text-[10px] uppercase tracking-[0.14em]",
+                                  status === "complete" ? accentTextClass : mutedTextClass
+                                )}
+                              >
+                                {getCatalogStatusLabel(status)}
+                              </span>
+                            </li>
+                          )
+                        })
+                      : null}
+
+                    {upcomingChallenges.map((challenge, index) => (
                       <li key={challenge.label} className="flex items-baseline gap-3">
                         <span
                           className={cn(
@@ -507,29 +647,19 @@ export default function ChallengesPage() {
                             mutedTextClass
                           )}
                         >
-                          {index + 1}.
+                          {(catalogState.status === "ready"
+                            ? catalogState.challenges.length
+                            : 0) + index + 1}.
                         </span>
-                        {challenge.available && challenge.href ? (
-                          <Link
-                            href={challenge.href}
-                            className={cn(
-                              "min-w-0 flex-1 truncate text-[14px] leading-8 tracking-[0.04em]",
-                              challenge.active ? rowTextClass : mutedTextClass
-                            )}
-                          >
-                            {challenge.label}
-                          </Link>
-                        ) : (
-                          <span
-                            aria-disabled={!challenge.available}
-                            className={cn(
-                              "min-w-0 flex-1 cursor-not-allowed truncate text-[14px] leading-8 tracking-[0.04em] opacity-75",
-                              mutedTextClass
-                            )}
-                          >
-                            {challenge.label}
-                          </span>
-                        )}
+                        <span
+                          aria-disabled={!challenge.available}
+                          className={cn(
+                            "min-w-0 flex-1 cursor-not-allowed truncate text-[14px] leading-8 tracking-[0.04em] opacity-75",
+                            mutedTextClass
+                          )}
+                        >
+                          {challenge.label}
+                        </span>
                       </li>
                     ))}
                   </ol>
@@ -556,19 +686,98 @@ export default function ChallengesPage() {
 
         <SidebarInset className="min-h-0 overflow-hidden">
           <section className="flex h-full min-h-0 flex-col gap-4 overflow-hidden">
-            <div className={cn("shrink-0 border px-4 py-4 shadow-2xl sm:px-5", summaryCardClass)}>
-              <div className="max-w-3xl">
+            <div
+              data-testid="catalog-dashboard"
+              className={cn("shrink-0 border px-4 py-4 shadow-2xl sm:px-5", summaryCardClass)}
+            >
+              <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+                <div className="max-w-3xl">
                   <div className={cn("text-[11px] uppercase tracking-[0.24em]", mutedTextClass)}>
-                    Dataset
+                    Challenge Dashboard
                   </div>
                   <h1 className={cn("mt-2 text-[1.15rem] uppercase tracking-[0.18em] sm:text-[1.35rem]", accentTextClass)}>
-                    TikTok creator posts
+                    {dashboardChallenge?.challenge.title ?? "TikTok creator posts"}
                   </h1>
                   <p className={cn("mt-3 text-[12px] leading-6", bodyTextClass)}>
-                    A synthetic creator-post dataset with 500 rows, 25
-                    creators, and 15 columns covering posting time, format,
-                    views, likes, comments, shares, watch time, and completion.
+                    {dashboardChallenge?.challenge.description ??
+                      "A synthetic creator-post dataset with 500 rows, 25 creators, and 15 columns covering posting time, format, views, likes, comments, shares, watch time, and completion."}
                   </p>
+                </div>
+
+                <div
+                  data-testid={
+                    dashboardChallenge
+                      ? `catalog-card-${dashboardChallenge.challenge.challenge_slug}`
+                      : "catalog-card-loading"
+                  }
+                  className={cn(
+                    "grid min-w-[18rem] gap-3 border p-3",
+                    isLightTheme ? "border-black/10" : "border-white/12"
+                  )}
+                >
+                  <div className="flex items-center justify-between gap-4">
+                    <span className={cn("text-[11px] uppercase tracking-[0.18em]", mutedTextClass)}>
+                      Status
+                    </span>
+                    <span
+                      data-testid={
+                        dashboardChallenge
+                          ? `catalog-status-${dashboardChallenge.challenge.challenge_slug}`
+                          : "catalog-status-loading"
+                      }
+                      className={cn(
+                        "text-[11px] uppercase tracking-[0.18em]",
+                        dashboardStatus === "complete" ? accentTextClass : rowTextClass
+                      )}
+                    >
+                      {dashboardStatus ? getCatalogStatusLabel(dashboardStatus) : "Loading"}
+                    </span>
+                  </div>
+
+                  <div
+                    data-testid={
+                      dashboardChallenge
+                        ? `catalog-progress-${dashboardChallenge.challenge.challenge_slug}`
+                        : "catalog-progress-loading"
+                    }
+                    className={cn("font-mono text-[12px] leading-6", bodyTextClass)}
+                  >
+                    {dashboardChallenge
+                      ? getCatalogProgressText(dashboardChallenge.summary)
+                      : "Preparing session summary."}
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {dashboardChallenge ? (
+                      <Link
+                        data-testid={`catalog-action-${dashboardChallenge.challenge.challenge_slug}`}
+                        href={`/challenges/${dashboardChallenge.challenge.challenge_slug}`}
+                        className={cn(
+                          "inline-flex h-9 items-center border px-3 text-[11px] uppercase tracking-[0.16em] transition-colors",
+                          isLightTheme
+                            ? "border-[#c16508] text-[#c16508] hover:bg-[#c16508] hover:text-white"
+                            : "border-[#ffbd2e] text-[#ffbd2e] hover:bg-[#ffbd2e] hover:text-black"
+                        )}
+                      >
+                        {getCatalogActionLabel(dashboardStatus)}
+                      </Link>
+                    ) : null}
+
+                    <button
+                      type="button"
+                      data-testid="catalog-new-session-button"
+                      onClick={startNewSession}
+                      className={cn(
+                        "h-9 border px-3 text-[11px] uppercase tracking-[0.16em] transition-colors",
+                        isLightTheme
+                          ? "border-black/15 text-[#73695d] hover:bg-black/[0.04]"
+                          : "border-white/15 text-[#8f8b80] hover:bg-white/5"
+                      )}
+                    >
+                      New session
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -587,4 +796,36 @@ export default function ChallengesPage() {
       </SidebarProvider>
     </main>
   )
+}
+
+function getCatalogStatus(summary: SessionChallengeSummary): CatalogStatus {
+  if (summary.total_questions > 0 && summary.correct_questions >= summary.total_questions) {
+    return "complete"
+  }
+
+  if (summary.total_attempts > 0) {
+    return "in_progress"
+  }
+
+  return "not_started"
+}
+
+function getCatalogStatusLabel(status: CatalogStatus) {
+  if (status === "complete") {
+    return "Complete"
+  }
+
+  return status === "in_progress" ? "In progress" : "Not started"
+}
+
+function getCatalogActionLabel(status: CatalogStatus | null) {
+  if (status === "complete") {
+    return "Review results"
+  }
+
+  return status === "in_progress" ? "Continue challenge" : "Start challenge"
+}
+
+function getCatalogProgressText(summary: SessionChallengeSummary) {
+  return `${summary.correct_questions}/${summary.total_questions} correct / ${summary.total_attempts} attempts / ${summary.accuracy_percent}% accuracy`
 }

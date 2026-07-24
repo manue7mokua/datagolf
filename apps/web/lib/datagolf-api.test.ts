@@ -10,6 +10,8 @@ import {
   getDatagolfApiBaseUrl,
   getDatagolfApiErrorMessage,
   getSessionChallengeSummary,
+  listChallenges,
+  listSessionChallengeSummaries,
   listSessionAttempts,
 } from "./datagolf-api";
 
@@ -106,6 +108,7 @@ async function runApiRequestTests() {
 
   try {
     await getChallenge(" creator posts/v1 ");
+    await listChallenges();
     await getChallengeQuestions(" creator posts/v1 ");
     await createAttempt(" question 1/intro ", {
       session_id: " session-1 ",
@@ -128,9 +131,18 @@ async function runApiRequestTests() {
     await listSessionAttempts("session 4/user", " creator posts/v1 ", 10);
     await getSessionChallengeSummary("session 1/user", "creator posts/v1");
     await getSessionChallengeSummary(" session 5/user ", " creator posts/v1 ");
+    await listSessionChallengeSummaries("session 6/user", [
+      {
+        challenge_slug: "creator posts/v1",
+      },
+      {
+        challenge_slug: "creator posts/v2",
+      },
+    ]);
 
     assert.deepEqual(requestedUrls, [
       "http://localhost:8000/challenges/creator%20posts%2Fv1",
+      "http://localhost:8000/challenges",
       "http://localhost:8000/challenges/creator%20posts%2Fv1/questions",
       "http://localhost:8000/questions/question%201%2Fintro/attempts",
       "http://localhost:8000/attempts/attempt%201%2Ffirst",
@@ -147,6 +159,8 @@ async function runApiRequestTests() {
       "http://localhost:8000/sessions/session%204%2Fuser/attempts?limit=10&challenge_slug=creator+posts%2Fv1",
       "http://localhost:8000/sessions/session%201%2Fuser/challenges/creator%20posts%2Fv1/summary",
       "http://localhost:8000/sessions/session%205%2Fuser/challenges/creator%20posts%2Fv1/summary",
+      "http://localhost:8000/sessions/session%206%2Fuser/challenges/creator%20posts%2Fv1/summary",
+      "http://localhost:8000/sessions/session%206%2Fuser/challenges/creator%20posts%2Fv2/summary",
     ]);
     assert.deepEqual(attemptBodies, [
       {

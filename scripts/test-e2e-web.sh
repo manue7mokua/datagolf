@@ -114,11 +114,11 @@ NEXT_PUBLIC_DATAGOLF_API_URL="$api_url" \
     >"$web_log" 2>&1 &
 web_pid=$!
 
-wait_for_url "$web_url/challenges/$challenge_slug" "web app" "$web_log"
+wait_for_url "$web_url/challenges" "web app" "$web_log"
 
 (
   cd "$tmp_dir"
-  "$playwright_cli" --session "$playwright_session" open "$web_url/challenges/$challenge_slug"
+  "$playwright_cli" --session "$playwright_session" open "$web_url/challenges"
 )
 
 run_log="$tmp_dir/playwright-run.log"

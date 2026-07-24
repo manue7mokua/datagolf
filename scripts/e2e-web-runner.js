@@ -1,4 +1,6 @@
 async page => {
+const challengeSlug = "tiktok-creator-posts";
+const catalogUrl = page.url();
 const answers = [
   {
     id: "Q1",
@@ -113,6 +115,12 @@ const answers = [
   },
 ];
 
+await waitForTestId("catalog-dashboard");
+await expectTestIdText(`catalog-status-${challengeSlug}`, "Not started");
+await expectTestIdText(`catalog-progress-${challengeSlug}`, "0/15 correct");
+await expectTestIdText(`catalog-action-${challengeSlug}`, "Start challenge");
+await clickTestId(`catalog-action-${challengeSlug}`);
+
 await waitForTestId("challenge-runner-page");
 await waitForTestId("runner-dataset-preview");
 await expectTestIdText("runner-progress-summary", "0 of 15 correct");
@@ -138,6 +146,20 @@ await expectTestIdText("runner-progress-summary", "15 attempts");
 await clickTestId("runner-question-nav-Q8");
 await expectQuestionTitle("Sort highest views first");
 await expectTestIdText("runner-attempt-feedback", "Correct");
+
+await page.goto(catalogUrl, {
+  waitUntil: "domcontentloaded",
+});
+await waitForTestId("catalog-dashboard");
+await expectTestIdText(`catalog-status-${challengeSlug}`, "Complete");
+await expectTestIdText(`catalog-progress-${challengeSlug}`, "15/15 correct");
+await expectTestIdText(`catalog-progress-${challengeSlug}`, "15 attempts");
+await expectTestIdText(`catalog-action-${challengeSlug}`, "Review results");
+
+await clickTestId("catalog-new-session-button");
+await expectTestIdText(`catalog-status-${challengeSlug}`, "Not started");
+await expectTestIdText(`catalog-progress-${challengeSlug}`, "0/15 correct");
+await expectTestIdText(`catalog-action-${challengeSlug}`, "Start challenge");
 
 async function answerQuestion(answer) {
   await clickTestId(`runner-question-nav-${answer.id}`);

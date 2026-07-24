@@ -283,6 +283,17 @@ export async function getSessionChallengeSummary(
   );
 }
 
+export async function listSessionChallengeSummaries(
+  sessionId: string,
+  challenges: Pick<ChallengeListItem, "challenge_slug">[],
+) {
+  return Promise.all(
+    challenges.map((challenge) =>
+      getSessionChallengeSummary(sessionId, challenge.challenge_slug),
+    ),
+  );
+}
+
 async function requestJson<T>(
   path: string,
   init: RequestInit = {},
